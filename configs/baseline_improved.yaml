@@ -1,0 +1,30 @@
+# P1.T5 improved baseline VAE configuration
+# Task ID: baseline_vae_v2
+# Changes from v1: z=32, wider layers, LayerNorm, KL warm-up, free-bits
+
+# Data
+data_path: data/adata_processed.h5ad
+
+# Model architecture
+input_dim: 2000
+hidden_dims: [1024, 512, 128]
+latent_dim: 32
+likelihood: nb
+dropout: 0.1
+use_layer_norm: true
+
+# Training hyperparameters
+epochs: 100
+batch_size: 256
+lr: 0.0001
+seed: 42
+
+# KL warm-up schedule - ramp KL weight from 0 to 1 over 20 epochs
+kl_warmup_epochs: 20
+
+# Free-bits to prevent posterior collapse - 0.03 nats per dimension minimum KL
+free_bits: 0.03
+
+# Output
+output_dir: outputs/p1/baseline_v2
+print_every: 1

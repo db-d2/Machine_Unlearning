@@ -1,0 +1,19 @@
+# Task P3.T1-T7: Mixture-of-Gaussians simulation configuration
+
+# Model architecture (smaller for MoG simulations)
+hidden_dims: [128, 64]
+latent_dim: 8
+
+# Training hyperparameters
+epochs: 50
+batch_size: 256
+lr: 0.001
+beta: 1.0
+kl_warmup_epochs: 10
+free_bits: 0.03
+
+# Random seed
+seed: 42
+
+# Logging
+print_every: 5

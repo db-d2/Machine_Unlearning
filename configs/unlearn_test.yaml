@@ -1,0 +1,29 @@
+# Quick smoke test for adversarial unlearning
+
+# Data
+data_path: data/adata_processed.h5ad
+split_path: outputs/p1/split_structured.json
+
+# Base model
+baseline_checkpoint: outputs/p1/baseline_v2/best_model.pt
+
+# Unlearning objective
+lambda_retain: 0.5
+
+# Adversarial setup
+attacker_lr: 0.0003
+vae_lr: 0.0001
+ema_decay: 0.999
+use_spectral_norm: true
+grad_clip: 1.0
+
+# Training (short for smoke test)
+epochs: 2
+batch_size: 256
+seed: 42
+early_stop_patience: 10
+early_stop_cooldown: 3
+
+# Output
+output_dir: outputs/p2/unlearn_test
+print_every: 1

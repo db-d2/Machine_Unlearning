@@ -1,0 +1,42 @@
+# P2.T1: V3 with Lambda=100 for stronger privacy emphasis
+# Addresses insufficient privacy from lambda10 run
+# - 10× stronger privacy weight (lambda: 100)
+# - Disabled early stopping (patience: 100)
+# - Full 50 epochs to allow convergence
+# - All other settings identical to v3_lambda10
+
+data_path: data/adata_processed.h5ad
+split_path: outputs/p1/split_structured.json
+baseline_checkpoint: outputs/p1/baseline_v2/best_model.pt
+
+lambda_retain: 100  # 10× stronger than v3_lambda10
+
+# Adversarial setup
+attacker_lr: 0.0003
+vae_lr: 0.0001
+ema_decay: 0.999
+use_spectral_norm: true
+grad_clip: 1.0
+
+# Training schedule (P2.T1a)
+epochs: 50
+batch_size: 256
+steps_per_epoch: null  # Auto-compute as ceil(|R|/B)
+privacy_repeats_k: 8  # Privacy gradient accumulation
+pretrain_epochs: 20
+
+# Loss balancing (P2.T1b)
+balance_mode: "none"  # Start without EMA ratio scaling
+
+# Privacy objective (P2.T1c-e)
+use_max_privacy: false  # Start simple: F vs R only
+use_matched_unseen_loader: false
+mmd_gamma: 0.0  # No MMD initially
+alpha_f_kl: 0.0  # No F-only KL initially
+
+# Other
+seed: 42
+early_stop_patience: 100  # Effectively disabled - let it run full 50 epochs
+
+output_dir: outputs/p2/unlearn_v3_lambda100
+print_every: 1

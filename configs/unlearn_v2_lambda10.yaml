@@ -1,0 +1,25 @@
+# P2.T1b Option-1: Per-cell utility loss with balanced lambdas
+# With per-cell averaging: privacy ~2 nats, utility ~0.18 nats
+# Lambda=10 means roughly equal weighting (2 vs 10*0.18 = 1.8)
+
+data_path: data/adata_processed.h5ad
+split_path: outputs/p1/split_structured.json
+baseline_checkpoint: outputs/p1/baseline_v2/best_model.pt
+
+lambda_retain: 10  # Balanced for per-cell losses
+
+# Adversarial setup
+attacker_lr: 0.0003
+vae_lr: 0.0001
+ema_decay: 0.999
+use_spectral_norm: true
+grad_clip: 1.0
+
+# Training
+epochs: 50
+batch_size: 256
+seed: 42
+early_stop_patience: 10
+
+output_dir: outputs/p2/unlearn_v2_lambda10
+print_every: 1

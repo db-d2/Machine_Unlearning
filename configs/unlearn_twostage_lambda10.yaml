@@ -1,0 +1,30 @@
+# P2.T0b: Two-stage adversarial training with per-cell utility loss
+# Stage-A: Freeze attacker for 5 epochs to stabilize VAE after scale fixes
+# Stage-B: Unfreeze attacker with LR_A = LR_VAE/10, TTUR = 1:1
+# Early stopping on EMA(privacy_loss)
+
+data_path: data/adata_processed.h5ad
+split_path: outputs/p1/split_structured.json
+baseline_checkpoint: outputs/p1/baseline_v2/best_model.pt
+
+lambda_retain: 10  # Balanced for per-cell losses (privacy ~2, utility ~0.5)
+
+# Two-stage schedule
+stage_a_epochs: 5  # Freeze attacker to stabilize VAE
+# After stage_a_epochs, attacker unfrozen with LR = vae_lr / 10
+
+# Adversarial setup
+attacker_lr: 0.0003  # Used only during pre-training; Stage-B uses vae_lr/10
+vae_lr: 0.0001
+ema_decay: 0.999
+use_spectral_norm: true
+grad_clip: 1.0
+
+# Training
+epochs: 50
+batch_size: 256
+seed: 42
+early_stop_patience: 10
+
+output_dir: outputs/p2/unlearn_twostage_lambda10
+print_every: 1

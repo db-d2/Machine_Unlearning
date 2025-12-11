@@ -1,0 +1,17 @@
+# Baseline VAE configuration
+
+data_path: data/adata_processed.h5ad
+output_dir: outputs/p1/baseline
+
+# Model architecture
+hidden_dims: [512, 128]
+latent_dim: 16
+likelihood: nb
+
+# Training
+epochs: 100
+batch_size: 256
+lr: 0.001
+beta: 1.0
+seed: 42
+print_every: 10

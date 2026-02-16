@@ -42,7 +42,8 @@ class AnnDataDataset(Dataset):
 
     def __getitem__(self, idx):
         i = self.indices[idx]
-        x = torch.FloatTensor(self.adata.X[i].toarray().flatten())
+        row = self.adata.X[i]
+        x = torch.FloatTensor(row.toarray().flatten() if hasattr(row, 'toarray') else np.asarray(row).flatten())
         library_size = torch.FloatTensor([x.sum().item()])
         return x, library_size
 

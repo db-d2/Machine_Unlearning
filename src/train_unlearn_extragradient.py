@@ -38,7 +38,8 @@ class AnnDataDataset(Dataset):
 
     def __getitem__(self, idx):
         i = self.indices[idx]
-        x = torch.FloatTensor(self.adata.X[i].toarray().flatten())
+        row = self.adata.X[i]
+        x = torch.FloatTensor(row.toarray().flatten() if hasattr(row, 'toarray') else np.asarray(row).flatten())
         library_size = torch.FloatTensor([x.sum().item()])
         return x, library_size
 
@@ -159,7 +160,8 @@ def train_shadow_attacker(vae, forget_idx, retain_idx, unseen_idx, adata, device
                                       (retain_idx, retain_feats),
                                       (unseen_idx, unseen_feats)]:
             for i in idx_list:
-                x = torch.FloatTensor(adata.X[i].toarray().flatten()).unsqueeze(0).to(device)
+                row = adata.X[i]
+                x = torch.FloatTensor(row.toarray().flatten() if hasattr(row, 'toarray') else np.asarray(row).flatten()).unsqueeze(0).to(device)
                 lib = torch.FloatTensor([[x.sum().item()]]).to(device)
                 vae_feats = extract_vae_features(vae, x, lib, device, requires_grad=False)
                 attack_feats = build_attack_features(vae_feats, variant='v1')

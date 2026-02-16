@@ -11,10 +11,37 @@ from sklearn.linear_model import LogisticRegression
 from typing import Dict, Optional, Tuple
 
 
+def compute_advantage(auc: float) -> float:
+    """Compute attack advantage from AUC.
+
+    Advantage = 2 * |AUC - 0.5|
+
+    This is direction-agnostic: AUC=0.38 and AUC=0.62 both give advantage=0.24.
+    An advantage of 0 means the attacker is at chance (no distinguishing power).
+    An advantage of 1 means perfect distinguishing (AUC=0 or AUC=1).
+    """
+    return 2 * abs(auc - 0.5)
+
+
+def compute_attack_success(auc: float) -> float:
+    """Compute attack success from AUC.
+
+    Attack success = max(AUC, 1 - AUC)
+
+    This is equivalent to advantage but on [0.5, 1] scale.
+    A success of 0.5 means chance; 1.0 means perfect distinguishing.
+    """
+    return max(auc, 1 - auc)
+
+
 def compute_attack_metrics(predictions: np.ndarray, labels: np.ndarray) -> Dict[str, float]:
-    """Compute standard attack metrics including TPR@FPR."""
+    """Compute standard attack metrics including TPR@FPR and advantage."""
     auc = roc_auc_score(labels, predictions)
     accuracy = accuracy_score(labels, (predictions >= 0.5))
+
+    # Advantage metric (direction-agnostic)
+    advantage = compute_advantage(auc)
+    attack_success = compute_attack_success(auc)
 
     # Compute TPR at specific FPR thresholds
     fpr, tpr, _ = roc_curve(labels, predictions)
@@ -29,6 +56,8 @@ def compute_attack_metrics(predictions: np.ndarray, labels: np.ndarray) -> Dict[
 
     return {
         'auc': float(auc),
+        'advantage': float(advantage),
+        'attack_success': float(attack_success),
         'accuracy': float(accuracy),
         'tpr_at_fpr_01': float(tpr_at_fpr_01),
         'tpr_at_fpr_05': float(tpr_at_fpr_05)
@@ -39,20 +68,23 @@ def compute_confidence_interval(
     predictions: np.ndarray,
     labels: np.ndarray,
     n_bootstrap: int = 1000,
-    confidence: float = 0.95
-) -> Tuple[float, float, float]:
-    """Compute confidence interval for AUC via bootstrap.
+    confidence: float = 0.95,
+    seed: int = 42
+) -> Dict[str, Tuple[float, float, float]]:
+    """Compute confidence intervals for AUC and advantage via bootstrap.
 
     Returns:
-        mean_auc, lower_bound, upper_bound
+        Dictionary with 'auc' and 'advantage' keys, each containing
+        (mean, lower_bound, upper_bound) tuple.
     """
-    np.random.seed(42)
+    rng = np.random.RandomState(seed)
     aucs = []
+    advantages = []
 
     n_samples = len(labels)
     for _ in range(n_bootstrap):
         # Bootstrap sample
-        idx = np.random.choice(n_samples, size=n_samples, replace=True)
+        idx = rng.choice(n_samples, size=n_samples, replace=True)
 
         # Check if we have both classes
         if len(np.unique(labels[idx])) < 2:
@@ -60,15 +92,29 @@ def compute_confidence_interval(
 
         auc = roc_auc_score(labels[idx], predictions[idx])
         aucs.append(auc)
+        advantages.append(compute_advantage(auc))
 
     aucs = np.array(aucs)
-    mean_auc = aucs.mean()
+    advantages = np.array(advantages)
 
     alpha = 1 - confidence
-    lower = np.percentile(aucs, alpha/2 * 100)
-    upper = np.percentile(aucs, (1 - alpha/2) * 100)
 
-    return mean_auc, lower, upper
+    auc_result = (
+        float(aucs.mean()),
+        float(np.percentile(aucs, alpha/2 * 100)),
+        float(np.percentile(aucs, (1 - alpha/2) * 100))
+    )
+
+    adv_result = (
+        float(advantages.mean()),
+        float(np.percentile(advantages, alpha/2 * 100)),
+        float(np.percentile(advantages, (1 - alpha/2) * 100))
+    )
+
+    return {
+        'auc': auc_result,
+        'advantage': adv_result
+    }
 
 
 def cluster_conditioned_evaluation(
@@ -230,11 +276,17 @@ def matched_negative_evaluation(
     # Compute metrics
     metrics = compute_attack_metrics(predictions, all_labels)
 
-    # Add CI
-    mean_auc, lower, upper = compute_confidence_interval(predictions, all_labels)
-    metrics['auc_mean'] = mean_auc
-    metrics['auc_ci_lower'] = lower
-    metrics['auc_ci_upper'] = upper
+    # Add CI for AUC and advantage
+    ci_results = compute_confidence_interval(predictions, all_labels)
+    auc_mean, auc_lower, auc_upper = ci_results['auc']
+    adv_mean, adv_lower, adv_upper = ci_results['advantage']
+
+    metrics['auc_mean'] = auc_mean
+    metrics['auc_ci_lower'] = auc_lower
+    metrics['auc_ci_upper'] = auc_upper
+    metrics['advantage_mean'] = adv_mean
+    metrics['advantage_ci_lower'] = adv_lower
+    metrics['advantage_ci_upper'] = adv_upper
     metrics['comparison'] = 'F_vs_matched_negatives'
 
     return metrics
@@ -278,10 +330,16 @@ def evaluate_with_conditioning(
 
     # Global metrics (confounded)
     global_metrics = compute_attack_metrics(predictions, all_labels)
-    mean_auc, lower, upper = compute_confidence_interval(predictions, all_labels)
-    global_metrics['auc_mean'] = mean_auc
-    global_metrics['auc_ci_lower'] = lower
-    global_metrics['auc_ci_upper'] = upper
+    ci_results = compute_confidence_interval(predictions, all_labels)
+    auc_mean, auc_lower, auc_upper = ci_results['auc']
+    adv_mean, adv_lower, adv_upper = ci_results['advantage']
+
+    global_metrics['auc_mean'] = auc_mean
+    global_metrics['auc_ci_lower'] = auc_lower
+    global_metrics['auc_ci_upper'] = auc_upper
+    global_metrics['advantage_mean'] = adv_mean
+    global_metrics['advantage_ci_lower'] = adv_lower
+    global_metrics['advantage_ci_upper'] = adv_upper
 
     # Conditioned metrics (true privacy)
     conditioned_metrics = cluster_conditioned_evaluation(

@@ -5,97 +5,88 @@ title: Home
 
 # Machine Unlearning for Single-Cell VAEs
 
-**Comparing adversarial and Fisher-based unlearning methods for privacy-preserving single-cell RNA-seq models**
+**Eight unlearning methods tested on two scRNA-seq datasets. All fail on structured forget sets. Fisher information analysis explains why.**
 
-STAT 4243 Final Project - Columbia University, Fall 2025
+STAT 4243 Final Project - Columbia University
 
 [View Code](https://github.com/db-d2/Machine_Unlearning) | [Writeup (Markdown)](./Writeup.md) | [Writeup (PDF)](./Writeup.pdf)
 
 ## Abstract
 
-Single-cell RNA sequencing models trained on patient data may memorize individual samples, creating privacy risks. This study examines machine unlearning for variational autoencoders (VAEs), asking whether specific training samples can be removed so that membership inference attacks cannot distinguish "forgotten" cells from truly unseen cells. Two approaches are compared: adversarial unlearning, where the VAE is trained to fool an attacker, and Fisher information scrubbing, which perturbs parameters based on their influence on specific samples. On PBMC-33k data, frozen-critic adversarial methods fail completely (AUC > 0.98). Extra-gradient co-training with $\lambda$=10 achieves the target band (AUC = 0.48 vs floor = 0.48) for structured forget sets, but requires approximately 42 minutes compared to 10 minutes for full retraining. Fisher unlearning succeeds on scattered forget sets (AUC = 0.50) but fails on structured sets (AUC = 0.81). For this dataset, full retraining remains the most practical approach since it is faster and guarantees data removal.
+Single-cell RNA sequencing models can memorize individual training samples, creating privacy risks when the data contains sensitive biological information. Eight unlearning methods were evaluated against four attack families on two datasets (PBMC-33k and Tabula Muris). All eight methods fail on structured (biologically coherent) forget sets. Methods that treat unlearning as a small parameter perturbation (retain-only fine-tuning, gradient ascent, SSD, SCRUB) preserve utility perfectly but produce no measurable privacy improvement. Fisher scrubbing and contrastive latent unlearning make the model detectably worse rather than detectably better. Extra-gradient co-training shows high variance across seeds (mean advantage = 0.300, 95% CI [0.226, 0.374]). DP-SGD trained from scratch on the retain set comes closest to the retrain baseline (advantage = 0.072 vs. 0.046), but at a real utility cost and by construction, not by unlearning. A Fisher information analysis reveals the structural cause: the VAE's shared decoder produces 17x higher Fisher overlap between forget and retain sets than a classifier on the same data, so selective parameter perturbation cannot cleanly separate the two. Full retraining remains the only dependable option for structured forget sets.
 
 ## Key Results
 
-| Method | Post-hoc AUC | Status |
-|--------|--------------|--------|
-| Baseline | 0.769 | LEAK |
-| Frozen Adversarial | >0.98 | FAIL |
-| Extra-gradient $\lambda$=10 | 0.482 | SUCCESS |
-| Fisher (scattered) | 0.499 | SUCCESS |
-| Fisher (structured) | 0.814 | FAIL |
-| Retrain (floor) | 0.481 | TARGET |
+All methods on PBMC-33k structured forget set (cluster 13, n=30 megakaryocytes). Advantage = 2|AUC - 0.5|. Target: advantage within retrain 95% CI (upper bound = 0.266).
+
+| Method | Seeds | AUC | Advantage | Status |
+|--------|-------|-----|-----------|--------|
+| Baseline | -- | 0.783 | 0.565 | -- |
+| Retain-only fine-tune | 5 | 0.665 | 0.331 | FAIL |
+| Gradient ascent | 5 | 0.702 | 0.404 | FAIL |
+| SSD | 3 | 0.725 | 0.450 | FAIL |
+| SCRUB | 3 | 0.737 | 0.474 | FAIL |
+| Contrastive latent | 3 | 0.153 | 0.695 | FAIL (Streisand) |
+| Fisher scrubbing | 3 | 0.814 | 0.628 | FAIL (worse) |
+| Extra-gradient | 10 | 0.429 | 0.300 | FAIL |
+| DP-SGD (eps=10) | 3 | 0.464 | 0.072 | Near target |
+| **Retrain** | -- | **0.523** | **0.046** | **TARGET** |
 
 ## Main Figures
 
-### Method Comparison
-![Method Comparison](./figures/method_comparison_v2.png)
-*Adversarial method comparison on structured forget set. Frozen critics (orange) fail completely with AUC near 1.0. Extra-gradient $\lambda$=5 over-unlearns (AUC below target). Only extra-gradient $\lambda$=10 achieves the target band.*
+### MIA Advantage by Method
+![Method Comparison](./figures/method_comparison_advantage.png)
+*MIA advantage by method on PBMC-33k structured forget set. The dashed line marks the retrain advantage (0.046). DP-SGD comes closest (0.072) but trains from scratch. No post-hoc method falls below the threshold.*
 
-### Extra-gradient Validation
-![Extra-gradient Validation](./figures/extragradient_validation.png)
-*Shadow AUC trajectories and post-hoc AUC comparison by seed.*
+### Privacy-Utility Tradeoff
+![Privacy-Utility](./figures/privacy_utility_all_methods.png)
+*Left: advantage vs. ELBO. Right: advantage vs. marker gene correlation. Methods that preserve utility fail on privacy; methods that reduce advantage pay a utility cost. Only retrain achieves both.*
 
-### Summary
-![Summary](./figures/final_summary_2panel.png)
-*Left: Extra-gradient with $\lambda$=10 achieves the target band while frozen adversarial methods fail completely. Right: For structured forget sets, only extra-gradient succeeds; Fisher fails. The green band indicates the target AUC range.*
-
-### Fisher by Forget Type
-![Fisher Comparison](./figures/fisher_forget_type_comparison.png)
-*Fisher unlearning succeeds on scattered forget sets but fails on structured (cluster-based) sets.*
-
-### Utility Preservation
-![Utility UMAP](./figures/utility_umap.png)
-*Latent space UMAP showing utility preservation after unlearning.*
+### Fisher Information Overlap
+![Fisher Scatter](./figures/fisher_scatter.png)
+*Per-parameter Fisher magnitude (log scale) for forget vs. retain sets. Left: VAE parameters are correlated (log-Fisher r = 0.73). Right: classifier parameters show no correlation (cosine = 0.018).*
 
 ## Key Findings
 
-1. **VAEs Memorize Training Data** - Baseline model achieves MIA AUC = 0.769 (well above 0.5 random chance), confirming privacy risk especially for rare cell types.
+1. **Memorization is structured.** Coherent biological clusters have baseline MIA AUC of 0.78-0.89. Scattered random cells have AUC of 0.41-0.53. The unlearning problem only matters for structured sets.
 
-2. **Frozen Adversarial Methods Fail Completely** - All frozen-critic approaches produce AUC > 0.98, worse than baseline. The VAE learns to exploit critic-specific blind spots without actually removing membership signal.
+2. **All eight methods fail.** No approximate method achieves mean advantage within the retrain 95% CI. Four methods produce no privacy improvement. Three create detectable artifacts (Streisand effect). Extra-gradient has high variance and does not generalize to Tabula Muris.
 
-3. **Extra-Gradient Co-Training Works on Structured Sets** - Extra-gradient $\lambda$=10 achieves AUC = 0.482, within 0.001 of the retrain floor. Multi-seed validation shows 75% success rate.
+3. **Fisher overlap explains why.** The VAE's shared decoder creates Fisher cosine similarity of 0.306 between forget and retain sets, 17x higher than a classifier (0.018). A proposition formalizes this for linear decoders, with a corollary showing the gap scales as 1 - O(M/D) for generative models vs. O(1/sqrt(C)) for classifiers.
 
-4. **Fisher Unlearning Works on Scattered Sets** - Scattered forget set achieves AUC = 0.499 (success), but structured forget set only reaches AUC = 0.814 (fail). Data structure matters significantly.
+4. **The gap is architectural, not capacity-based.** A deep MLP classifier (1.09M params) has the same low output-layer overlap (0.010) as a linear probe (0.018). Shared hidden layers match VAE encoder overlap (0.262 vs. 0.273). Overlap depends on shared-vs-class-specific parameters.
 
-5. **Computational Tradeoff** - Extra-gradient takes 42 minutes vs 10 minutes for retraining. Fisher is fast (2 minutes) but limited to scattered forgetting.
+5. **Reducing latent dimension does not help.** A VAE with z=8 gives higher Fisher overlap (0.846) than z=32 (0.306), driven by the bottleneck (0.858 vs. 0.291).
 
-## Method Selection Guide
+6. **Conditional decoders are insufficient.** A cluster-conditional VAE achieves near-zero overlap in class-specific output columns (1.2e-8) but irreducible overlap persists in the shared encoder (0.433) and hidden layers (0.346). Fisher scrubbing on the conditional VAE gives no privacy improvement.
 
-| Forget Set Type | Recommended Method | Time | Success Rate |
-|-----------------|-------------------|------|--------------|
-| Scattered (random cells) | Fisher | ~2 min | ~100% |
-| Structured (rare clusters) | Extra-gradient $\lambda$=10 | ~42 min | ~75% |
+## Fisher Overlap Summary
+
+| Layer Category | Parameters | Cosine Similarity |
+|---|---|---|
+| VAE Encoder | 2,642,816 | 0.273 |
+| VAE Bottleneck | 8,256 | 0.291 |
+| VAE Decoder hidden | 598,912 | 0.232 |
+| VAE Decoder output | 4,100,000 | 0.362 |
+| **VAE Global** | **7,349,984** | **0.306** |
+| **Classifier** | **462** | **0.018** |
 
 ## Documentation
 
-**Technical Write-up**: [Markdown version](./Writeup.md) | [PDF version](./Writeup.pdf)
-
-Complete methods, results, and analysis including all equations, tables, and detailed methodology.
+[Writeup (Markdown)](./Writeup.md) | [Writeup (PDF)](./Writeup.pdf) | [LaTeX source](./Writeup.tex)
 
 ## Reproducing Results
 
-Run the notebooks in numerical order:
+Run notebooks in numerical order (01-30). Key notebooks:
 
-1. `01_data_preparation.ipynb` - Load and preprocess PBMC-33k data
-2. `02_baseline_vae.ipynb` - Train baseline VAE model
-3. `03_privacy_audit.ipynb` - Evaluate baseline membership inference vulnerability
-4. `04_adversarial_unlearning.ipynb` - Run adversarial unlearning experiments
-5. `05_fisher_unlearning.ipynb` - Run Fisher scrubbing experiments
-6. `06_theory_analysis.ipynb` - Theoretical analysis of unlearning
-7. `07_utility_evaluation.ipynb` - Evaluate model utility after unlearning
-8. `08_mog_simulations.ipynb` - Mixture of Gaussians toy experiments
-9. `09_ablations.ipynb` - Ablation studies and hyperparameter analysis
-10. `10_final_results.ipynb` - Summary of all results
-
-## References
-
-- Bourtoule et al. (2021) "Machine unlearning" IEEE S&P
-- Golatkar et al. (2020) "Eternal sunshine of the spotless net" CVPR
-- Chavdarova et al. (2019) "Reducing noise in GAN training with variance reduced extragradient" NeurIPS
-- Hayes et al. (2024) "Inexact unlearning needs more careful evaluations" ICLR
-- Lopez et al. (2018) "Deep generative modeling for single-cell transcriptomics" Nature Methods
+- **NB01-10**: Data prep, baseline training, initial unlearning experiments
+- **NB11-25**: Additional methods, cross-dataset validation, ablations, attack diversity
+- **NB26**: Canonical Fisher overlap analysis (VAE vs classifier, damping=1e-8)
+- **NB27**: Deep MLP classifier (fair capacity comparison)
+- **NB28**: VAE z=8 (architecture generalization)
+- **NB29**: Conditional VAE (cluster-specific output columns)
+- **NB30**: Proposition 1 verification + conditional VAE scrubbing
 
 ---
 
-*STAT 4243 Final Project - Columbia University, Fall 2025*
+*STAT 4243 Final Project - Columbia University*

@@ -1,4 +1,4 @@
-# Machine Unlearning for Single-Cell VAEs: Fishing for Privacy
+# Fishing for Privacy: Machine Unlearning for Single-Cell VAEs
 
 **David Benson**
 Columbia University
@@ -6,224 +6,166 @@ dmb2262@columbia.edu
 
 ## Abstract
 
-Single-cell RNA sequencing models trained on patient data may memorize individual samples, creating privacy risks. This study examines machine unlearning for variational autoencoders (VAEs), asking whether specific training samples can be removed so that membership inference attacks cannot distinguish "forgotten" cells from truly unseen cells. Two approaches are compared: adversarial unlearning, where the VAE is trained to fool an attacker, and Fisher information scrubbing, which perturbs parameters based on their influence on specific samples. On PBMC-33k data, frozen-critic adversarial methods fail completely (AUC > 0.98). Extra-gradient co-training with λ=10 achieves the target band (AUC = 0.48 vs floor = 0.48) for structured forget sets, but requires approximately 42 minutes compared to 10 minutes for full retraining. Fisher unlearning succeeds on scattered forget sets (AUC = 0.50) but fails on structured sets (AUC = 0.81). For this dataset, full retraining remains the most practical approach since it is faster and guarantees data removal.
+Single-cell RNA sequencing models can memorize individual training samples, creating privacy risks when the data contains sensitive biological information. Eight unlearning methods were evaluated against four attack families on two datasets (PBMC-33k and Tabula Muris). All eight methods fail on structured (biologically coherent) forget sets. Methods that treat unlearning as a small parameter perturbation (retain-only fine-tuning, gradient ascent, SSD, SCRUB) preserve utility perfectly but produce no measurable privacy improvement. Fisher scrubbing and contrastive latent unlearning make the model detectably worse rather than detectably better. Extra-gradient co-training shows high variance across seeds (mean advantage = 0.300, 95% CI [0.226, 0.374]). DP-SGD trained from scratch on the retain set comes closest to the retrain baseline (advantage = 0.072 vs. 0.046), but at a real utility cost and by construction, not by unlearning. A Fisher information analysis reveals the structural cause: the VAE's shared decoder produces 17x higher Fisher overlap between forget and retain sets than a classifier on the same data, so selective parameter perturbation cannot cleanly separate the two. Full retraining remains the only dependable option for structured forget sets.
 
-## I. Introduction
+## 1. Introduction
 
-Deep learning models can memorize their training data and for models trained on sensitive patient information, this creates a privacy problem. An attacker might be able to determine whether a specific individual's data was used to train the model. This is called a membership inference attack (MIA).
+Deep learning models memorize training data, and for rare subpopulations this memorization may be necessary for generalization (Feldman 2020). When those models are trained on sensitive biological information, an attacker can determine whether a specific sample was part of the training set through a membership inference attack (MIA).
 
-Privacy regulations like GDPR give individuals the "right to be forgotten," the ability to request that their data be deleted. For machine learning models, this is challenging. Simply deleting the original data file does not remove what the model learned from that data. The obvious solution is to retrain the model from scratch without the deleted samples, but this can be computationally expensive for large models.
+This paper tests machine unlearning for VAEs trained on single-cell RNA sequencing (scRNA-seq) data, where gene expression profiles can reveal disease status, genetic predispositions, and other personal health information. The work addresses subpopulation unlearning, meaning the removal of entire biological groups such as rare cell types, not individual samples.
 
-Machine unlearning aims to modify a trained model so that it behaves as if certain samples were never in the training set, without full retraining. This study applies machine unlearning to VAEs trained on single-cell RNA sequencing (scRNA-seq) data. Single-cell data is particularly sensitive because gene expression profiles can reveal disease status, genetic predispositions, and other personal health information. Furthermore, rare cell types (e.g., cancer cells or immune subtypes) may be uniquely identifiable even within aggregated datasets.
+Privacy leakage is measured by membership inference advantage (adapted from Yeom et al. 2018): advantage = 2|AUC - 0.5|. This is direction-agnostic, so AUC = 0.38 (over-unlearning) and AUC = 0.62 (under-unlearning) both give advantage = 0.24. Unlearning succeeds when the post-hoc advantage falls within the 95% CI of the retrain model's advantage.
 
-**Input and Output.** The input to the unlearning algorithm consists of (1) a trained VAE with parameters θ, (2) a "forget set" F of samples to remove, and (3) a "retain set" R of samples to keep. The output is updated parameters θ' such that a membership inference attacker cannot distinguish forget-set samples from samples that were never in training.
+**Contributions.**
 
-**Evaluation Criterion.** Unlearning succeeds if a post-hoc membership inference attack achieves AUC within ±0.03 of the "retrain floor," defined as the AUC measured on a model retrained from scratch without the forget set. An AUC near 0.5 means the attacker cannot distinguish members from non-members, which is the goal.
+1. An evaluation protocol for MIAs in single-cell VAEs using biologically matched negatives.
+2. Evidence that memorization concentrates in structured subpopulations (baseline MIA AUC of 0.78-0.89 for structured clusters; 0.41-0.53 for scattered cells).
+3. A systematic comparison of eight unlearning methods plus DP-SGD, against four attack families, with utility evaluation across four metrics.
+4. A catalog of failure modes: posterior collapse, critic exploitation, Streisand effect, parameter-space ineffectiveness, and dataset dependence.
+5. A Fisher information analysis showing the VAE's shared decoder creates cosine similarity of 0.306 between forget-set and retain-set Fisher diagonals, 17x higher than a classifier (0.018). A proposition formalizes this gap for linear decoders, showing the Fisher cosine factorizes into residual-profile and latent-moment components, with the residual-profile factor scaling as 1 - O(M/D) for generative models and O(1/sqrt(C)) for classifiers.
 
-## II. Related Work
+## 2. Datasets
 
-**Machine Unlearning.** Cao and Yang [2] introduced formal definitions of machine unlearning. Bourtoule et al. [1] proposed SISA training, which partitions data so that forgetting only requires retraining affected shards.
+| | PBMC-33k | Tabula Muris |
+|---|---|---|
+| Cells | 33,088 | 41,647 |
+| HVGs | 2,000 | 2,000 |
+| Clusters | 14 | 35 |
+| Tissues | 1 (blood) | 12 |
+| Train / Unseen | 28,124 / 4,964 | 35,399 / 6,248 |
+| Structured forget set | Cluster 13 (30 megakaryocytes) | Cluster 33 (82 cardiac muscle) |
+| Scattered forget set | 35 random | 30 random |
+| Matched negatives | 194 | 137 |
 
-**Fisher Information Scrubbing.** Golatkar et al. [4] introduced "Eternal Sunshine," which uses Fisher information to identify parameters most influenced by samples to forget, then adds noise proportional to that influence.
+The PBMC-33k dataset consists of 33,088 peripheral blood mononuclear cells from 10x Genomics, preprocessed with Scanpy (Wolf et al. 2018). The Tabula Muris dataset has 41,647 cells from 12 mouse tissues. Matched negatives were selected as the unseen cells closest to the forget set in the baseline model's latent space (k-NN with k=10).
 
-**Adversarial Training for Privacy.** Nasr et al. [7] formulated privacy-preserving training as a min-max game for classifiers in which the model minimizes both task loss and attacker success while the attacker maximizes membership detection. Their approach uses alternating gradient descent.
+## 3. Methods
 
-**Extragradient Methods.** Chavdarova et al. [3] showed that extragradient updates stabilize GAN training by damping the rotational dynamics of simultaneous gradient descent-ascent. This study applies extragradient to the VAE-attacker min-max game for unlearning.
+**VAE architecture.** Encoder: 2000 input genes through [1024, 512, 128] to latent mean and log-variance (z=32). Decoder reverses this to negative binomial parameters. Layer normalization and dropout (0.1) after each hidden layer. 7.35M total parameters.
 
-**Membership Inference Attacks.** Shokri et al. [8] introduced shadow model attacks for membership inference. Hayes et al. [5] showed that inexact unlearning can create a "Streisand effect" where forgotten samples become more detectable, not less.
+**Eight unlearning methods tested:**
 
-**Single-Cell VAEs.** Lopez et al. [6] developed scVI, a VAE for scRNA-seq data using negative binomial likelihood. This study implements a similar architecture.
+1. **Retain-only fine-tuning.** Fine-tune on the 28,094 retain cells.
+2. **Gradient ascent.** Maximize loss on forget set, then fine-tune on retain set.
+3. **Frozen critics.** Freeze pre-trained attackers, update VAE to minimize their success.
+4. **Extra-gradient co-training.** Min-max game with extragradient updates, TTUR (attacker LR 5x higher), 3 co-trained critics, lambda=10, 50 epochs.
+5. **Fisher scrubbing** (Golatkar et al. 2020). Perturb parameters inversely proportional to Fisher curvature. alpha=1e-4, lambda=0.1, 100 steps + 10 finetune epochs.
+6. **SSD** (Foster et al. 2024). Dampen parameters proportional to forget-set Fisher importance.
+7. **Contrastive latent.** Push forget-set latent representations toward prior N(0,I), preserve retain-set representations.
+8. **SCRUB** (Kurmanji et al. 2023). Teacher-student distillation: match teacher on retain data, diverge on forget data.
 
-## III. Dataset
+**DP-SGD baseline.** Trains from scratch on retain set with per-sample gradient clipping and Gaussian noise (Abadi et al. 2016). Privacy by exclusion, not by unlearning.
 
-### A. PBMC-33k
+**Attack suite.** Trained MLP (69-dim features, spectral norm), threshold attacks (reconstruction, KL, ELBO), likelihood ratio, k-NN latent.
 
-The dataset consists of 33,088 peripheral blood mononuclear cells (PBMCs) from 10x Genomics, each represented by expression counts for 2,000 highly variable genes. Cell types include T cells, B cells, NK cells, monocytes, and rare megakaryocytes (cluster 13, containing 30 cells). The rare cluster is of particular interest because rare cell types are potentially easier to memorize.
+## 4. Results
 
-### B. Preprocessing
+### Main results (PBMC-33k structured forget set)
 
-Standard scRNA-seq preprocessing was applied using scanpy [9], including quality control filtering, library size normalization (CPM), log transformation, selection of top 2,000 highly variable genes, and Leiden clustering for cell type annotation.
+| Method | Seeds | AUC | Advantage | Marker r | Status |
+|--------|-------|-----|-----------|----------|--------|
+| Baseline | — | 0.783 | 0.565 | 0.831 | — |
+| Retain-only fine-tune | 5 | 0.665 +/- 0.007 | 0.331 | 0.832 | FAIL |
+| Gradient ascent | 5 | 0.702 +/- 0.004 | 0.404 | 0.832 | FAIL |
+| SSD (alpha=1.0) | 3 | 0.725 +/- 0.001 | 0.450 | 0.831 | FAIL |
+| SCRUB (alpha_f=1.0) | 3 | 0.737 +/- 0.002 | 0.474 | 0.832 | FAIL |
+| Contrastive latent | 3 | 0.153 +/- 0.032 | 0.695 | 0.832 | FAIL (Streisand) |
+| Fisher scrubbing | 3 | 0.814 +/- 0.003 | 0.628 | — | FAIL (worse) |
+| Extra-gradient (lambda=10) | 10 | 0.429 +/- 0.142 | 0.300 | 0.789 | FAIL |
+| DP-SGD (eps=10) | 3 | 0.464 +/- 0.024 | 0.072 | 0.787 | Near target |
+| Retrain | — | 0.523 | 0.046 | 0.829 | TARGET |
 
-### C. Data Splits
+Retrain advantage = 0.046, 95% CI upper bound = 0.266. No approximate method achieves mean advantage within this interval.
 
-| Split | Size | Description |
-|-------|------|-------------|
-| Train | 28,124 | 85% of data |
-| Unseen | 4,964 | 15% held out |
-| Forget (structured) | 30 | Cluster 13 (rare cells) |
-| Forget (scattered) | 30 | Random from train |
-| Retain | 28,094 | Train minus forget |
-| Matched negatives | 194 | k-NN from unseen |
+### Fisher by forget set type
 
-Two forget set configurations were tested. The structured set contains all 30 cells from cluster 13, forming a coherent biological group. The scattered set contains 30 randomly selected cells with no shared structure.
+Fisher achieves AUC = 0.499 on scattered sets (near chance, but baseline is already 0.525) and AUC = 0.814 on structured sets (worse than baseline). The memorization problem concentrates in structured subpopulations, and Fisher fails where it is most needed.
 
-**Matched Negatives.** A naive MIA evaluation would compare forget cells to random unseen cells. However, this is confounded by biological structure. If forget cells are rare megakaryocytes and unseen cells are common T cells, the attacker might distinguish them based on cell type rather than membership. To control for this, "matched negatives" were selected as the 194 unseen cells closest to the forget set in latent space (k-NN with k=7). These are biologically similar to forget cells but were never in training, providing a fair comparison.
+### Cross-dataset (Tabula Muris)
 
-## IV. Methods
+Extra-gradient does not transfer (AUC = 0.874 on TM vs. 0.482 on PBMC). Fisher fails on structured sets in both datasets (PBMC 0.814, TM 0.946). The Tabula Muris retrain model itself has AUC = 0.944 (exceeding baseline 0.891), confirming that the attacker detects biology rather than membership.
 
-### A. VAE Architecture
+### Utility
 
-The VAE follows scVI design principles. Single-cell RNA-seq data consists of discrete read counts with high variance and many zeros. The negative binomial distribution handles this overdispersion better than Gaussian or Poisson alternatives, which is why it has become standard for scRNA-seq modeling.
+Five methods (retain-FT, gradient ascent, SSD, SCRUB, contrastive) preserve utility identically to baseline (ELBO ~364, marker r >= 0.831). These methods barely change the model, which is why they fail on privacy. Extra-gradient and DP-SGD trade utility for privacy (ELBO ~403, marker r ~0.789). Fisher is worst (ELBO = 490, marker r = 0.628, KL = 0.007 due to posterior collapse).
 
-**Encoder.** Input (2,000 genes) → [1024, 512, 128] → (μ, log σ²), latent dim 32. Layer normalization and dropout (0.1) are applied after each hidden layer.
+## 5. Why parameter-space methods fail
 
-**Decoder.** Latent z → [128, 512, 1024] → negative binomial parameters (mean and dispersion).
+### Fisher information overlap
 
-The model minimizes the negative ELBO
+The diagonal Fisher was computed on the forget set (30 cells) and retain set (28,094 cells) from the baseline PBMC model.
 
-$$\mathcal{L}(\theta, \phi; x) = -\mathbb{E}_{q_\phi(z|x)}[\log p_\theta(x|z)] + \text{KL}(q_\phi(z|x) \| p(z))$$
+| Layer category | Parameters | Cosine similarity |
+|---|---|---|
+| Encoder | 2,642,816 | 0.273 |
+| Bottleneck | 8,256 | 0.291 |
+| Decoder hidden | 598,912 | 0.232 |
+| Decoder output | 4,100,000 | 0.362 |
+| **VAE global** | **7,349,984** | **0.306** |
+| **Classifier** | **462** | **0.018** |
 
-Training uses Adam optimizer with learning rate 10⁻³, batch size 128, and KL annealing over the first 10 epochs. The model is trained for 100 epochs with early stopping based on validation ELBO.
+The 17x gap between VAE (0.306) and classifier (0.018) arises because the VAE's output layer is shared across all 2,000 genes, while the classifier's output weights are specific to each of the 14 classes.
 
-### B. Membership Inference Attack
+### Proposition 1 (Fisher factorization)
 
-The MIA is a multilayer perceptron (MLP) with spectral normalization, designed to detect whether a sample was in the training set based on model behavior. The input is a 69-dimensional feature vector comprising the latent mean μ (32 dims), latent log-variance log σ² (32 dims), reconstruction loss (1 dim), KL divergence (1 dim), ELBO (1 dim), and L2 norms of latent statistics (2 dims).
+For a linear decoder f(z) = Wz + b with squared-error loss, the diagonal Fisher factorizes as F_dh = 4 E[e_d^2] E[z_h^2], giving
 
-The attacker architecture uses two hidden layers of 256 units each with dropout (0.3) and spectral normalization to prevent overfitting. Spectral normalization constrains the Lipschitz constant of each layer, which stabilizes training and prevents the attacker from memorizing the small training set.
+cos(F^F, F^R) = cos(sigma^F, sigma^R) * cos(nu^F, nu^R)
 
-The attacker is trained on a balanced dataset of forget-set samples (positive class) and matched negatives from the unseen set (negative class). Importantly, a fresh post-hoc attacker is trained after each unlearning method completes. This is critical because an attacker trained during the unlearning process might be fooled by adversarial artifacts, while a post-hoc attacker reveals whether membership signal truly remains.
+where sigma is the residual variance profile (R^D) and nu is the latent second moment (R^H).
 
-The success criterion is post-hoc AUC ∈ [0.451, 0.511], i.e., within ±0.03 of the retrain floor (0.481). The retrain floor represents the best achievable privacy since a model retrained without the forget set has no memory of those samples.
+### Corollary 2 (Dimensional scaling)
 
-### C. Adversarial Unlearning
+Part (i): For a generative model with D output dimensions, of which only M differ between forget and retain sets, cos(sigma) >= (D - M) / (D - M + MV^2). With D=2000, M=100, V=3, the bound is 0.68. The data-direct cos(sigma) = 0.83 satisfies this. The Fisher-marginal cos(sigma) = 0.51 is lower because the NB likelihood departs from linear-MSE assumptions.
 
-The adversarial approach frames unlearning as a min-max game
+Part (ii): For a single-class forget set in a C-class classifier, cos(sigma) = 1/sqrt(C). With C=14, this gives 0.27. The measured classifier cosine of 0.018 is lower still.
 
-$$\min_\theta \max_\psi \mathcal{L}_{\text{VAE}}(\theta; \mathcal{R}) - \lambda \cdot \mathcal{L}_{\text{att}}(\theta, \psi; \mathcal{F})$$
+### Empirical verification
 
-**Frozen Critics.** This approach freezes a pre-trained attacker and only updates the VAE. Two variants were tested. Single-critic uses one frozen attacker. Multi-critic uses an ensemble of three frozen attackers with different initializations, hoping diversity would prevent the VAE from finding universal blind spots. Both fail completely (AUC > 0.98) because the VAE learns to fool even diverse critics without truly forgetting.
+The fc_mean Fisher matrix is approximately rank-1 (top singular value explains 94-96% of the Frobenius norm). The factorized prediction cos(sigma)*cos(nu) = 0.41 overestimates the measured 0.37 by 11%, with the softmax nonlinearity as the dominant error source.
 
-**Extra-gradient Co-training.** Chavdarova et al. [3] introduced a two-step update that dampens oscillations
+### Controls
 
-$$\theta^{k+1/2} = \theta^k - \eta_\theta \nabla_\theta \mathcal{L}(\theta^k, \psi^k)$$
+**Model capacity.** A deep MLP classifier (2000 -> [512, 128] -> 14, 1.09M params, 95.2% accuracy) has shared-hidden cosine = 0.262 and class-specific output cosine = 0.010. Overlap depends on shared-vs-class-specific, not model size.
 
-$$\theta^{k+1} = \theta^k - \eta_\theta \nabla_\theta \mathcal{L}(\theta^{k+1/2}, \psi^{k+1/2})$$
+**Architecture generalization.** A VAE with z=8 gives global cosine = 0.846 (higher than z=32). Smaller latent dimension concentrates overlap in the bottleneck (0.858 vs. 0.291).
 
-With large λ (e.g., 10), the game is privacy-dominant. Training uses two-timescale update rule (TTUR) with attacker learning rate 5× higher than VAE learning rate. The faster attacker updates help the critic track the changing VAE representations, preventing the VAE from easily escaping. Training runs for 50 epochs and stops before the game reaches equilibrium. Extended training allows the VAE to eventually find ways to encode membership information that the current critics miss, so early stopping is essential.
+**Cluster-conditional decoder.** Conditioning the output layer on a 14-dim cluster one-hot achieves near-zero overlap in the cluster-specific columns (1.2e-8) but irreducible overlap persists in the shared hidden layers (encoder 0.433, bottleneck 0.508, decoder hidden 0.346). Fisher scrubbing on the conditional VAE gives advantage = 0.72, no improvement over the standard VAE's 0.63. The shared encoder dominates because 64 of 69 MIA features come from encoder outputs.
 
-### D. Fisher Information Unlearning
+## 6. Discussion
 
-Fisher scrubbing perturbs parameters to reduce "memory" of the forget set
+Three failure modes emerge: (1) methods that preserve utility perfectly but produce no privacy improvement, (2) methods that create detectable artifacts (Streisand effect), and (3) methods that trade utility for privacy but cannot reach the retrain target.
 
-$$\theta \leftarrow \theta + \alpha \cdot (F + \lambda I)^{-1} \cdot \nabla_\theta \mathcal{L}_\mathcal{F}(\theta)$$
+The Fisher overlap analysis identifies the structural cause. Any generative model with shared output parameters will have high Fisher overlap between forget and retain sets, making parameter-space unlearning methods fundamentally harder than in classifiers where class-specific weights create a low-overlap regime.
 
-where $F_{ii}$ is the diagonal Fisher information for parameter i.
-
-**Hyperparameters.** The scrubbing step size is α = 10⁻⁴, regularization λ = 0.1, with 100 scrubbing steps followed by 10 epochs of fine-tuning on the retain set to restore utility.
-
-**Limitation for VAEs.** Unlike classifiers where each class has relatively independent parameters, VAE decoders store shared generative mappings across all data. When scrubbing parameters important for a rare cluster, those same parameters often contribute to reconstructing other cell types. This creates a dilemma since aggressive scrubbing damages utility for retained cells while conservative scrubbing leaves membership signal intact. For structured forget sets, scrubbing can cause "collapse to prior" where the decoder learns to ignore latent codes for forgotten cells, producing generic outputs. This collapse itself becomes a detectable signature, as the model behaves anomalously on these inputs.
-
-## V. Experiments and Results
-
-### A. Experimental Setup
-
-**Baseline.** VAE trained on full training set (28,124 cells), 100 epochs. **Retrain.** VAE retrained from scratch on retain set only. **Hyperparameters.** Learning rate 10⁻³, batch size 128, Adam optimizer.
-
-Reference values are Baseline MIA AUC = 0.769, Retrain floor AUC = 0.481, and Target band = [0.451, 0.511].
-
-**Baseline Memorization.** The baseline AUC of 0.769 confirms that the VAE memorizes training data to a detectable degree. This is well above random chance (0.5) but not perfect (1.0), suggesting partial memorization. The model learns general patterns shared across cells while also encoding sample-specific information that an attacker can exploit. Rare cell types like cluster 13 are particularly vulnerable because the model sees fewer similar examples during training.
-
-### B. Adversarial Methods on Structured Forget Set
-
-| Method | AUC | Gap | Status |
-|--------|-----|-----|--------|
-| Baseline | 0.769 | +0.288 | LEAK |
-| Frozen single λ=5 | 0.997 | +0.516 | FAIL |
-| Frozen multi λ=10 | 0.992 | +0.511 | FAIL |
-| Extra-grad λ=5 | 0.382 | −0.099 | FAIL |
-| **Extra-grad λ=10** | **0.482** | **+0.001** | **SUCCESS** |
-| Retrain | 0.481 | 0.000 | TARGET |
-
-All frozen-critic methods produce AUC > 0.98, which is worse than the baseline (0.769). This counterintuitive result occurs because frozen critics have fixed decision boundaries that the VAE can learn to circumvent without actually removing membership signal.
-
-Extra-gradient with λ=10 achieves post-hoc AUC of 0.482, within 0.001 of the retrain floor. Multi-seed validation shows 75% success rate (3 of 4 seeds land in the target band). The variance across seeds reflects the non-convex optimization landscape of the min-max game, where different initializations traverse different trajectories through parameter space.
-
-![Shadow AUC trajectories and post-hoc AUC comparison by seed](./figures/extragradient_validation.png)
-
-**The λ Tradeoff.** The hyperparameter λ controls the privacy-utility balance. With λ=5, privacy pressure dominates and the model over-unlearns (AUC = 0.38). With λ=10, the balance shifts toward preserving reconstruction quality while still achieving target privacy. Values below 5 provide insufficient privacy pressure.
-
-![Adversarial method comparison](./figures/method_comparison_v2.png)
-*Adversarial method comparison on structured forget set. Frozen critics (orange) fail completely with AUC near 1.0. Extra-gradient λ=5 over-unlearns (AUC below target). Only extra-gradient λ=10 (green) achieves the target band.*
-
-### C. Fisher Unlearning by Forget Set Type
-
-| Forget Type | Mean AUC | Std | Status |
-|-------------|----------|-----|--------|
-| Structured (cluster 13) | 0.814 | 0.003 | FAIL |
-| Scattered (random 30) | 0.499 | 0.004 | SUCCESS |
-
-Fisher achieves AUC 0.499 on scattered forget sets (perfect unlearning) but only 0.814 on structured sets (substantial leakage). The contrast is stark. When forget cells are randomly distributed throughout the training set, they share no common structure that the decoder must preserve. Scrubbing affects each cell independently. When forget cells form a coherent cluster, the decoder has learned cluster-specific mappings that are entangled with general reconstruction capabilities. Scrubbing these parameters disrupts the model's behavior on forgotten cells in ways that an attacker can detect.
-
-### D. Utility and Computational Cost
-
-| | Base | Extra-grad | Fisher | Retrain |
-|---|------|------------|--------|---------|
-| Recon. MSE | 0.572 | 0.572 | 0.572 | 0.572 |
-| Marker MSE | 2.54 | 2.54 | 2.55 | 2.54 |
-| Class. acc | 0.954 | 0.942 | 0.818 | 0.954 |
-| Time | – | 42 min | 2 min | 10 min |
-
-Reconstruction quality (MSE) is fully preserved across all methods, indicating that the decoder's ability to reconstruct gene expression is not degraded. Marker gene MSE specifically measures reconstruction of biologically important genes that define cell types.
-
-Classification accuracy measures how well a simple classifier can predict cell type from latent representations. Extra-gradient preserves this structure (0.942 vs 0.954 baseline) while Fisher damages it severely (0.818). This suggests Fisher scrubbing disrupts the latent space geometry, moving cell representations in ways that hurt downstream tasks even though raw reconstruction appears intact.
-
-Extra-gradient takes 4× longer than retraining (42 vs 10 minutes) because it requires joint optimization of the VAE and three attacker networks. Fisher is fast (2 minutes) but only works for scattered forget sets.
-
-## VI. Discussion
-
-### A. Why Frozen Critics Fail
-
-Frozen-critic methods achieve AUC > 0.98, which is worse than the baseline (0.769). This counterintuitive result occurs because the VAE learns to exploit critic-specific blind spots. The frozen attacker has a fixed decision boundary, and the VAE can move forget-set representations to regions that fool this specific boundary without actually removing membership signal. A fresh post-hoc attacker, trained on the updated VAE's representations, easily detects these samples because the underlying information was never removed.
-
-### B. Why Extra-Gradient Succeeds
-
-With λ=10, the min-max objective is privacy-dominant: the VAE prioritizes fooling the attacker over reconstruction quality. The extra-gradient method dampens the rotational dynamics that cause naive simultaneous gradient descent-ascent to oscillate. This allows optimization to settle into a neighborhood where the VAE has genuinely reduced membership signals, rather than just finding adversarial blind spots. The 75% success rate across seeds suggests multiple local minima exist, with most being privacy-good solutions.
-
-### C. Why Fisher Fails on Structured Sets
-
-VAE decoders learn shared generative mappings across all cell types. When the forget set is a coherent cluster (e.g., all megakaryocytes), the parameters encoding that cluster's characteristics are entangled with parameters needed for other cells. Scrubbing these parameters damages the decoder's ability to reconstruct the forgotten cluster, but this damage itself becomes a detectable signal since the model behaves differently on these cells. This behavior reveals the cells that were targeted for removal. For scattered forget sets with no shared structure, no such entanglement exists.
-
-### D. The Over-Unlearning Problem
-
-Extra-gradient with λ=5 achieves AUC of 0.38, which is below the target band. This "over-unlearning" makes forget cells look *less* like training data than truly unseen cells. An attacker could exploit this since samples that appear suspiciously "non-member-like" may have been targeted for removal. This connects to the Streisand effect noted by Hayes et al. [5]. The λ=10 configuration avoids this by balancing privacy pressure against reconstruction fidelity.
-
-### E. Limitations
-
-This study has several limitations. (1) Single dataset (PBMC-33k); results may differ for other datasets or modalities. (2) Small forget set (n=30); larger forget sets may behave differently. (3) Empirical privacy guarantees only, with no formal differential privacy bounds. (4) Extra-gradient is slower than retraining for this model size.
-
-![Summary of main results](./figures/final_summary_2panel.png)
-*Summary of main results. Left: Extra-gradient with λ=10 achieves the target band while frozen adversarial methods fail completely. Right: For structured forget sets, only extra-gradient succeeds; Fisher fails. The green band indicates the target AUC range (±0.03 of retrain floor).*
-
-## VII. Conclusion
-
-This study compared adversarial and Fisher-based unlearning for scRNA-seq VAEs. The key findings are that (1) frozen-critic adversarial methods fail completely for VAEs, (2) extra-gradient co-training with λ=10 achieves retrain-equivalent privacy for structured forget sets, and (3) Fisher unlearning works for scattered forget sets but fails on structured sets due to decoder parameter entanglement.
-
-For small-to-medium models like this VAE, full retraining remains the most practical solution because it is faster (10 minutes vs 42 minutes) and guarantees complete data removal. However, for larger models where retraining is prohibitive, extra-gradient co-training offers a viable alternative.
-
-### A. Future Work
-
-Several directions could extend this work. First, relative Fisher scrubbing could weight parameter importance by the ratio of forget-set to retain-set influence, preserving parameters that matter more for retained cells. Second, latent space projection could directly remove the "cluster direction" in latent space rather than modifying decoder parameters. Third, integrating formal differential privacy bounds would provide theoretical guarantees beyond empirical MIA evaluation. Finally, validation on larger models and datasets (e.g., multi-million cell atlases) would clarify when unlearning becomes preferable to retraining.
-
-## Acknowledgments
-
-Claude Code (Anthropic) was used for debugging assistance, PEP8 standardization, linting, and comment cleanup. Code and data are available at [https://github.com/db-d2/Machine_Unlearning](https://github.com/db-d2/Machine_Unlearning).
+Full retraining remains the only reliable option for structured forget sets.
 
 ## References
 
-[1] L. Bourtoule et al., "Machine unlearning," in *IEEE S&P*, 2021.
+- Abadi et al. (2016). Deep Learning with Differential Privacy. CCS.
+- Bourtoule et al. (2021). Machine Unlearning. IEEE S&P.
+- Cao & Yang (2015). Towards Making Systems Forget with Machine Unlearning. IEEE S&P.
+- Carlini et al. (2022). Membership Inference Attacks From First Principles. IEEE S&P.
+- Chavdarova et al. (2019). Reducing Noise in GAN Training with Variance Reduced Extragradient. NeurIPS.
+- Feldman (2020). Does Learning Require Memorization? STOC.
+- Foster et al. (2024). Fast Machine Unlearning Without Retraining Through Selective Synaptic Dampening. AAAI.
+- Ginart et al. (2019). Making AI Forget You: Data Deletion in Machine Learning. NeurIPS.
+- Golatkar et al. (2020). Eternal Sunshine of the Spotless Net. CVPR.
+- Guo et al. (2020). Certified Data Removal from Machine Learning Models. ICML.
+- Hayes et al. (2024). Inexact Unlearning Needs More Careful Evaluations to Avoid a False Sense of Privacy. SaTML.
+- Izzo et al. (2021). Approximate Data Deletion from Machine Learning Models. AISTATS.
+- Kunstner et al. (2019). Limitations of the Empirical Fisher Approximation for Natural Gradient Descent. NeurIPS.
+- Kurmanji et al. (2023). Towards Unbounded Machine Unlearning. NeurIPS.
+- Lopez et al. (2018). Deep Generative Modeling for Single-cell Transcriptomics. Nature Methods.
+- Moon et al. (2024). Feature Unlearning for Pre-trained GANs and VAEs. AAAI.
+- Nasr et al. (2018). Machine Learning with Membership Privacy Using Adversarial Regularization. CCS.
+- Neel et al. (2021). Descent-to-Delete: Gradient-Based Methods for Machine Unlearning. ALT.
+- Sekhari et al. (2021). Remember What You Want to Forget: Algorithms for Machine Unlearning. NeurIPS.
+- Shokri et al. (2017). Membership Inference Attacks Against Machine Learning Models. IEEE S&P.
+- Tabula Muris Consortium (2018). Single-cell Transcriptomics of 20 Mouse Organs Creates a Tabula Muris. Nature.
+- Thudi et al. (2022). On the Necessity of Auditable Algorithmic Definitions for Machine Unlearning. USENIX Security.
+- Wolf et al. (2018). SCANPY: Large-scale Single-cell Gene Expression Data Analysis. Genome Biology.
+- Yeom et al. (2018). Privacy Risk in Machine Learning: Analyzing the Connection to Overfitting. CSF.
+- Basu et al. (2021). Influence Functions in Deep Learning Are Fragile. ICLR.
 
-[2] Y. Cao and J. Yang, "Towards making systems forget with machine unlearning," in *IEEE S&P*, 2015.
-
-[3] T. Chavdarova et al., "Reducing noise in GAN training with variance reduced extragradient," in *NeurIPS*, 2019.
-
-[4] A. Golatkar et al., "Eternal sunshine of the spotless net," in *CVPR*, 2020.
-
-[5] J. Hayes et al., "Inexact unlearning needs more careful evaluations to avoid a false sense of privacy," in *ICLR*, 2024.
-
-[6] R. Lopez et al., "Deep generative modeling for single-cell transcriptomics," *Nature Methods*, 2018.
-
-[7] M. Nasr et al., "Machine learning with membership privacy using adversarial regularization," in *ACM CCS*, 2018.
-
-[8] R. Shokri et al., "Membership inference attacks against machine learning models," in *IEEE S&P*, 2017.
-
-[9] F.A. Wolf et al., "Scanpy: large-scale single-cell gene expression data analysis," *Genome Biology*, 2018.
+Code: https://github.com/db-d2/Machine_Unlearning

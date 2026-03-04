@@ -41,7 +41,7 @@ The PBMC-33k dataset consists of 33,088 peripheral blood mononuclear cells from 
 
 ## 3. Methods
 
-**VAE architecture.** Encoder: 2000 input genes through [1024, 512, 128] to latent mean and log-variance (z=32). Decoder reverses this to negative binomial parameters. Layer normalization and dropout (0.1) after each hidden layer. 7.35M total parameters.
+**VAE architecture.** Encoder: 2000 input genes through [1024, 512, 128] to latent mean and log-variance (z=32). Decoder reverses this to reconstructed gene expression via a softmax output layer. Reconstruction loss is MSE on log-normalized counts (Gaussian observation model). Layer normalization and dropout (0.1) after each hidden layer. 7.35M total parameters.
 
 **Eight unlearning methods tested:**
 
@@ -116,7 +116,7 @@ where sigma is the residual variance profile (R^D) and nu is the latent second m
 
 ### Corollary 2 (Dimensional scaling)
 
-Part (i): For a generative model with D output dimensions, of which only M differ between forget and retain sets, cos(sigma) >= (D - M) / (D - M + MV^2). With D=2000, M=100, V=3, the bound is 0.68. The data-direct cos(sigma) = 0.83 satisfies this. The Fisher-marginal cos(sigma) = 0.51 is lower because the NB likelihood departs from linear-MSE assumptions.
+Part (i): For a generative model with D output dimensions, of which only M differ between forget and retain sets, cos(sigma) >= (D - M) / (D - M + MV^2). With D=2000, M=100, V=3, the bound is 0.68. The data-direct cos(sigma) = 0.83 satisfies this. The Fisher-marginal cos(sigma) = 0.51 is lower because the softmax output layer couples output dimensions, departing from the element-wise independence assumed in Proposition 1.
 
 Part (ii): For a single-class forget set in a C-class classifier, cos(sigma) = 1/sqrt(C). With C=14, this gives 0.27. The measured classifier cosine of 0.018 is lower still.
 

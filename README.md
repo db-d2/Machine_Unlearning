@@ -23,7 +23,7 @@ python -c "import torch; print(f'PyTorch {torch.__version__}')"
 
 ```
 src/
-├── vae.py                          # VAE (NB likelihood, z=32, hidden=[1024,512,128])
+├── vae.py                          # VAE (MSE on log-normalized counts, z=32, hidden=[1024,512,128])
 ├── vae_conditional.py              # Cluster-conditional VAE variant
 ├── attacker.py                     # MIA attacker (spectral norm, 69-dim features)
 ├── attacker_eval.py                # Post-hoc attacker evaluation

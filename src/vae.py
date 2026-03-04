@@ -71,7 +71,7 @@ class NBDecoder(nn.Module):
 
         self.network = nn.Sequential(*layers)
 
-        # NB parameters: mean and dispersion
+        # Output heads: mean (used in MSE loss) and dispersion (vestigial, unused in loss)
         self.fc_mean = nn.Sequential(
             nn.Linear(hidden_dims[-1], output_dim),
             nn.Softmax(dim=-1)

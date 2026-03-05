@@ -48,7 +48,7 @@ The PBMC-33k dataset consists of 33,088 peripheral blood mononuclear cells from 
 1. **Retain-only fine-tuning.** Fine-tune on the 28,094 retain cells.
 2. **Gradient ascent.** Maximize loss on forget set, then fine-tune on retain set.
 3. **Frozen critics.** Freeze pre-trained attackers, update VAE to minimize their success.
-4. **Extra-gradient co-training.** Min-max game with extragradient updates, TTUR (attacker LR 5x higher), 3 co-trained critics, lambda=10, 50 epochs.
+4. **Extra-gradient co-training.** Min-max game with extragradient updates, TTUR (attacker LR 10x lower), 3 co-trained critics, lambda=10, 50 epochs.
 5. **Fisher scrubbing** (Golatkar et al. 2020). Perturb parameters inversely proportional to Fisher curvature. alpha=1e-4, lambda=0.1, 100 steps + 10 finetune epochs.
 6. **SSD** (Foster et al. 2024). Dampen parameters proportional to forget-set Fisher importance.
 7. **Contrastive latent.** Push forget-set latent representations toward prior N(0,I), preserve retain-set representations.

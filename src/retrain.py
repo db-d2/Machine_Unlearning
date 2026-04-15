@@ -16,6 +16,7 @@ import numpy as np
 from vae import VAE, vae_loss
 from utils import set_global_seed, create_run_metadata, save_metadata, load_config, Timer, DEVICE
 from logging_utils import ExperimentLogger, save_metrics_json
+from train import get_kl_weight, train_epoch, eval_epoch
 from learning_curve import (
     LearningCurveTracker,
     compute_mia_auc,
@@ -60,68 +61,6 @@ def create_dataloader_exclude(adata, indices, exclude_indices, batch_size=256, s
 
     dataset = TensorDataset(X, library_size)
     return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
-
-
-def train_epoch(model, dataloader, optimizer, device, likelihood='nb', beta=1.0):
-    """Train for one epoch."""
-    model.train()
-
-    total_loss = 0.0
-    total_recon = 0.0
-    total_kl = 0.0
-    n_batches = 0
-
-    for x, lib_size in dataloader:
-        x = x.to(device)
-        lib_size = lib_size.to(device)
-
-        optimizer.zero_grad()
-
-        output = model(x, library_size=lib_size)
-        loss, recon, kl = vae_loss(x, output, likelihood=likelihood, library_size=lib_size, beta=beta)
-
-        loss.backward()
-        optimizer.step()
-
-        total_loss += loss.item()
-        total_recon += recon.item()
-        total_kl += kl.item()
-        n_batches += 1
-
-    return {
-        'loss': total_loss / n_batches,
-        'recon': total_recon / n_batches,
-        'kl': total_kl / n_batches
-    }
-
-
-def eval_epoch(model, dataloader, device, likelihood='nb', beta=1.0):
-    """Evaluate for one epoch."""
-    model.eval()
-
-    total_loss = 0.0
-    total_recon = 0.0
-    total_kl = 0.0
-    n_batches = 0
-
-    with torch.no_grad():
-        for x, lib_size in dataloader:
-            x = x.to(device)
-            lib_size = lib_size.to(device)
-
-            output = model(x, library_size=lib_size)
-            loss, recon, kl = vae_loss(x, output, likelihood=likelihood, library_size=lib_size, beta=beta)
-
-            total_loss += loss.item()
-            total_recon += recon.item()
-            total_kl += kl.item()
-            n_batches += 1
-
-    return {
-        'loss': total_loss / n_batches,
-        'recon': total_recon / n_batches,
-        'kl': total_kl / n_batches
-    }
 
 
 def main(args):
@@ -174,7 +113,9 @@ def main(args):
         input_dim=adata.n_vars,
         hidden_dims=args.hidden_dims,
         latent_dim=args.latent_dim,
-        likelihood=args.likelihood
+        likelihood=args.likelihood,
+        use_layer_norm=args.use_layer_norm,
+        dropout=args.dropout,
     ).to(device)
 
     print(f"Model: {sum(p.numel() for p in model.parameters())} parameters")
@@ -234,6 +175,10 @@ def main(args):
 
     # Training loop
     print("\nStarting training on D\\F...")
+    if args.kl_warmup_epochs > 0:
+        print(f"KL warm-up: ramping from 0 to 1 over {args.kl_warmup_epochs} epochs")
+    if args.free_bits > 0:
+        print(f"Free-bits: {args.free_bits} nats per dimension")
     best_val_loss = float('inf')
     history = {'train': [], 'val': []}
 
@@ -248,8 +193,12 @@ def main(args):
 
     with Timer("Retrain"):
         for epoch in range(args.epochs):
-            train_metrics = train_epoch(model, train_loader, optimizer, device, args.likelihood, args.beta)
-            val_metrics = eval_epoch(model, val_loader, device, args.likelihood, args.beta)
+            kl_weight = get_kl_weight(epoch, args.kl_warmup_epochs)
+            train_metrics = train_epoch(model, train_loader, optimizer, device,
+                                        args.likelihood, beta=kl_weight,
+                                        free_bits=args.free_bits)
+            val_metrics = eval_epoch(model, val_loader, device, args.likelihood,
+                                     beta=1.0, free_bits=args.free_bits)
 
             logger.log_metrics(train_metrics, epoch, prefix="train")
             logger.log_metrics(val_metrics, epoch, prefix="val")
@@ -310,6 +259,13 @@ if __name__ == "__main__":
     parser.add_argument("--hidden_dims", type=int, nargs="+", default=[512, 128])
     parser.add_argument("--latent_dim", type=int, default=16)
     parser.add_argument("--likelihood", type=str, default="nb", choices=["nb", "gaussian"])
+    parser.add_argument("--use_layer_norm", action="store_true",
+                        help="Use LayerNorm (canonical) instead of BatchNorm")
+    parser.add_argument("--dropout", type=float, default=0.1)
+    parser.add_argument("--kl_warmup_epochs", type=int, default=20,
+                        help="KL warm-up ramp from 0 to beta over this many epochs (canonical: 20)")
+    parser.add_argument("--free_bits", type=float, default=0.03,
+                        help="Free-bits nats per latent dimension (canonical: 0.03)")
 
     # Training
     parser.add_argument("--epochs", type=int, default=100)

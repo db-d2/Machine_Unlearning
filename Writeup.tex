@@ -1,0 +1,615 @@
+\documentclass{article}
+\usepackage[preprint]{neurips_2025}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{multirow}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}[proposition]{Corollary}
+
+\title{Fishing for Privacy: Machine Unlearning for Single-Cell VAEs}
+
+\author{David Benson\\Columbia University\\
+\texttt{dmb2262@columbia.edu}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Single-cell RNA sequencing and bulk RNA-seq models can memorize individual training samples, which is a problem when the data contains sensitive biological information. This paper tests whether machine unlearning can remove specific samples from a variational autoencoder (VAE) so that membership inference attacks (MIAs) can no longer detect them. Eight unlearning methods plus two constructive approaches (training-time synthetic augmentation and representation alignment against a retrain reference) were evaluated against four attack families on three datasets (PBMC-33k and Tabula Muris single-cell, TCGA-BRCA bulk RNA-seq). All eight methods fail on structured (biologically coherent) forget sets. Methods that treat unlearning as a small parameter perturbation (retain-only fine-tuning, gradient ascent, SSD, SCRUB) preserve utility perfectly but produce no measurable privacy improvement. Fisher scrubbing and contrastive latent unlearning make the model detectably worse rather than detectably better. Extra-gradient co-training shows high variance across seeds (mean advantage $= 0.300$, nested 95\% CI $[0.216, 0.383]$). DP-SGD trained from scratch on the retain set comes closest to the multi-seed retrain baseline (advantage $= 0.072$ vs.\ $0.148$), but at a real utility cost and by construction, not by unlearning. Synthetic augmentation shifts memorization bias to the seed samples; representation alignment creates a detectable Streisand effect. The core finding is that memorization concentrates in biologically coherent subpopulations. Structured clusters show baseline MIA AUC of 0.78--0.89, while scattered random cells show 0.41--0.53. A within-subtype matching analysis shows that standard cross-subtype matched negatives overestimate above-chance memorization by 30--90\% on both scRNA and bulk RNA data. A Fisher information analysis reveals the structural cause: the VAE's shared decoder produces $17\times$ higher Fisher overlap between forget and retain sets than a classifier on the same data ($0.306$ vs.\ $0.018$ on PBMC; $0.905$ on TCGA-BRCA), so selective parameter perturbation cannot cleanly separate the two. Proposition~\ref{prop:factorization} formalizes this for linear decoders, with scaling bounds showing generative-model overlap grows as $1 - O(M/D)$ while classifier overlap scales as $1/\sqrt{C}$. Full retraining remains the only dependable option for structured forget sets.
+\end{abstract}
+
+\section{Introduction}
+
+Deep learning models memorize training data, and for rare subpopulations this memorization may be necessary for generalization~\citep{feldman2020}. When those models are trained on sensitive biological information, an attacker can determine whether a specific sample was part of the training set through a membership inference attack (MIA). This paper tests machine unlearning for VAEs trained on single-cell RNA sequencing (scRNA-seq) data, where gene expression profiles can reveal disease status, genetic predispositions, and other personal health information. Rare cell types like cancer cells or immune subtypes may be individually identifiable even within large, aggregated datasets.
+
+The work here addresses subpopulation unlearning, meaning the removal of entire biological groups such as rare cell types or disease subtypes, not individual samples. This corresponds to scenarios where all cells from a specific cluster or all patients of a molecular subtype must be deleted. Experiments use cell-type clusters (PBMC, Tabula Muris) and disease subtypes with per-patient annotations (TCGA-BRCA) as forget sets.
+
+Given a trained VAE with parameters $\theta$, a forget set $\mathcal{F}$, and a retain set $\mathcal{R}$, produce updated parameters $\theta'$ such that a post-hoc MIA cannot tell forget-set samples apart from samples that were never in training.
+
+Privacy leakage is measured by membership inference advantage (adapted from~\citet{yeom2018}): $\text{advantage} = 2|\text{AUC} - 0.5|$. This is direction-agnostic, so AUC $= 0.38$ (over-unlearning) and AUC $= 0.62$ (under-unlearning) both give advantage $= 0.24$, since an adversary can always flip predictions. Advantage is 0 at chance and 1 for a perfect attack. Unlearning is judged against a multi-seed retrain reference by one-sided Welch's $t$-test with Holm--Bonferroni correction across methods. A method fails when its per-seed advantages are significantly greater than the retrain distribution after correction.
+
+\paragraph{Contributions.}
+\begin{enumerate}
+    \item An evaluation methodology for MIAs on biological generative models that quantifies the biology confound. Standard matched negatives overestimate the above-chance memorization signal by 30--90\% (computed as the fraction of the AUC-above-0.5 signal attributable to subtype identity rather than training membership). Within-subtype matching, attack diversity analysis, and retrain-baseline comparison separate the two signals. This addresses the evaluation gap identified by \citet{ozturk2026} and \citet{golob2026} as future work.
+
+    \item Evidence across three datasets and two modalities (single-cell and bulk RNA-seq) that memorization concentrates in biologically coherent subpopulations (baseline AUC 0.78--0.89 for structured sets, 0.41--0.53 for scattered), and that no baseline-vs-retrain gap is detectable on TCGA-BRCA after controlling for the biology confound.
+
+    \item A systematic comparison of eight unlearning methods plus two constructive approaches (training-time synthetic augmentation and representation alignment unlearning), all evaluated with both cross-subtype and within-subtype matching. All ten approaches fail. Synthetic augmentation shifts the memorization bias rather than removing it. Representation alignment creates a detectable Streisand effect.
+
+    \item A Fisher information analysis explaining the structural cause. The VAE's shared decoder creates $17\times$ higher Fisher overlap than a classifier ($0.306$ vs.\ $0.018$ on PBMC; $0.905$ on TCGA-BRCA). A proposition formalizes this for linear decoders, with dimensional scaling bounds showing generative-model overlap grows as $1 - O(M/D)$ while classifier overlap scales as $1/\sqrt{C}$.
+\end{enumerate}
+
+\section{Related work}
+
+\citet{cao2015} introduced formal definitions of machine unlearning. \citet{bourtoule2021} proposed SISA training, which partitions data so that forgetting requires retraining only the affected shards. Approximate unlearning has theoretical guarantees for restricted model classes: \citet{ginart2019} gave deletion-efficient algorithms for $k$-means, \citet{guo2020} proposed certified removal via Newton-step updates for convex models, \citet{sekhari2021} derived sample complexity bounds under strong convexity, \citet{neel2021} showed that noisy gradient descent admits deletion guarantees in smooth settings, and \citet{izzo2021} used projective residual updates for linear models. These results all depend on convexity or smoothness assumptions that deep generative models violate.
+
+\citet{golatkar2020} introduced Fisher information scrubbing (``Eternal Sunshine''), which identifies parameters most influenced by the samples to forget and adds noise proportional to that influence. \citet{foster2024} proposed Selective Synaptic Dampening (SSD), which dampens parameters proportional to their forget-set Fisher importance. \citet{kurmanji2023} introduced SCRUB, a teacher-student framework where the student matches the teacher on retain data while diverging on forget data. All three methods assume that forget-set influence concentrates in identifiable parameter subsets; Section~6 shows that assumption breaks down in shared-decoder architectures. \citet{basu2021} found that influence functions produce unreliable estimates in non-convex models, weakening the case for influence-based parameter selection in unlearning.
+
+\citet{nasr2018} formulated privacy-preserving training as a min-max game where the model minimizes both task loss and attacker success while the attacker maximizes membership detection. \citet{chavdarova2019} showed that extragradient updates stabilize GAN training by damping oscillations in simultaneous gradient descent-ascent. The present work applies extragradient to the VAE-attacker min-max problem.
+
+\citet{abadi2016} introduced DP-SGD, which provides formal differential privacy guarantees through per-sample gradient clipping and Gaussian noise injection. DP-SGD trains from scratch on the retain set and is used here as a formal privacy baseline rather than an unlearning method.
+
+\citet{shokri2017} introduced shadow model attacks for membership inference. \citet{carlini2022} proposed the likelihood ratio attack (LiRA), which trains multiple shadow models and compares per-example difficulty scores against calibrated null distributions. \citet{hayes2024} showed that inexact unlearning can make forgotten samples \textit{more} detectable, a Streisand effect~\citep{golatkar2020}. \citet{thudi2022} argued that without auditable definitions, unlearning claims are unverifiable in practice, a problem confirmed by the results here (Section~7).
+
+\citet{moon2024} used latent-space interventions to remove class-level features from pre-trained GANs and VAEs. Their goal is preventing generation of a class, not preventing detection that specific samples were in training, which is the distinction here. \citet{cheng2026} studied retain-forget entanglement in classifiers via Wasserstein regularization, defining entanglement as semantic proximity between retained and forgotten examples. Their analysis is restricted to classifiers and does not use Fisher information.
+
+\citet{walker2024} demonstrated that single-cell count matrices leak private information sufficient to re-identify individuals via eQTL-based linking attacks. \citet{golob2026} introduced scMAMA-MIA for membership inference on synthetic scRNA-seq data from scDesign2, showing per-cell-type variation in attack vulnerability (their Figure~5) but setting it aside as ``not relevant to this work.'' \citet{ozturk2026} benchmarked 11 generative models for bulk RNA-seq privacy, reporting a Spearman correlation of $0.92$ between differential expression recovery and MIA vulnerability (Figure~8, TCGA-COMBINED), interpreting it as a privacy-utility tradeoff. Neither paper stratifies MIA evaluation by biological subtype; both call for subtype-stratified evaluation as future work. The present paper provides it.
+
+\citet{lopez2018} developed scVI, a VAE for scRNA-seq data using negative binomial likelihood, which is the architectural basis for the models tested here.
+
+\section{Datasets and setup}
+\label{sec:datasets}
+
+\begin{table}[t]
+\centering
+\caption{Dataset and split summary. Matched negatives are the $k$-nearest unseen samples to the structured forget set in baseline latent space ($k=10$). TCGA-BRCA data from~\citet{ozturk2026}, VST-normalized, 978 LINCS L1000 landmark genes~\citep{subramanian2017}.}
+\label{tab:datasets}
+\begin{tabular}{lccc}
+\toprule
+ & PBMC-33k & Tabula Muris & TCGA-BRCA \\
+\midrule
+Type & scRNA-seq & scRNA-seq & Bulk RNA-seq \\
+Samples & 33,088 cells & 41,647 cells & 1,089 patients \\
+Genes & 2,000 HVGs & 2,000 HVGs & 978 L1000 \\
+Train / Unseen & 28,124 / 4,964 & 35,399 / 6,248 & 925 / 164 \\
+Structured forget & Cluster 13 (30 megakaryocytes) & Cluster 33 (82 cardiac muscle) & Basal subtype (158 patients) \\
+Forget fraction & 0.1\% & 0.2\% & 17\% \\
+Patient-level forget & N/A & N/A & 5, 10, 20 patients \\
+Matched negatives & 194 & 137 & 121 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The PBMC-33k dataset consists of 33,088 peripheral blood mononuclear cells from 10x Genomics, preprocessed with Scanpy~\citep{wolf2018}, each represented by 2,000 highly variable gene counts. The structured forget set is cluster 13, which contains 30 rare megakaryocytes. The Tabula Muris dataset~\citep{tabula2018} has 41,647 cells from 12 mouse tissues with 35 Leiden clusters; the structured forget set is cluster 33 (82 cardiac muscle cells). The TCGA-BRCA dataset~\citep{tcga2012} consists of 1,089 breast cancer patients with PAM50 molecular subtypes (LumA 52\%, LumB 20\%, Basal 17\%, Her2 8\%, Normal 4\%), preprocessed by~\citet{ozturk2026} for the CAMDA 2025 Health Privacy Challenge. Each sample corresponds to one patient, enabling patient-level forget sets. Table~\ref{tab:datasets} gives a full comparison.
+
+To control for biological confounds in MIA evaluation, matched negatives were selected as the unseen cells closest to the forget set in the baseline model's latent space ($k$-NN with $k=10$). Without this control, an attacker could distinguish forget from unseen cells by cell type alone rather than by memorization. A within-subtype holdout variant restricts matched negatives to the same biological group as the forget set. On PBMC, this drops baseline AUC from 0.769 to 0.527 (5 unseen megakaryocytes); on TCGA-BRCA, baseline and retrain AUCs converge to 0.576 (30 unseen Basal patients). Section~\ref{sec:confound} quantifies this confound across datasets.
+
+\section{Methods}
+
+\subsection{VAE architecture}
+
+The VAE follows scVI design principles~\citep{lopez2018}. Because the input data are log-normalized (Section~\ref{sec:datasets}), the reconstruction term is mean squared error, equivalent to a Gaussian observation model on the transformed counts. The encoder maps input genes (2,000 for PBMC/Tabula Muris; 978 for TCGA-BRCA) through layers of size [1024, 512, 128] to produce the latent mean $\mu$ and log-variance $\log\sigma^2$ (latent dimension 32). The decoder reverses this, mapping $z$ through [128, 512, 1024] to reconstructed gene expression, with a softmax output layer that enforces a sum-to-one constraint across genes. Layer normalization and dropout (0.1) are applied after each hidden layer. The training objective is the negative ELBO:
+\begin{equation}
+\mathcal{L}(\theta, \phi; x) = -\mathbb{E}_{q_\phi(z|x)}[\log p_\theta(x|z)] + \text{KL}(q_\phi(z|x) \| p(z))
+\end{equation}
+
+\subsection{Unlearning methods}
+
+Eight unlearning approaches were tested, grouped below from simplest to most complex. A DP-SGD model trained from scratch on the retain set is included as a formal privacy baseline.
+
+\paragraph{Retain-only fine-tuning.} The simplest approach is to fine-tune the trained VAE on only the retain set ($\mathcal{R} = \mathcal{D} \setminus \mathcal{F}$), which is 99.9\% of the original training data. This preserves utility (ELBO $= 363.2$, marker $r = 0.832$) but produces no measurable unlearning.
+
+\paragraph{Gradient ascent.} Maximize the loss on the forget set for 10--100 steps (learning rates in $[10^{-5}, 10^{-4}]$), then fine-tune on the retain set. No hyperparameter combination produced measurable unlearning.
+
+\paragraph{Frozen critics.} Freeze pre-trained MIA attackers and update only the VAE to minimize their success. This fails completely (AUC $>$ 0.98) because the VAE exploits critic-specific blind spots without removing the underlying membership signal.
+
+\paragraph{Extra-gradient co-training.} Frame unlearning as a min-max game:
+\begin{equation}
+\min_\theta \max_\psi \mathcal{L}_{\text{VAE}}(\theta; \mathcal{R}) - \lambda \cdot \mathcal{L}_{\text{att}}(\theta, \psi; \mathcal{F})
+\end{equation}
+Use a two-step extragradient update~\citep{chavdarova2019} to damp oscillations:
+\begin{align}
+\theta^{k+1/2} &= \theta^k - \eta_\theta \nabla_\theta \mathcal{L}(\theta^k, \psi^k) \\
+\theta^{k+1} &= \theta^k - \eta_\theta \nabla_\theta \mathcal{L}(\theta^{k+1/2}, \psi^{k+1/2})
+\end{align}
+Training uses two-timescale update rules (TTUR) with attacker LR $10\times$ lower than VAE LR (following the convention of stabilizing the discriminator), three co-trained critics with BCE loss while the VAE minimizes the worst-case mean membership probability across critics, and 50 epochs (stopping before equilibrium). A $\lambda$ sweep over $\{5, 10, 15, 20\}$ found $\lambda=10$ optimal on PBMC; $\lambda=5$ over-unlearns and $\lambda=15$+ under-unlearns.
+
+\paragraph{Fisher information scrubbing.} Fisher scrubbing~\citep{golatkar2020} computes the diagonal Fisher information matrix on the forget set and updates parameters inversely proportional to curvature:
+\begin{equation}
+\theta \leftarrow \theta + \alpha \cdot (F + \lambda I)^{-1} \cdot \nabla_\theta \mathcal{L}_\mathcal{F}(\theta)
+\end{equation}
+Hyperparameters: $\alpha = 10^{-4}$, $\lambda = 0.1$, 100 scrubbing steps, 10 fine-tuning epochs on the retain set.
+
+\paragraph{Selective Synaptic Dampening (SSD).} SSD~\citep{foster2024} computes the diagonal Fisher information on the forget set, then dampens parameters proportional to their importance:
+$\theta \leftarrow \theta \cdot \max(1 - \alpha \cdot F_\mathcal{F}, 0)$, where $\alpha$ controls dampening strength. Unlike Fisher scrubbing, SSD multiplicatively shrinks parameters rather than adding gradient-scaled noise. Tested with $\alpha \in \{0.5, 1.0, 5.0\}$, 3 seeds each.
+
+\paragraph{Contrastive latent unlearning.} A VAE-specific approach that pushes forget-set latent representations toward the prior $p(z) = \mathcal{N}(0, I)$ while preserving retain-set representations near their original locations. The loss combines a KL-to-prior term on forget samples with a representation-preservation term on retain samples:
+$\mathcal{L} = \gamma \cdot \text{KL}(q_\phi(z|x_f) \| p(z)) + \lambda \cdot \|\mu_\phi(x_r) - \mu_{\text{orig}}(x_r)\|^2$,
+followed by retain-only fine-tuning. If forget samples map to the prior, they become indistinguishable from random latent samples. Tested with $\gamma \in \{0.1, 1.0, 10.0\}$, 3 seeds each.
+
+\paragraph{SCRUB.} SCRUB~\citep{kurmanji2023} uses teacher-student distillation. The original (trained) model is the teacher. The student is trained to match the teacher's output on retain data while maximizing divergence on forget data:
+$\mathcal{L} = \mathcal{L}_{\text{match}}(\theta_s, \theta_t; \mathcal{R}) - \alpha_f \cdot \mathcal{L}_{\text{match}}(\theta_s, \theta_t; \mathcal{F})$,
+with alternating optimization (forget steps then retain steps). Adapted from classification to VAE outputs (reconstruction and KL). Tested with $\alpha_f \in \{0.1, 1.0, 10.0\}$, 3 seeds each.
+
+\paragraph{DP-SGD baseline.} DP-SGD~\citep{abadi2016} trains a fresh VAE from scratch on only the retain set with per-sample gradient clipping (max norm $= 1.0$) and calibrated Gaussian noise to achieve a target privacy budget $(\varepsilon, \delta)$. Since the forget set is excluded from training entirely, this is not an unlearning method but a formal privacy baseline: membership inference should be at chance by construction. Tested with $\varepsilon \in \{1, 10, 50\}$, $\delta = 10^{-5}$, 50 epochs, 3 seeds for $\varepsilon = 10$.
+
+\subsection{Attack suite}
+
+Beyond the trained MLP attacker (70-dim features: 69 from the VAE latent space plus a $k$-NN distance to the retain set with $k=5$; spectral normalization, [256, 256] hidden layers, dropout 0.3), three additional attack families were tested to assess robustness:
+
+\begin{itemize}
+\item \textbf{Threshold attacks} (low-assumption): threshold on reconstruction loss, KL divergence, or ELBO individually. These require only black-box access to the model's loss components.
+\item \textbf{Likelihood-ratio attack} (high-assumption): compares per-sample loss under the target model vs.\ a reference model (retrain). Requires access to a second model.
+\item \textbf{$k$-NN latent attack} (high-assumption): classifies membership based on distance to known training samples in latent space ($k=10$). Requires access to training set embeddings.
+\end{itemize}
+
+The retrain model is the evaluation target. Across 5 independently trained retrain seeds (42--46), the fresh-attacker advantage is $0.148 \pm 0.017$ (mean across seeds; AUC $= 0.574$) with a nested 95\% CI of $[0.070, 0.229]$. The nested CI combines cross-seed variance (outer resample) with within-seed bootstrap uncertainty on the $\approx 200$ matched-negative evaluation pool (inner resample). Method advantages are tested against this retrain distribution by one-sided Welch's $t$-test, with Holm--Bonferroni correction across the 8 methods and Cohen's $d$ as the effect size.
+
+\section{Experiments}
+
+Reference values throughout are baseline MIA AUC $= 0.783$ (advantage $= 0.565$), retrain AUC $= 0.574$ (multi-seed mean, advantage $= 0.148$, nested 95\% CI $[0.070, 0.229]$). Single-seed entries marked $\dagger$ in Table~\ref{tab:methods} use a separate evaluation attacker (baseline $= 0.769$, single-seed retrain $= 0.481$).
+
+\subsection{Unlearning methods on structured forget set}
+
+\begin{table}[t]
+\centering
+\caption{All methods on PBMC-33k structured forget set (cluster 13, $n=30$). Multi-seed results evaluated with a fresh MLP attacker trained on baseline forget vs.\ matched negatives (baseline AUC $= 0.783$, multi-seed retrain AUC $= 0.574$). AUC values are mean $\pm$ standard deviation across seeds. $\dagger$Single-seed entries use a separate attacker (baseline $= 0.769$, single-seed retrain $= 0.481$); these are excluded from hypothesis tests. Advantage is computed per seed as $2|\text{AUC}_s - 0.5|$ then averaged; this differs from $2|\overline{\text{AUC}} - 0.5|$ for high-variance methods (e.g., extra-gradient: mean advantage $= 0.300$ vs.\ $2|0.429 - 0.5| = 0.142$). Status from one-sided Welch's $t$-test against the 5-seed retrain distribution with Holm--Bonferroni correction across the 8 multi-seed methods; every post-hoc unlearning method rejects $H_0$ at $p < 0.01$ (Cohen's $d \geq 1.67$).}
+\label{tab:methods}
+\begin{tabular}{lccccc}
+\toprule
+Method & Seeds & AUC & Advantage & Marker $r$ & Status \\
+\midrule
+Baseline (no unlearning) & -- & 0.783 & 0.565 & 0.831 & -- \\
+\midrule
+Retain-only fine-tune & 5 & $0.665 \pm 0.007$ & 0.331 & 0.832 & FAIL \\
+Gradient ascent & 5 & $0.702 \pm 0.004$ & 0.404 & 0.832 & FAIL \\
+SSD ($\alpha=1.0$) & 3 & $0.725 \pm 0.001$ & 0.450 & 0.831 & FAIL \\
+SCRUB ($\alpha_f=1.0$) & 3 & $0.737 \pm 0.002$ & 0.474 & 0.832 & FAIL \\
+Contrastive latent ($\gamma=1.0$) & 3 & $0.153 \pm 0.032$ & 0.695 & 0.832 & FAIL (Streisand) \\
+Fisher scrubbing & 3 & $0.814 \pm 0.003$ & 0.628 & -- & FAIL (worse) \\
+Frozen critics$^\dagger$ ($\lambda=10$) & 1 & 0.992 & 0.984 & -- & FAIL \\
+Extra-grad ($\lambda=10$) & 10 & $0.429 \pm 0.142$ & 0.300 & 0.789 & FAIL \\
+\midrule
+DP-SGD ($\varepsilon=10$) & 3 & $0.464 \pm 0.024$ & 0.072 & 0.787 & Passes$^{*}$ \\
+Full retrain & 5 & $0.574 \pm 0.009$ & 0.148 & 0.829 & TARGET \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:methods} shows all eight methods plus the DP-SGD baseline.
+
+\paragraph{Utility-preserving methods that fail on privacy.} Retain-only fine-tuning, gradient ascent, SSD, and SCRUB all preserve utility almost perfectly (marker $r \geq 0.831$, matching baseline) but produce no useful privacy reduction. Thirty forget-set cells leave too small a gradient signal relative to the 28,094 retain cells. SSD~\citep{foster2024} dampens parameters proportional to their Fisher importance on the forget set, but the structured subpopulation's influence is distributed across the parameter space. At $\alpha = 1.0$ (3 seeds), advantage $= 0.450$, which the Welch test rejects against the retrain distribution at $p < 10^{-5}$ ($d = 21.4$). At $\alpha = 5.0$ (single seed), advantage drops to $0.268$, closer to the retrain mean but still above the nested CI upper bound ($0.229$), and utility is preserved identically (marker $r = 0.831$), suggesting the dampening is not removing membership information so much as adding noise at high $\alpha$. SCRUB~\citep{kurmanji2023} alternates forget-divergence and retain-matching steps, but the retain objective dominates regardless of $\alpha_f$, with advantage $= 0.474$ at $\alpha_f = 1.0$ (rejected at $p < 10^{-5}$, $d = 23.0$), and a sweep from 0.1 to 10.0 moves advantage by less than $0.02$.
+
+\paragraph{Methods that create detectable artifacts.} Contrastive latent unlearning produces a Streisand effect~\citep{hayes2024}, with AUC dropping to 0.153 (advantage $= 0.695$), worse than the baseline's 0.565. Pushing forget-set representations away from their natural latent location does not erase membership information; it creates a new artifact the attacker detects instead. Fisher scrubbing similarly makes the model worse rather than better (advantage $= 0.628$), with KL collapsing from 10.55 to 0.007 on the forget set. Frozen critics (AUC $= 0.992^\dagger$) exploit fixed decision boundaries without removing the underlying signal.
+
+\paragraph{Adversarial and formal methods.} Extra-gradient with $\lambda=10$ (10 seeds) gives mean advantage $= 0.300$ with nested 95\% CI $[0.216, 0.383]$, which overlaps the upper end of the retrain nested CI $[0.070, 0.229]$. The one-sided Welch's $t$-test nevertheless rejects $H_0$: method $=$ retrain at $p = 0.002$ (Holm-corrected, $d = 1.67$), so the mean advantage is reliably above retrain despite the per-seed variance ($\sigma_{\text{AUC}} = 0.142$). The method also fails entirely on Tabula Muris (Section~\ref{sec:crossdataset}).
+
+DP-SGD at $\varepsilon = 10$ (3 seeds) achieves advantage $= 0.072 \pm 0.048$, below the 5-seed retrain mean (0.148). The Welch test cannot reject $H_0$ in either direction at $p < 0.05$ (one-sided $p = 0.95$ for method $>$ retrain). DP-SGD is therefore not a failure mode, but it is also not unlearning: it trains from scratch on the retain set, so the forget set was never in training. It is privacy by exclusion. The utility cost is real. ELBO rises from 364 to 403 and marker $r$ drops from 0.831 to 0.787. An $\varepsilon$ sweep shows a non-monotonic tradeoff. At $\varepsilon = 1$, the model degrades so severely (marker $r = 0.495$) that the damage itself becomes detectable (advantage $= 0.292$); $\varepsilon = 50$ over-trains slightly (advantage $= 0.123$).
+
+The $^*$ in Table~\ref{tab:methods} marks DP-SGD as passing the statistical test but not the spirit of the task: it is a from-scratch formal-privacy baseline, not a post-hoc unlearning method. The headline claim of this paper is that \textit{all eight post-hoc unlearning methods fail}; DP-SGD is reported for reference.
+
+\subsection{Fisher unlearning by forget set type}
+
+\begin{table}[t]
+\centering
+\caption{Fisher unlearning on PBMC-33k by forget set type (3 seeds). Fisher reduces AUC on scattered sets, where baseline memorization is already weak. On structured sets it increases AUC through posterior collapse.}
+\label{tab:fisher_type}
+\begin{tabular}{lcccc}
+\toprule
+Forget type & Mean AUC & Std & Baseline AUC & Status \\
+\midrule
+Structured & 0.814 & 0.003 & 0.769 & FAIL (worse) \\
+Scattered & 0.499 & 0.004 & 0.525 & At chance \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:fisher_type} separates the two cases. On scattered forget sets, Fisher achieves AUC $= 0.499$ (near chance), but the baseline is already $0.525$, so the actual privacy gain is $\Delta = 0.026$. These cells were barely memorized to begin with. On structured sets, Fisher makes things worse. The memorization problem is concentrated in structured subpopulations, and the one method that works on scattered sets fails where it is most needed.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/method_comparison_advantage.png}
+\caption{MIA advantage by method on PBMC-33k structured forget set ($n=30$). The dashed line marks the 5-seed retrain advantage mean ($0.148$) with shaded nested 95\% CI $[0.070, 0.229]$. DP-SGD's advantage ($0.072$) falls below the retrain mean but trains from scratch. No post-hoc unlearning method reaches the retrain CI.}
+\label{fig:advantage}
+\end{figure}
+
+\subsection{Attack diversity}
+
+\begin{table}[t]
+\centering
+\caption{Attack suite results on PBMC-33k structured forget set. Advantage $= 2|\text{AUC} - 0.5|$. Low-assumption attacks use only loss components; high-assumption attacks require a reference model or training set embeddings. The trained MLP (canonical attacker) is shown for comparison.}
+\label{tab:attacks}
+\begin{tabular}{llcccc}
+\toprule
+ & Attack & Baseline & Retrain & EG $\lambda$=10 & Fisher \\
+\midrule
+\multirow{3}{*}{\rotatebox{90}{\small Low}} & Recon.\ threshold & 0.438 & 0.438 & 0.438 & 0.438 \\
+ & KL threshold & 0.841 & 0.733 & 0.192 & 0.272 \\
+ & ELBO threshold & 0.838 & 0.725 & 0.023 & 0.454 \\
+\midrule
+\multirow{2}{*}{\rotatebox{90}{\small High}} & Likelihood ratio & 0.839 & 0.839 & 0.734 & 0.744 \\
+ & $k$-NN latent & 0.986 & 0.971 & 0.897 & 0.927 \\
+\midrule
+ & Trained MLP & 0.538$^\dagger$ & 0.038$^\dagger$ & 0.036$^{*\dagger}$ & 0.628$^\dagger$ \\
+\bottomrule
+\multicolumn{6}{l}{\small $^*$Single seed; multi-seed mean advantage $= 0.300$. $^\dagger$Separate evaluation attacker.}
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:attacks} shows how four attack families perform across methods. Three patterns emerge.
+
+First, reconstruction-loss thresholding is identical across all models (advantage $= 0.438$), because all models reconstruct the forget set similarly. The membership signal lives in the KL and latent structure, not in reconstruction quality.
+
+Second, ELBO-based thresholding is the most informative low-assumption attack for extra-gradient, which reduces ELBO advantage from 0.838 (baseline) to 0.023 (near chance). KL thresholding tells a complementary story. Extra-gradient reduces KL advantage from 0.841 to 0.192, and Fisher reduces it to 0.272, near the retrain threshold. However, Fisher's low KL advantage reflects posterior collapse (KL itself is destroyed rather than normalized), not genuine unlearning.
+
+Third, high-assumption attacks ($k$-NN latent, likelihood ratio) detect all models, including retrain (advantage $\geq 0.73$). These attacks pick up on biological structure because megakaryocytes occupy a distinct region of latent space regardless of whether the model was trained on them. This means high-assumption attacks in this setting measure cell-type identity, not membership. The trained MLP attacker, which combines all signal types with learned weights, provides the most balanced evaluation.
+
+\subsection{Cross-dataset validation}
+\label{sec:crossdataset}
+
+\begin{table}[t]
+\centering
+\caption{Cross-dataset comparison (PBMC-33k vs.\ Tabula Muris). PBMC values use the single-seed attacker (baseline $= 0.769$, retrain $= 0.481$; cf.\ Table~\ref{tab:methods} multi-seed attacker where baseline $= 0.783$, multi-seed retrain $= 0.574$). The Tabula Muris retrain AUC ($0.944$) exceeds the baseline ($0.891$), so the TM attacker is measuring cell-type identifiability, not membership. $^\dagger$Fisher fails on PBMC (gap $0.241$ above multi-seed retrain) but is uninterpretable on TM, where there is no membership signal to remove; the TM Fisher result is consistent with the biology-confound thesis rather than a Fisher failure.}
+\label{tab:crossdataset}
+\begin{tabular}{lccccc}
+\toprule
+Method & \multicolumn{2}{c}{PBMC} & \multicolumn{2}{c}{Tabula Muris} & Gen.? \\
+ & AUC & Baseline & AUC & Baseline & \\
+\midrule
+Retrain (structured) & 0.481 & 0.769 & 0.944 & 0.891 & -- \\
+EG $\lambda=10$ (structured) & 0.482 & 0.769 & 0.874 & 0.891 & No \\
+Fisher (structured) & 0.814 & 0.769 & 0.946 & 0.891 & PBMC fails$^\dagger$ \\
+Fisher (scattered) & 0.499 & 0.525 & 0.568 & 0.411 & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:crossdataset} shows results on Tabula Muris. The retrain model itself has AUC $= 0.944$, exceeding the baseline ($0.891$). Since retrain never saw cluster 33, this proves the attacker is detecting cardiac muscle cell biology rather than membership. The TM evaluation does not measure membership leakage at all; it measures how distinctively the model represents the cardiac muscle transcriptional signature. The multi-tissue structure creates biological signals that no amount of unlearning can remove while still reconstructing the data, because the signal is in the cell type, not in any specific cell.
+
+This reframes how the TM unlearning numbers should be read. Extra-gradient AUC $= 0.874$ and Fisher AUC $= 0.946$ are not failures to remove a membership signal; there is no membership signal on TM cluster 33 to remove. Rather, they show that no method moves the AUC below the retrain ceiling of $0.944$, which is exactly what the biology-confound thesis predicts. Fisher's slight increase above the retrain ceiling (0.946 vs.\ 0.944) is consistent with posterior collapse marginally amplifying cell-type identifiability. The cross-dataset Fisher result therefore consists of one genuine failure (PBMC, AUC $0.814$ vs.\ retrain $0.481$, gap $0.333$) plus one supporting observation for the confound thesis (TM, gap below noise). On scattered sets the picture is muddier: Fisher AUC $= 0.568$ vs.\ a Tabula Muris baseline of 0.411 (AUC below 0.5 means the labels are flipped; advantage $= 0.178$ baseline, $= 0.136$ Fisher).
+
+\subsection{TCGA-BRCA and the biology confound}
+\label{sec:confound}
+
+On TCGA-BRCA (1,089 breast cancer patients, bulk RNA-seq), the structured forget set is 158 Basal-subtype patients (17\% of training). With standard cross-subtype matching, baseline AUC $= 0.821$ and retrain AUC $= 0.860$. The retrain model, which never saw the Basal patients, is better at detecting them than the baseline. All six tested unlearning methods converge to the retrain floor ($\text{AUC} \approx 0.862$).
+
+Within-subtype matching (restricting matched negatives to 30 unseen Basal patients) resolves the cross-subtype confound. Baseline and retrain advantages both reach $\approx 0.15$ and become indistinguishable from each other. The entire cross-subtype gap was driven by Basal identity. The residual within-subtype advantage of $0.15$ is not zero, so the attacker still detects something, but whatever it detects is equally present in the retrain model that never saw the Basal patients, and is therefore not membership. Patient-level experiments at $n_f \in \{5, 10, 20\}$ show the same pattern: baseline and retrain advantages overlap within their CIs at every size, with no consistent gap.
+
+This confound is not unique to TCGA-BRCA. On PBMC, within-cluster matching (5 unseen megakaryocytes) drops baseline AUC from 0.769 to 0.527 while retrain rises from 0.495 to 0.609. Approximately 90\% of the cross-cluster above-chance signal on PBMC and 76\% on TCGA-BRCA is attributable to subtype identity rather than memorization. Replication on PBMC cluster 7 (CD14+ monocytes, 80 unseen cells) gives a confound fraction of 84\%, consistent with the cluster-13 estimate and removing the dependence on a 5-cell holdout. Tabula Muris cluster 28 (67 unseen) shows no detectable per-sample memorization under either matching strategy. Table~\ref{tab:attacks} shows the confound at the attack level: high-assumption attacks ($k$-NN, likelihood ratio) achieve advantage $\geq 0.73$ on the retrain model because they detect biological structure regardless of training history.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/confound_comparison.png}
+\caption{Biology confound across datasets. Left: cross-subtype vs.\ within-subtype MIA AUC for PBMC and TCGA-BRCA. With within-subtype matching, baseline and retrain AUCs converge. Right: decomposition of the cross-subtype AUC signal into biology (red) and memorization (green) components.}
+\label{fig:confound}
+\end{figure}
+
+This finding has implications beyond the present study. \citet{ozturk2026} report a Spearman correlation of $\rho = 0.92$ between differential expression recovery and MIA vulnerability across 11 generative models (their Figure~8, TCGA-COMBINED; $n = 11$ models, so the correlation is suggestive rather than definitive). The present analysis suggests this correlation reflects the biology confound rather than a privacy-utility tradeoff. \citet{golob2026} observe cell-type-dependent MIA vulnerability in their scMAMA-MIA evaluation (their Figure~5) but state that ``verifying why distances to some cell types are much greater than others will require further investigation, and is not relevant to this work.'' Both papers use off-the-shelf distance-based MIA methods (GAN-leaks, Monte Carlo, Mahalanobis distance) that operate on synthetic data outputs. These methods have no mechanism to distinguish biological signal preservation from individual-level memorization. A trained MLP attacker on model-internal features can make this distinction, as evidenced by its much lower retrain advantage (0.148, multi-seed) compared to baseline (0.565) on PBMC.
+
+\subsection{Constructive approaches}
+
+Two constructive approaches were tested to determine whether the structural limit can be bypassed.
+
+\paragraph{Synthetic augmentation at training time.} If memorization concentrates in rare subpopulations, augmenting those subpopulations with synthetic data during training might prevent sample-level memorization while preserving subtype biology. VAEs trained on retain + bootstrap-resampled synthetic megakaryocytes (generated from 5 unseen seed cells with Gaussian noise) were compared to the baseline and retrain. On PBMC with within-cluster matching, the augmented model achieves AUC $= 0.82$--$1.00$, worse than baseline ($0.63$). The model's representation of the megakaryocyte region is now shaped by the 5 seed cells rather than the 30 training cells, and the MIA detects this shift. Augmentation replaces one memorization pattern with another rather than eliminating memorization. On TCGA-BRCA with within-subtype matching, the augmented model ($0.581$) is indistinguishable from baseline ($0.578$) and retrain ($0.573$), consistent with the absence of patient-level memorization.
+
+\paragraph{Representation alignment unlearning (RAU).} Instead of modifying parameters directly, RAU fine-tunes the baseline model so its posterior on forget samples matches the retrain model's posterior: $\mathcal{L} = \text{ELBO}(\mathcal{R}) + \lambda \cdot \text{KL}(q_{\text{student}}(z|x_f) \| q_{\text{retrain}}(z|x_f))$, where $\lambda$ controls alignment strength. The retrain model provides the counterfactual representation, with no memorization by construction. A sweep over $\lambda \in \{0.1, 1.0, 10.0, 100.0\}$ successfully aligns posteriors (KL to retrain drops from 139 to 0.02), but cross-cluster AUC drops to 0.10--0.13, a Streisand effect. The representational shift is itself a detectable membership signal. On TCGA-BRCA, RAU with $\lambda = 10$ produces AUC $= 0.571$ (within-subtype), indistinguishable from baseline and retrain. The structural limit extends to representation space: any modification to the model's treatment of forget samples, whether in parameter space (Fisher, SSD) or representation space (RAU, contrastive), creates a detectable trace.
+
+\subsection{Utility evaluation}
+
+Utility was measured on the held-out set (4,964 cells) across four metrics (Table~\ref{tab:utility_main}). Five methods (retain-FT, gradient ascent, SSD, SCRUB, contrastive) preserve utility almost identically to baseline (ELBO $\approx 364$, marker $r \geq 0.831$). These methods barely change the model, which is why they fail on privacy. Extra-gradient and DP-SGD both degrade ELBO by ${\sim}40$ and marker $r$ by ${\sim}5\%$, the cost of reducing membership signal. Fisher is worst, with ELBO $= 490$ and marker $r = 0.628$ due to posterior collapse (KL $= 0.007$). ARI is preserved across all methods, indicating that global cluster structure survives even when gene-level reconstruction degrades.
+
+\begin{table}[t]
+\centering
+\caption{Utility metrics on PBMC-33k held-out set (4,964 cells). Marker $r$ is the average Pearson correlation across 8 cell-type marker genes. Full per-gene results in Appendix~\ref{app:utility}.}
+\label{tab:utility_main}
+\begin{tabular}{lcccc}
+\toprule
+ & ELBO $\downarrow$ & KL & Marker $r$ $\uparrow$ & ARI $\uparrow$ \\
+\midrule
+Baseline & 364.2 & 10.55 & 0.831 & 0.452 \\
+Retrain & 365.6 & 9.69 & 0.829 & 0.488 \\
+\midrule
+Retain-FT & 363.2 & 10.59 & 0.832 & 0.461 \\
+Grad-ascent & 363.3 & 10.53 & 0.832 & 0.441 \\
+SSD ($\alpha=1.0$) & 363.9 & 10.40 & 0.831 & 0.449 \\
+SCRUB ($\alpha_f=1.0$) & 363.8 & 10.41 & 0.832 & 0.451 \\
+Contrastive ($\gamma=1.0$) & 364.0 & 10.38 & 0.832 & 0.458 \\
+Extra-grad ($\lambda=10$, 10-seed) & 403.7 & 4.70 & 0.789 & 0.508 \\
+Fisher & 489.8 & 0.007 & 0.628 & 0.481 \\
+\midrule
+DP-SGD ($\varepsilon=10$, 3-seed) & 403.3 & 8.08 & 0.787 & 0.482 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Figure~\ref{fig:tradeoff} shows the privacy-utility tradeoff across methods. The five utility-preserving methods (retain-FT, gradient ascent, SSD, SCRUB, contrastive) cluster in the upper-left with excellent ELBO but high advantage. Extra-gradient and DP-SGD trade utility for privacy but neither reaches the retrain target without substantial reconstruction degradation. No method occupies the lower-left region (low advantage, low ELBO) except retrain.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/privacy_utility_all_methods.png}
+\caption{Privacy-utility tradeoff across all methods. Left: advantage vs.\ ELBO. Right: advantage vs.\ marker gene correlation. Methods that preserve utility (upper cluster) fail on privacy; methods that reduce advantage (DP-SGD, extra-gradient) pay a utility cost. Only retrain achieves both.}
+\label{fig:tradeoff}
+\end{figure}
+
+\section{Why parameter-space methods fail}
+
+The previous section shows that all eight methods fail to match retrain-level privacy on the structured forget set. Four methods (retain-FT, gradient ascent, SSD, SCRUB) produce no privacy improvement; three (contrastive, Fisher, frozen critics) create detectable artifacts. This section provides a structural explanation.
+
+\paragraph{Fisher information overlap.} Parameter-space unlearning methods work by identifying which parameters are ``important'' for the forget set and modifying those parameters. The standard tool for this is the diagonal Fisher information matrix, $F_i = \mathbb{E}[(\partial \mathcal{L}/\partial \theta_i)^2]$, which measures how much each parameter contributes to the loss on a given dataset. Fisher scrubbing, SSD, and SCRUB all use variants of this idea.
+
+For this approach to work, the forget-set Fisher $F^f$ and retain-set Fisher $F^r$ must be separable, meaning there must exist parameters that are important for the forget set but not the retain set. The cosine similarity $\cos(F^f, F^r) = \langle F^f, F^r \rangle / (\|F^f\| \|F^r\|)$ measures this separability. If it is close to 1, no parameter-space perturbation can reduce forget-set loss without proportionally affecting retain-set loss.
+
+The diagonal Fisher was computed on the forget set (30 megakaryocytes) and retain set (28,094 cells) using the baseline PBMC model. Table~\ref{tab:fisher_overlap} reports the results per layer category, alongside a linear classifier (logistic regression on frozen VAE latent codes, 14 Leiden clusters) trained on the same data.
+
+\begin{table}[t]
+\centering
+\caption{Fisher information overlap between forget and retain sets. Cosine similarity measures how entangled forget-set influence is with retain-set influence in parameter space. Higher cosine means less room for selective parameter perturbation. The classifier's low overlap shows that class-specific output weights allow targeted forgetting; the VAE's shared decoder does not.}
+\label{tab:fisher_overlap}
+\small
+\begin{tabular}{llrrr}
+\toprule
+Model & Layer category & Parameters & Cosine sim. & Eff.\ rank ratio (F) \\
+\midrule
+VAE & Encoder & 2,642,816 & 0.273 & 0.030 \\
+VAE & Bottleneck & 8,256 & 0.291 & 0.033 \\
+VAE & Decoder hidden & 598,912 & 0.232 & 0.041 \\
+VAE & Decoder output & 4,100,000 & 0.362 & 0.006 \\
+\midrule
+VAE & \textbf{Global} & \textbf{7,349,984} & \textbf{0.306} & 0.010 \\
+Classifier & \textbf{Output layer} & \textbf{462} & \textbf{0.018} & 0.037 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The VAE's global Fisher cosine similarity is $0.306$, driven by two effects. First, the dispersion output layer (2.05M parameters, 28\% of the model) has cosine $= 0.998$. This layer receives zero gradients under the MSE loss (the dispersion parameter is vestigial), so its Fisher is entirely damping-dominated and the near-unity cosine is an artifact of the uniform damping floor, not meaningful overlap. Second, the mean output layer ($\cos = 0.360$, 2.05M parameters) shares the same 1,024-dimensional hidden representation across all 2,000 output genes, so perturbations to any column affect reconstruction of all cell types. At the individual gene level, 73\% of genes (1,462/2,000) have per-gene Fisher cosine $> 0.5$, and the median is $0.877$.
+
+The classifier's cosine similarity is $0.018$, 17$\times$ lower. The forget set (cluster 13, megakaryocytes) contributes Fisher information primarily to the 32 weights connecting the latent space to the cluster-13 logit. Retain-set Fisher spreads across all 14 class logits. These weight sets are nearly orthogonal, making selective perturbation possible.
+
+\paragraph{A structural bound on Fisher overlap.} The pattern above admits a closed-form explanation for linear decoders.
+
+\begin{proposition}
+\label{prop:factorization}
+Let $f(z) = Wz + b$ with $W \in \mathbb{R}^{D \times H}$ and squared-error loss. If residuals $e_d = x_d - f(z)_d$ are independent of latent activations $z_h$, the diagonal Fisher factorizes as $F_{dh} = 4\,\mathbb{E}[e_d^2]\,\mathbb{E}[z_h^2]$, and
+\begin{equation}
+\cos(F^{\mathcal{F}}, F^{\mathcal{R}}) = \cos(\sigma^{\mathcal{F}}, \sigma^{\mathcal{R}}) \cdot \cos(\nu^{\mathcal{F}}, \nu^{\mathcal{R}})
+\label{eq:factorization}
+\end{equation}
+where $\sigma^S \in \mathbb{R}^D$ has entries $\sigma^S_d = \mathbb{E}_{x \sim S}[e_d^2]$ (residual variance per output dimension) and $\nu^S \in \mathbb{R}^H$ has entries $\nu^S_h = \mathbb{E}_{x \sim S}[z_h^2]$ (latent second moment).
+\end{proposition}
+
+\textit{Proof sketch.} $\partial \mathcal{L}/\partial W_{dh} = -2 e_d z_h$, so $F_{dh} = 4\,\mathbb{E}[e_d^2 z_h^2] = 4\,\sigma_d \nu_h$ under independence. Then $\langle F^{\mathcal{F}}, F^{\mathcal{R}} \rangle = 16\,\langle \sigma^{\mathcal{F}}, \sigma^{\mathcal{R}} \rangle\,\langle \nu^{\mathcal{F}}, \nu^{\mathcal{R}} \rangle$ and $\|F^S\| = 4\,\|\sigma^S\|\,\|\nu^S\|$. Dividing gives \eqref{eq:factorization}.\hfill$\square$
+
+\textit{Remark.} The factorization quantifies a privacy-utility tradeoff for Fisher-based methods. For a perturbation that weights each parameter by its forget-set Fisher importance ($\delta\theta_i^2 \propto F^{\mathcal{F}}_i$), the ratio of retain-set to forget-set curvature disturbance is $\cos(F^{\mathcal{F}}, F^{\mathcal{R}}) \cdot \|F^{\mathcal{R}}\|/\|F^{\mathcal{F}}\|$. When the cosine is near zero (classifier), perturbation directions exist that primarily affect the forget set. At cosine $= 0.306$ (VAE), every unit of forget-set curvature change imposes a proportional cost on the retain set.
+
+\begin{corollary}[Dimensional scaling]
+\label{cor:scaling}
+Under the conditions of Proposition~\ref{prop:factorization}:
+\begin{enumerate}
+\item If $D - M$ of the $D$ output dimensions satisfy
+$\sigma^{\mathcal{F}}_d = \sigma^{\mathcal{R}}_d$ and the remaining $M$
+dimensions have $\sigma^S_d \leq V\bar{\sigma}$ for all $S$, then
+\[
+\cos(\sigma^{\mathcal{F}}, \sigma^{\mathcal{R}})
+\;\geq\; \frac{D - M}{D - M + M V^2}.
+\]
+\item For a single-class forget set where $\sigma^{\mathcal{F}}$ is supported
+on a single coordinate $k$,
+$\cos(\sigma^{\mathcal{F}}, \sigma^{\mathcal{R}})
+= \sigma^{\mathcal{R}}_k / \|\sigma^{\mathcal{R}}\|$,
+which equals $1/\sqrt{C}$ for balanced $C$-class residuals.
+\end{enumerate}
+\end{corollary}
+
+\textit{Proof.} (i) The inner product
+$\langle \sigma^{\mathcal{F}}, \sigma^{\mathcal{R}} \rangle \geq
+\sum_{\text{shared}} \bar{\sigma}_d^2 = A$,
+while $\|\sigma^S\|^2 \leq A + M V^2 \bar{\sigma}^2$ for each set $S$.
+Then $\cos \geq A / (A + M V^2 \bar{\sigma}^2)$. Writing
+$A = (D - M)\bar{\sigma}^2$ gives the bound, which tends to 1 as
+$D/M \to \infty$.
+(ii) When $\sigma^{\mathcal{F}} = \sigma^{\mathcal{F}}_k \mathbf{e}_k$,
+the cosine reduces to $\sigma^{\mathcal{R}}_k / \|\sigma^{\mathcal{R}}\|$.
+For balanced classes ($\sigma^{\mathcal{R}}_j = c$ for all $j$),
+this is $c / (c\sqrt{C}) = 1/\sqrt{C}$.\hfill$\square$
+
+This factorization separates Fisher cosine into two interpretable components. The input to fc\_mean is the 1{,}024-dimensional decoder hidden output $h$, not the 32-dimensional latent $z$. KL regularization constrains $z$ toward $\mathcal{N}(0, I)$ but does not act on $h$. Because forget and retain data pass through the same shared decoder network, the hidden activation profiles are similar ($\cos(\nu^{\mathcal{F}}, \nu^{\mathcal{R}}) = 0.80$). Corollary~\ref{cor:scaling} formalizes the gap between these settings. In the VAE, roughly 50--100 marker genes out of $D = 2{,}000$ have substantially different residual variance for the forget subpopulation. Under the linear-decoder conditions of Proposition~\ref{prop:factorization}, the relevant $\sigma$ is the data-direct residual variance per gene, for which $\cos(\sigma^{\mathcal{F}}, \sigma^{\mathcal{R}}) = 0.83$, above the lower bound of $0.68$ from part~(i) with $M = 100$, $V = 3$. The Fisher-marginal $\sigma$ gives a lower cosine of $0.51$ because the softmax output layer couples all output dimensions through its Jacobian, departing from the element-wise independence assumed in Proposition~\ref{prop:factorization}. For the classifier ($C = 14$), part~(ii) gives an upper bound of $1/\sqrt{14} \approx 0.27$; the measured value is lower still because the forget-class gradient is more concentrated than a point mass at 95\% accuracy.
+
+\paragraph{Empirical verification.} The fc\_mean Fisher matrix is approximately rank-1: the leading singular value explains 94\% of the Frobenius norm for the forget set and 96\% for the retain set, consistent with the outer-product form $F_{dh} \approx 4\sigma_d\nu_h$. The factorized prediction $\cos(\sigma^{\mathcal{F}}, \sigma^{\mathcal{R}}) \cdot \cos(\nu^{\mathcal{F}}, \nu^{\mathcal{R}}) = 0.41$ overestimates the measured cosine of $0.37$ by 11\%. The dominant source of error is the softmax nonlinearity in the decoder, which couples all output dimensions through its Jacobian. Fisher-marginal $\nu$ matches data-direct hidden second moments (cosine $> 0.99$), but Fisher-marginal $\sigma$ diverges from data-direct residual variance (cosine $= 0.50$--$0.73$), and the product computed directly from data statistics ($0.65$) overestimates by 77\%. The Kronecker structure of the actual Fisher (94--96\% rank-1) is tighter than the data-level interpretation of $\sigma$ as residual variance per gene would suggest. The $17\times$ gap over the classifier ($0.018$) is consistent with the structural prediction.
+
+\paragraph{Controlling for model capacity.} The linear classifier has 462 parameters against the VAE's 7.35M. A deep MLP classifier (2,000 $\to$ [512, 128] $\to$ 14 with layer normalization and dropout, 1.09M parameters) trained on the same raw gene expression (95.2\% accuracy) separates the effect of model capacity from architecture. The shared hidden layers have cosine $= 0.262$, in the same range as the VAE encoder (0.273) and decoder hidden layers (0.232). The class-specific output layer has cosine $= 0.010$, comparable to the linear probe (0.018). Fisher overlap therefore depends on whether parameters are shared across classes or specific to individual classes, not on model size.
+
+\paragraph{Architecture and dataset generalization.} Repeating the analysis with a VAE using latent dimension $z = 8$ instead of $z = 32$ (same hidden layers) yields a global cosine of $0.846$, higher than the baseline. The bottleneck layers drive this increase (cosine $= 0.858$ vs.\ $0.291$ for $z = 32$), because a smaller latent space concentrates the representation. Reducing the latent dimension does not reduce Fisher overlap.
+
+On TCGA-BRCA (978 genes, 4.2M parameters, 17\% forget fraction), the global cosine rises to $0.905$, with 100\% of genes having per-gene cosine above 0.5 (vs.\ 73\% on PBMC). The decoder output layer cosine is $0.920$ (Figure~\ref{fig:fisher_crossdataset}). The higher overlap is consistent with the larger forget fraction (Corollary~\ref{cor:scaling} predicts that the bound tightens as $M/D$ increases) and the fewer output dimensions (978 vs.\ 2,000 genes). Fisher overlap is a structural property that persists across datasets, modalities (single-cell vs.\ bulk), and forget-set sizes.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/fisher_overlap_cross_dataset.png}
+\caption{Fisher overlap comparison between PBMC-33k (0.1\% forget fraction) and TCGA-BRCA (17\% forget fraction). Left: per-layer cosine similarity. Right: global cosine. TCGA-BRCA overlap is higher across all layers, driven by the larger forget fraction and fewer output dimensions.}
+\label{fig:fisher_crossdataset}
+\end{figure}
+
+\paragraph{Cluster-conditional decoder.} If shared output parameters cause the overlap, conditioning the decoder on cell type should reduce it. A conditional VAE was trained in which the mean output layer receives the final hidden representation concatenated with a 14-dimensional cluster one-hot vector (adding 28K parameters). The fc\_mean weight matrix decomposes into shared columns (corresponding to the 1,024 hidden features) and cluster-specific columns (corresponding to the 14 one-hot inputs). The shared columns have cosine $= 0.222$, reflecting irreducible overlap from the shared hidden representation. The cluster-specific columns have cosine $\approx 0$ ($1.2 \times 10^{-8}$), achieving the same near-orthogonality as the classifier output weights. To test whether this structural separation improves unlearning, Fisher scrubbing was applied to the conditional VAE with the same hyperparameters as the standard experiments. The conditional VAE baseline shows higher memorization (advantage $= 0.73$) than the standard VAE ($0.54$), likely because the cluster-specific columns give the model additional capacity to distinguish cluster~13. After scrubbing, the advantage drops to $0.72$, a negligible reduction, while the standard VAE achieves advantage $0.63$ after scrubbing. Fisher overlap persists throughout the shared network in the conditional model, with encoder cosine $= 0.433$, bottleneck $= 0.508$, and decoder hidden layers $= 0.346$. Since the MIA attacker draws 64 of its 70 feature dimensions from encoder outputs (latent mean and log-variance), the high encoder overlap is the dominant factor. Routing cluster-specific information through dedicated output parameters does not reduce the memorization already encoded in the shared encoder and hidden layers.
+
+\paragraph{Implication.} This difference explains the empirical results. Fisher scrubbing, SSD, and SCRUB all modify parameters proportional to forget-set Fisher magnitude. When the forget-set Fisher overlaps heavily with the retain-set Fisher (cosine = 0.306 for the VAE), these modifications necessarily damage retain performance or leave the forget set's influence intact. The same structural problem applies to any generative model with shared output parameters. Classifier unlearning methods can succeed because class-specific output weights create a low-overlap regime that does not exist in the standard VAE architecture.
+
+\paragraph{Diagonal Fisher approximation.} The analysis above uses the diagonal Fisher, which ignores off-diagonal curvature. \citet{kunstner2019} showed that the diagonal approximation can misrepresent the true Fisher in deep networks, particularly when parameters interact through shared activations. Two points limit this concern. First, Fisher scrubbing~\citep{golatkar2020}, SSD~\citep{foster2024}, and SCRUB~\citep{kurmanji2023} all use the diagonal Fisher internally, so the overlap measured above characterizes these methods as implemented, not an idealized version of them. If the diagonal Fisher is the wrong tool, then these methods are already using the wrong tool, and the overlap analysis correctly identifies why they fail. Second, the log-Fisher correlation ($r = 0.73$) and the per-gene analysis (73\% of genes with cosine $> 0.5$) provide converging evidence at different granularities, reducing the chance that diagonal artifacts drive the conclusion.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fisher_scatter.png}
+\caption{Per-parameter Fisher magnitude (log scale) for forget vs.\ retain sets. Left: VAE parameters are correlated (log-Fisher $r = 0.73$), confirming that the same parameters matter for both sets. Right: classifier parameters show no correlation ($\cos = 0.018$), with forget-set Fisher concentrated in a few class-specific weights.}
+\label{fig:fisher_scatter}
+\end{figure}
+
+\section{Discussion}
+
+The results in Sections~5--6 show three failure modes, a structural explanation for one of them, and an irreducible tradeoff between privacy and utility. The numbers are reported above. Here the question is what these failures imply for practice.
+
+\paragraph{Unlearning as a detectable operation.} Contrastive latent unlearning, Fisher scrubbing, frozen critics, and representation alignment (RAU) all share a problem. The operation of unlearning itself leaves a trace. Contrastive pushes latent representations to an unnatural location; Fisher collapses the posterior; frozen critics drive the model toward critic-specific blind spots; RAU shifts forget-sample posteriors toward the retrain model, creating a detectable representational gap. In each case the model's behavior on forget-set samples becomes \textit{more} distinguishable from its behavior on never-seen samples, not less. This is the Streisand effect~\citep{golatkar2020, hayes2024}. Synthetic augmentation at training time avoids this specific failure but introduces a different one: the model's representation of the subtype region shifts to reflect the synthetic training distribution, which is itself detectable. Any modification to the model's treatment of forget samples, whether in parameter space, representation space, or data space, creates exactly the signal it aims to remove.
+
+\paragraph{Verification without a retrain oracle.} A practical gap across all methods is the absence of a verification mechanism. None of the eight methods can confirm, at the end of the procedure, that membership information has been removed. The only ground truth is comparison against the retrain model. In a real deployment, the data controller would not have the retrain model available (retraining is the alternative they want to avoid). This means approximate unlearning in this setting is both technically difficult and unverifiable. DP-SGD sidesteps verification by offering a formal guarantee, but it is not an unlearning method because it requires training from scratch and accepting a utility cost (marker $r$ drops by 5\%, ELBO rises by ${\sim}40$).
+
+\paragraph{Biology vs.\ membership in MIA evaluation.} The attack diversity results (Table~\ref{tab:attacks}) and the cross-dataset within-subtype analysis (Section~\ref{sec:confound}) expose a confound that affects all MIA-based unlearning evaluation on biological data. Standard MIA evaluation overestimates memorization by 30--90\% by conflating subtype identity with training membership. The trained MLP attacker on model-internal features (latent mean, log-variance, reconstruction loss) partially separates these signals, with multi-seed retrain advantage $\approx 0.15$ (compared to baseline $\approx 0.57$), but cross-subtype matching still inflates estimates. Within-subtype matching resolves the confound on both PBMC and TCGA-BRCA.
+
+The choice of MIA methodology is a choice of threat model. Following Kerckhoffs's principle, privacy evaluation should assume the strongest realistic adversary. Distance-based methods (GAN-leaks, Monte Carlo) used by~\citet{ozturk2026} operate on synthetic data outputs and have no mechanism to learn which features distinguish membership from biology. A trained attacker on model internals can make this distinction. However, even the trained attacker is partially confounded (${\sim}30\%$ of signal) when matched negatives are drawn from different subtypes. Within-subtype matching or within-cluster holdout controls are necessary to isolate the genuine memorization signal.
+
+\paragraph{Limitations.} All privacy guarantees here are empirical, not formal (except DP-SGD). Tabula Muris evaluation is confounded by tissue-of-origin signals (retrain AUC $= 0.944$, exceeding baseline). Within-subtype evaluation on PBMC uses only 5 unseen megakaryocytes as negatives, yielding noisy estimates (retrain AUC $= 0.609$, higher than baseline $= 0.527$). TCGA-BRCA within-subtype evaluation (30 unseen Basal patients) shows no baseline-vs-retrain gap, limiting its utility for testing unlearning methods that operate on a non-zero gap. Only one generative architecture family (VAE) was tested; whether the Fisher overlap pattern holds for diffusion models or normalizing flows is unknown. The size ablation (Appendix~\ref{app:size}) conflates forget-set size with biological heterogeneity.
+\paragraph{Broader impact.} This work studies methods for removing sensitive biological data from trained models. The results are largely negative. All approximate methods fail on the structured forget sets where memorization is strongest, and the paper documents those failures. The matched-negative evaluation protocol and attack diversity analysis may be useful to others working on privacy in single-cell genomics.
+
+\section{Conclusion}
+
+Standard MIA evaluation overestimates memorization in gene-expression VAEs by 30--90\% because it conflates biological subtype identity with training membership. After controlling for this confound, genuine memorization is detectable only on PBMC (multi-seed AUC gap of 0.209, advantage gap of 0.417 between baseline and retrain) and concentrates in rare biological subpopulations. Scattered cells show AUC 0.41--0.53 and barely need unlearning. On TCGA-BRCA with 1,089 breast cancer patients, no baseline-vs-retrain gap was detected with proper matching, even though both models retain a within-subtype advantage of $\approx 0.15$ that is unrelated to membership.
+
+All eight approximate unlearning methods fail to remove even the reduced genuine signal on PBMC. Two constructive approaches also fail. Synthetic augmentation during training shifts the memorization bias to the seed samples rather than eliminating it. Representation alignment successfully matches the retrain model's posterior but creates a Streisand effect. The structural cause is Fisher overlap in the shared decoder (cosine $= 0.306$ on PBMC, $0.905$ on TCGA-BRCA), which is $17\times$ higher than the equivalent classifier ($0.018$). Proposition~\ref{prop:factorization} formalizes this gap, and Corollary~\ref{cor:scaling} shows it scales with the ratio of shared to class-specific output dimensions.
+
+Full retraining remains the only dependable option. The biology confound documented here affects any MIA evaluation on structured biological forget sets and is present in the concurrent evaluations of~\citet{ozturk2026} and~\citet{golob2026}. Within-subtype matching, attack diversity analysis, and retrain-baseline comparison should be standard practice for privacy evaluation of biological generative models.
+
+\paragraph{Future work.} A calibrated MIA using the retrain model as a per-sample reference (following~\citet{carlini2022}) could isolate memorization without requiring matched negatives. Fully modular architectures with subtype-specific pathways through the encoder and decoder might reduce Fisher overlap below the threshold where parameter-space unlearning becomes feasible, though at the cost of losing shared representation learning. Extending the analysis to diffusion models and normalizing flows would test whether the shared-decoder structural limit generalizes beyond VAEs.
+
+\section*{Acknowledgments}
+
+Code: \url{https://github.com/db-d2/Machine_Unlearning}.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\newpage
+\appendix
+
+\section{Full utility metrics}
+\label{app:utility}
+
+\begin{table}[h]
+\centering
+\caption{Per-gene marker correlation ($r$) on PBMC-33k held-out set for 8 cell-type marker genes. Fisher shows severe degradation on NK markers (GNLY, NKG7), consistent with posterior collapse disrupting specific decoder pathways.}
+\label{tab:utility_genes}
+\begin{tabular}{lcccccc}
+\toprule
+Gene & Baseline & Retrain & Retain-FT & Grad-asc. & Extra-grad & Fisher \\
+\midrule
+CD3D & 0.767 & 0.761 & 0.770 & 0.769 & 0.602 & 0.601 \\
+CD3E & 0.645 & 0.642 & 0.644 & 0.648 & 0.532 & 0.552 \\
+MS4A1 & 0.809 & 0.812 & 0.810 & 0.808 & 0.693 & 0.761 \\
+CD79A & 0.900 & 0.900 & 0.901 & 0.901 & 0.727 & 0.815 \\
+CD14 & 0.798 & 0.797 & 0.800 & 0.797 & 0.767 & 0.644 \\
+LYZ & 0.901 & 0.901 & 0.900 & 0.899 & 0.875 & 0.835 \\
+NKG7 & 0.930 & 0.928 & 0.928 & 0.929 & 0.698 & 0.515 \\
+GNLY & 0.900 & 0.894 & 0.903 & 0.903 & 0.636 & 0.304 \\
+\midrule
+Mean & 0.831 & 0.829 & 0.832 & 0.832 & 0.691 & 0.628 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Extra-gradient preserves reconstruction quality for most genes but degrades T-cell (CD3D/E) and NK-cell (NKG7/GNLY) markers; the per-gene values shown are from a single seed and the 10-seed mean marker $r$ ($0.789$) is higher than this seed. Fisher is worst on GNLY ($r = 0.304$ vs.\ baseline $0.900$) and NKG7 ($r = 0.515$), consistent with posterior collapse disrupting cell-type-specific decoder mappings. Retain-only fine-tuning, gradient ascent, SSD, SCRUB, and contrastive latent unlearning are all indistinguishable from baseline on all genes (marker $r \geq 0.831$), consistent with these methods making only minimal parameter changes. DP-SGD at $\varepsilon = 10$ shows a similar per-gene pattern to extra-gradient, with moderate degradation on T-cell and NK markers.
+
+\section{Forget set size ablation}
+\label{app:size}
+
+\begin{table}[h]
+\centering
+\caption{PBMC-33k structured size ablation for extra-gradient $\lambda=10$ (3 seeds except $n=30$ which uses the 10-seed evaluation from Table~\ref{tab:methods}). Larger forget sets span multiple clusters and the method fails to unlearn them.}
+\label{tab:size}
+\begin{tabular}{lccccc}
+\toprule
+Size & Clusters & Mean AUC & 95\% CI & Advantage & Status \\
+\midrule
+10 & 13 (subset) & $0.263 \pm 0.055$ & [0.200, 0.326] & 0.474 & Over-unlearn \\
+30 & 13 (all) & $0.429 \pm 0.142$ & [0.327, 0.530] & 0.300 & FAIL \\
+50 & 13 + 12 & $0.503 \pm 0.109$ & [0.379, 0.626] & 0.203 & Borderline \\
+100 & 13 + 12 + 11 & $0.611 \pm 0.028$ & [0.580, 0.642] & 0.222 & Insufficient \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+At $n=10$, extra-gradient over-unlearns (advantage $= 0.474$). At $n=30$ (10 seeds), mean AUC is 0.429 with high variance. At $n=50$, the mean AUC of 0.503 is near the retrain floor, and mean advantage $= 0.203$ falls within the nested retrain CI ($[0.070, 0.229]$) from the multi-seed reference. However, per-seed AUCs span 0.41 to 0.66, so individual seeds range from over-unlearning to under-unlearning; this is unreliable across seeds rather than reliably at target. At $n=100$, the method under-unlearns. A separate scattered-set ablation ($n = 10$ to 500, 10 seeds) confirmed that scattered cells have low baseline memorization (AUC 0.52--0.63) and Fisher provides at most marginal improvement ($\Delta$ of $-$0.01 to 0.04).
+
+\section{Matched negative validation}
+\label{app:matched}
+
+The default matched negatives (194 cells, $k$-NN from unseen set with $k=10$) include cells from multiple clusters (98.5\% non-megakaryocytes), which means the attacker could partially rely on cell-type differences rather than pure membership. A within-cluster control using only the 5 unseen cluster-13 cells produced: baseline AUC $= 0.527$, retrain AUC $= 0.609$, extra-gradient AUC $= 0.463$. The biology confound inflates the default baseline (0.769 vs.\ 0.527). Retrain AUC exceeds 0.5 in the within-cluster setting because both groups (30 forget, 5 unseen) were excluded from retraining, and with only 5 negatives the attacker overfits to within-cluster heterogeneity. Within-cluster matching would be preferable but is limited by the small number of held-out cells from rare clusters.
+
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% NeurIPS Paper Checklist
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section*{NeurIPS Paper Checklist}
+
+\begin{enumerate}
+
+\item \textbf{Claims.} Do the main claims made in the abstract and introduction accurately reflect the paper's contributions and scope?
+
+\textit{Yes.} The abstract states that all eight approximate methods fail on structured sets and that memorization concentrates in structured subpopulations. Both claims are supported by Tables~\ref{tab:methods}--\ref{tab:crossdataset}.
+
+\item \textbf{Limitations.} Does the paper discuss the limitations of the work performed by the authors?
+
+\textit{Yes.} Section~7 includes a dedicated limitations paragraph covering empirical-only guarantees, computational cost, architectural scope, and the use of cell-type (rather than donor) forget sets.
+
+\item \textbf{Theory.} For each theoretical result, does the paper provide the full set of assumptions and a complete proof?
+
+\textit{Yes.} Section~6 presents Proposition~\ref{prop:factorization}, which derives the Fisher cosine factorization for linear decoders under a residual-latent independence assumption. The proof sketch is provided. The assumption and the gap between the linear prediction and the measured nonlinear values are discussed. The diagonal Fisher approximation is explicitly addressed.
+
+\item \textbf{Reproducibility.} Does the paper fully disclose all the information needed to reproduce the main experimental results of the paper to the extent that it affects the main claims and/or conclusions of the paper?
+
+\textit{Yes.} All hyperparameters, architectures, seeds, data splits, and evaluation procedures are specified in Sections~3--5. Code is publicly available.
+
+\item \textbf{Open access to data and code.} Does the paper provide open access to the data and code, with sufficient instructions to faithfully reproduce the main experimental results?
+
+\textit{Yes.} Code is at \url{https://github.com/db-d2/Machine_Unlearning}. Both datasets (PBMC-33k from 10x Genomics, Tabula Muris) are publicly available.
+
+\item \textbf{Experimental setting/details.} Does the paper specify all the training and test details necessary to understand the results?
+
+\textit{Yes.} Data splits, optimizer settings, learning rates, batch sizes, number of epochs, architecture dimensions, attacker features, and evaluation thresholds are given in Sections~3--4.
+
+\item \textbf{Experiment statistical significance.} Does the paper report error bars suitably and correctly defined or other appropriate information about the statistical significance of the experiments?
+
+\textit{Yes.} Multi-seed experiments (3--10 seeds) with 95\% confidence intervals are reported for all main results.
+
+\item \textbf{Experiments compute resources.} For each experiment, does the paper provide sufficient information on the computer resources needed to reproduce the experiments?
+
+\textit{Yes.} Experiments were run on an Apple M-series laptop (CPU only). Typical training times: baseline VAE ${\sim}20$ min, extra-gradient ${\sim}80$ min, DP-SGD ${\sim}250$ min (50 epochs), retain-FT/gradient ascent/SSD/SCRUB/contrastive ${\sim}1$--$3$ min each, Fisher ${\sim}2$ min.
+
+\item \textbf{Code of ethics.} Does the research conducted in the paper conform, in every respect, with the NeurIPS Code of Ethics?
+
+\textit{Yes.} This is privacy research conducted on publicly available datasets. No human subjects were involved.
+
+\item \textbf{Broader impacts.} Does the paper discuss both potential positive societal impacts and negative societal impacts of the work?
+
+\textit{Yes.} Section~7 includes a broader impact statement. The work studies methods for removing sensitive data from models; the results are largely negative (most methods fail), and the paper documents those failures.
+
+\item \textbf{Safeguards.} Does the paper describe safeguards that have been put in place for responsible release of data or models?
+
+\textit{N/A.} No new models or datasets are released. All experiments use existing public data.
+
+\item \textbf{Licenses.} Are the creators or original owners of assets (e.g., code, data, models), used in the paper, properly credited and are the license and terms of use explicitly mentioned and properly respected?
+
+\textit{Yes.} PBMC-33k (10x Genomics, CC-BY), Tabula Muris (Nature, CC-BY), and all referenced methods are properly cited.
+
+\item \textbf{New assets.} Are new assets introduced in the paper well documented and is the URL or other publicly available method for accessing these assets provided?
+
+\textit{Yes.} The code repository is documented and linked in the acknowledgments.
+
+\item \textbf{Crowdsourcing and research with human subjects.} For crowdsourcing experiments and research with human subjects, does the paper include the full text of instructions given to participants and screenshots?
+
+\textit{N/A.} No crowdsourcing or human subjects research was conducted.
+
+\item \textbf{IRB approvals or equivalent for research with human subjects.} Does the paper describe potential risks incurred by study participants, whether compensation was adequate, and whether informed consent was obtained?
+
+\textit{N/A.} Only publicly available datasets were used.
+
+\item \textbf{Declaration of LLM usage.} Does the paper declare the use of LLMs?
+
+\textit{No.} LLMs were not used in the research methodology, experimental design, or analysis.
+
+\end{enumerate}
+
+\end{document}

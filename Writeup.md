@@ -14,7 +14,7 @@ Deep learning models memorize training data, and for rare subpopulations this me
 
 This paper tests machine unlearning for VAEs trained on gene-expression data, where expression profiles can reveal disease status, genetic predispositions, and other personal health information. The work addresses subpopulation unlearning, meaning the removal of entire biological groups such as rare cell types or disease subtypes, not individual samples. Experiments use cell-type clusters (PBMC, Tabula Muris) and disease subtypes with per-patient annotations (TCGA-BRCA) as forget sets.
 
-Privacy leakage is measured by membership inference advantage (adapted from Yeom et al. 2018): advantage = 2|AUC − 0.5|. This is direction-agnostic, so AUC = 0.38 (over-unlearning) and AUC = 0.62 (under-unlearning) both give advantage = 0.24. Unlearning is judged against a multi-seed retrain reference by one-sided Welch's t-test with Holm–Bonferroni correction across methods. A method fails when its per-seed advantages are significantly greater than the retrain distribution after correction.
+Privacy leakage is measured by membership inference advantage (adapted from Yeom et al. 2018): $\text{advantage} = 2|\text{AUC} - 0.5|$. This is direction-agnostic, so $\text{AUC} = 0.38$ (over-unlearning) and $\text{AUC} = 0.62$ (under-unlearning) both give advantage $= 0.24$. Unlearning is judged against a multi-seed retrain reference by one-sided Welch's $t$-test with Holm–Bonferroni correction across methods. A method fails when its per-seed advantages are significantly greater than the retrain distribution after correction.
 
 **Contributions.**
 
@@ -58,7 +58,11 @@ The PBMC-33k dataset consists of 33,088 peripheral blood mononuclear cells from 
 **Two constructive approaches:**
 
 - **Training-time synthetic augmentation.** Train a VAE on retain + bootstrap-resampled synthetic forget-class samples generated from k unseen seed cells with Gaussian noise.
-- **Representation alignment unlearning (RAU).** Fine-tune the baseline so its posterior on forget samples matches the retrain model's posterior: ℒ = ELBO(R) + λ · KL(q_student(z|x_f) ‖ q_retrain(z|x_f)).
+- **Representation alignment unlearning (RAU).** Fine-tune the baseline so its posterior on forget samples matches the retrain model's posterior:
+
+  $$\mathcal{L} = \text{ELBO}(\mathcal{R}) + \lambda \cdot \text{KL}\!\left(q_{\text{student}}(z \mid x_f) \,\big\|\, q_{\text{retrain}}(z \mid x_f)\right)$$
+
+  where $\lambda$ controls the alignment strength.
 
 **Attack suite.** Trained MLP attacker (70-dim features = 69 from VAE latent space + k-NN distance to retain), threshold attacks (reconstruction, KL, ELBO), likelihood ratio, k-NN latent.
 
@@ -89,7 +93,7 @@ The multi-seed retrain reference has advantage 0.148 with nested 95% CI [0.070, 
 
 *MIA advantage by method on PBMC-33k structured forget set. The dashed line marks the 5-seed retrain advantage mean (0.148) with shaded nested 95% CI [0.070, 0.229]. No post-hoc unlearning method reaches the retrain CI.*
 
-**Failure modes.** Methods that treat unlearning as a small parameter perturbation (retain-only fine-tuning, gradient ascent, SSD, SCRUB) preserve utility almost perfectly (marker r ≥ 0.831, matching baseline) but produce no measurable privacy improvement. Thirty forget-set cells leave too small a gradient signal relative to the 28,094 retain cells. Fisher scrubbing and contrastive latent unlearning create detectable artifacts: contrastive AUC drops to 0.153 (Streisand effect), Fisher KL collapses from 10.55 to 0.007 on the forget set. Extra-gradient has high per-seed variance (σ_AUC = 0.142) and the nested CI overlaps the retrain CI from above; Welch still rejects (d = 1.67) so the mean advantage is reliably above retrain despite the variance.
+**Failure modes.** Methods that treat unlearning as a small parameter perturbation (retain-only fine-tuning, gradient ascent, SSD, SCRUB) preserve utility almost perfectly (marker $r \ge 0.831$, matching baseline) but produce no measurable privacy improvement. Thirty forget-set cells leave too small a gradient signal relative to the $28{,}094$ retain cells. Fisher scrubbing and contrastive latent unlearning create detectable artifacts: contrastive AUC drops to $0.153$ (Streisand effect), Fisher KL collapses from $10.55$ to $0.007$ on the forget set. Extra-gradient has high per-seed variance ($\sigma_{\text{AUC}} = 0.142$) and the nested CI overlaps the retrain CI from above; Welch still rejects ($d = 1.67$), so the mean advantage is reliably above retrain despite the variance.
 
 ### 4.2 Fisher by forget set type
 
@@ -119,7 +123,7 @@ This confound is not unique to TCGA-BRCA. On PBMC, within-cluster matching (5 un
 
 **Synthetic augmentation at training time.** If memorization concentrates in rare subpopulations, augmenting those subpopulations with synthetic data during training might prevent sample-level memorization while preserving subtype biology. VAEs trained on retain + bootstrap-resampled synthetic megakaryocytes (generated from 5 unseen seed cells with Gaussian noise) were compared to baseline and retrain. On PBMC with within-cluster matching, the augmented model achieves AUC = 0.82–1.00, *worse* than baseline (0.63). The model's representation of the megakaryocyte region is now shaped by the 5 seed cells rather than the 30 training cells, and the MIA detects this shift. Augmentation replaces one memorization pattern with another rather than eliminating memorization. On TCGA-BRCA with within-subtype matching, the augmented model (0.581) is indistinguishable from baseline (0.578) and retrain (0.573), consistent with the absence of patient-level memorization.
 
-**Representation alignment unlearning (RAU).** Instead of modifying parameters directly, RAU fine-tunes the baseline so its posterior on forget samples matches the retrain model's posterior. The retrain model provides the counterfactual representation, with no memorization by construction. A sweep over λ ∈ {0.1, 1.0, 10.0, 100.0} successfully aligns posteriors (KL to retrain drops from 139 to 0.02), but cross-cluster AUC drops to 0.10–0.13, a Streisand effect. The representational shift is itself a detectable membership signal. The structural limit extends to representation space: any modification to the model's treatment of forget samples, whether in parameter space (Fisher, SSD) or representation space (RAU, contrastive), creates a detectable trace.
+**Representation alignment unlearning (RAU).** Instead of modifying parameters directly, RAU fine-tunes the baseline so its posterior on forget samples matches the retrain model's posterior. The retrain model provides the counterfactual representation, with no memorization by construction. A sweep over $\lambda \in \{0.1, 1.0, 10.0, 100.0\}$ successfully aligns posteriors (KL to retrain drops from $139$ to $0.02$), but cross-cluster AUC drops to $0.10$–$0.13$, a Streisand effect. The representational shift is itself a detectable membership signal. The structural limit extends to representation space: any modification to the model's treatment of forget samples, whether in parameter space (Fisher, SSD) or representation space (RAU, contrastive), creates a detectable trace.
 
 ### 4.6 Utility evaluation
 
@@ -150,37 +154,47 @@ The 17× gap between VAE (0.306) and classifier (0.018) on PBMC arises because t
 
 ### 5.2 Proposition 1 (Fisher factorization for linear decoders)
 
-For a linear decoder f(z) = Wz + b with squared-error loss, the diagonal Fisher factorizes as F_{dh} = 4 𝔼[e_d²] · 𝔼[z_h²], giving
+**Proposition 1.** Let $f(z) = Wz + b$ be a linear decoder with $W \in \mathbb{R}^{D \times H}$, $b \in \mathbb{R}^D$, and squared-error loss $\ell(x, f(z)) = \tfrac{1}{2}\|x - f(z)\|^2$. Let $e_d = x_d - f_d(z)$ denote the per-output residual and $z_h$ the per-hidden-unit latent activation. Under the empirical Fisher with element-wise independence,
 
-**cos(F^F, F^R) = cos(σ^F, σ^R) · cos(ν^F, ν^R)**
+$$F_{dh} \;=\; 4\,\mathbb{E}\!\left[e_d^{\,2}\right]\,\mathbb{E}\!\left[z_h^{\,2}\right]\,.$$
 
-where σ is the residual variance profile (ℝ^D, indexed by output dimension) and ν is the latent second moment (ℝ^H, indexed by hidden unit).
+Define the residual variance profile $\sigma \in \mathbb{R}^D$ and the latent second moment $\nu \in \mathbb{R}^H$ by
+
+$$\sigma_d \;=\; \mathbb{E}\!\left[e_d^{\,2}\right]\,, \qquad \nu_h \;=\; \mathbb{E}\!\left[z_h^{\,2}\right]\,.$$
+
+Then for any two distributions $\mathcal{F}$ (forget) and $\mathcal{R}$ (retain) the Fisher cosine factorizes as
+
+$$\cos\!\left(F^{\mathcal{F}},\,F^{\mathcal{R}}\right) \;=\; \cos\!\left(\sigma^{\mathcal{F}},\,\sigma^{\mathcal{R}}\right) \cdot \cos\!\left(\nu^{\mathcal{F}},\,\nu^{\mathcal{R}}\right)\,.$$
+
+The forget-vs-retain Fisher overlap thus separates into a *residual-profile* factor (which depends on which output dimensions differ between $\mathcal{F}$ and $\mathcal{R}$) and a *latent-moment* factor (which depends on how the encoder uses each hidden unit). The two factors can be analyzed independently.
 
 ### 5.3 Corollary 2 (Dimensional scaling bounds)
 
-**Part (i)** — generative model. If only M of D output dimensions differ between forget and retain sets, with bounded relative variance V, then
+**Part (i) — generative model.** Suppose only $M$ of the $D$ output dimensions differ between $\mathcal{F}$ and $\mathcal{R}$, with bounded relative residual variance $V$ on the differing dimensions. Then
 
-cos(σ) ≥ (D − M) / (D − M + M·V²)
+$$\cos\!\left(\sigma^{\mathcal{F}},\,\sigma^{\mathcal{R}}\right) \;\ge\; \frac{D - M}{D - M + M V^{2}}\,.$$
 
-For PBMC (D=2000, M=100, V=3), the bound is 0.68. The data-direct cos(σ) = 0.83 satisfies this. The Fisher-marginal cos(σ) = 0.51 is lower because the softmax output layer couples output dimensions, departing from element-wise independence.
+For PBMC ($D = 2000$, $M = 100$, $V = 3$) the bound is $0.68$. The data-direct estimate $\cos(\sigma) = 0.83$ satisfies this. The Fisher-marginal estimate $\cos(\sigma) = 0.51$ is lower because the softmax output layer couples output dimensions, departing from the element-wise independence assumed in Proposition 1.
 
-**Part (ii)** — single-class classifier forget set. For C-class classification with a single-class forget set:
+**Part (ii) — single-class classifier forget set.** For a $C$-class classifier whose forget set is one entire class,
 
-cos(σ) = 1/√C
+$$\cos\!\left(\sigma^{\mathcal{F}},\,\sigma^{\mathcal{R}}\right) \;=\; \frac{1}{\sqrt{C}}\,.$$
 
-For C=14, this gives 0.27. The measured classifier cosine of 0.018 is lower still because deep classifiers also concentrate residual variance on one logit.
+For $C = 14$ this gives $0.27$. The measured classifier cosine of $0.018$ is lower still because deep classifiers also concentrate residual variance on the forget-class logit, producing additional anti-alignment beyond the linear bound.
+
+The two parts of the corollary together explain the $17\times$ gap empirically observed on PBMC: generative models scale as $1 - O(M/D)$, classifiers as $O(1/\sqrt{C})$.
 
 ### 5.4 Empirical verification
 
-The fc_mean Fisher matrix is approximately rank-1 (top singular value explains 94–96% of the Frobenius norm). The factorized prediction cos(σ)·cos(ν) = 0.41 overestimates the measured 0.37 by 11%, with the softmax nonlinearity as the dominant error source.
+The $W$ matrix of the decoder $\texttt{fc\_mean}$ layer is approximately rank-1: its top singular value explains $94$–$96\%$ of the Frobenius norm. The factorized prediction $\cos(\sigma) \cdot \cos(\nu) = 0.41$ overestimates the measured Fisher cosine $0.37$ by $11\%$, with the softmax nonlinearity as the dominant error source.
 
 ### 5.5 Controls
 
-**Model capacity.** A deep MLP classifier (2000 → [512, 128] → 14, 1.09M params, 95.2% accuracy) has shared-hidden cosine = 0.262 and class-specific output cosine = 0.010. Overlap depends on shared-vs-class-specific structure, not on model size.
+**Model capacity.** A deep MLP classifier ($2000 \to [512, 128] \to 14$, $1.09\text{M}$ parameters, $95.2\%$ accuracy) has shared-hidden cosine $= 0.262$ and class-specific output cosine $= 0.010$. Overlap depends on shared-vs-class-specific structure, not on model size.
 
-**Architecture generalization.** A VAE with z=8 gives global cosine = 0.846 (higher than z=32). Smaller latent dimension concentrates overlap in the bottleneck (0.858 vs. 0.291).
+**Architecture generalization.** A VAE with $z = 8$ gives global cosine $= 0.846$ (higher than $z = 32$). Smaller latent dimension concentrates overlap in the bottleneck ($0.858$ vs.\ $0.291$).
 
-**Cluster-conditional decoder.** Conditioning the output layer on a 14-dim cluster one-hot achieves near-zero overlap in the cluster-specific columns (1.2e-8) but irreducible overlap persists in the shared hidden layers (encoder 0.433, bottleneck 0.508, decoder hidden 0.346). Fisher scrubbing on the conditional VAE gives advantage = 0.72, no improvement over the standard VAE's 0.63. The shared encoder dominates because 64 of 69 MIA features come from encoder outputs.
+**Cluster-conditional decoder.** Conditioning the output layer on a $14$-dim cluster one-hot achieves near-zero overlap in the cluster-specific columns ($1.2 \times 10^{-8}$) but irreducible overlap persists in the shared hidden layers (encoder $0.433$, bottleneck $0.508$, decoder hidden $0.346$). Fisher scrubbing on the conditional VAE gives advantage $= 0.72$, no improvement over the standard VAE's $0.63$. The shared encoder dominates because $64$ of $69$ MIA features come from encoder outputs.
 
 ![Conditional VAE Fisher comparison](./figures/fisher_conditional_comparison.png)
 

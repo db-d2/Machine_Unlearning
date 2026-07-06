@@ -4,7 +4,7 @@ David Benson — Columbia University
 
 ## Overview
 
-Eight machine unlearning methods plus two constructive approaches are evaluated on VAEs trained on gene-expression data across two modalities: scRNA-seq (PBMC-33k, Tabula Muris) and bulk RNA-seq (TCGA-BRCA). All eight post-hoc methods fail on structured (biologically coherent) forget sets. A Fisher information analysis explains why: the VAE's shared decoder creates 17× higher Fisher overlap between forget and retain sets than a classifier on the same data, making selective parameter perturbation structurally harder for generative models. A within-subtype matching analysis shows that standard MIA evaluation also overestimates memorization by 30–90% via a biology confound.
+Nine machine unlearning methods plus two constructive approaches are evaluated on VAEs trained on gene-expression data across two modalities: scRNA-seq (PBMC-33k, Tabula Muris) and bulk RNA-seq (TCGA-BRCA). All nine post-hoc methods fail on structured (biologically coherent) forget sets. A Fisher information analysis explains why: the VAE's shared decoder output layer has roughly 27× higher Fisher overlap between forget and retain sets than a classifier's class-specific output (0.485 vs 0.018 under a per-sample estimator), making selective parameter perturbation structurally harder for generative models. A within-subtype matching analysis shows that standard MIA evaluation also overestimates memorization by 30–90% via a biology confound.
 
 ## Setup
 
@@ -110,24 +110,25 @@ PYTHONPATH=src python scripts/nested_bootstrap_retrain.py
 
 ## Key results
 
-All methods evaluated on PBMC-33k structured forget set (cluster 13, n=30 megakaryocytes). Advantage = 2|AUC − 0.5|. Methods are tested by one-sided Welch's t-test against the multi-seed retrain reference, with Cohen's d as effect size and Holm–Bonferroni correction across the 8 multi-seed methods.
+All methods evaluated on PBMC-33k structured forget set (cluster 13, n=30 megakaryocytes). Advantage = 2|AUC − 0.5|. Scoring is CPU-deterministic with a single attacker applied to every model, since MPS is not bit-reproducible run to run. Each method is compared to the multi-seed retrain reference by a nested bootstrap of the advantage difference, and a method fails when its point advantage exceeds the retrain 95% CI upper bound (0.258).
 
-| Method | Seeds | AUC | Advantage | Status |
+| Method | Seeds | AUC | Advantage [95% CI] | Status |
 |---|---|---|---|---|
-| Baseline | — | 0.783 | 0.565 | — |
-| Retain-only fine-tune | 5 | 0.665 | 0.331 | FAIL (d=10.8) |
-| Gradient ascent | 5 | 0.702 | 0.404 | FAIL (d=18.9) |
-| SSD (alpha=1.0) | 3 | 0.725 | 0.450 | FAIL (d=21.4) |
-| SCRUB (alpha_f=1.0) | 3 | 0.737 | 0.474 | FAIL (d=23.0) |
-| Contrastive latent | 3 | 0.153 | 0.695 | FAIL (Streisand, d=14.0) |
-| Fisher scrubbing | 3 | 0.814 | 0.628 | FAIL (worse, d=33.2) |
-| Extra-gradient (lambda=10) | 10 | 0.429 | 0.300 | FAIL (d=1.7) |
-| DP-SGD (eps=10) | 3 | 0.464 | 0.072 | Passes (from-scratch) |
-| **Multi-seed retrain** | **5** | **0.574** | **0.148** | **TARGET** |
+| Baseline | 1 | 0.791 | 0.582 | anchor |
+| Retain-only fine-tune | 5 | 0.666 | 0.333 [0.23, 0.43] | FAIL |
+| Gradient ascent | 5 | 0.698 | 0.396 [0.30, 0.49] | FAIL |
+| SSD (alpha=1.0) | 3 | 0.718 | 0.435 [0.31, 0.56] | FAIL |
+| SCRUB (alpha_f=1.0) | 3 | 0.706 | 0.411 [0.28, 0.54] | FAIL |
+| Moon feature-unlearn | 3 | 0.740 | 0.480 [0.36, 0.60] | FAIL |
+| Contrastive latent | 3 | 0.164 | 0.673 [0.57, 0.75] | FAIL (Streisand) |
+| Fisher scrubbing | 1 | 0.808 | 0.615 [0.45, 0.77] | FAIL (worse) |
+| Extra-gradient (lambda=10) | 10 | 0.433 | 0.281 [0.20, 0.37] | FAIL (marginal) |
+| DP-SGD (eps=10) | 3 | 0.478 | 0.045 [0.03, 0.18] | ~ retrain (from-scratch) |
+| **Multi-seed retrain** | **5** | **0.578** | **0.156 [0.08, 0.26]** | **TARGET** |
 
-Retrain advantage = 0.148, nested 95% CI [0.070, 0.229]. All seven post-hoc unlearning methods reject H₀: method ≤ retrain at p < 0.01 after Holm–Bonferroni correction.
+Retrain advantage = 0.156, nested 95% CI [0.082, 0.258]. Every post-hoc method's point advantage exceeds this bound; all except extra-gradient also have an advantage-difference CI that excludes zero. Extra-gradient is the one borderline case, its point advantage (0.281) above the bound while its difference from retrain is not statistically resolved.
 
-Fisher overlap (Section 6): VAE PBMC global cosine = 0.306, classifier = 0.018, ratio = 17×. TCGA-BRCA global cosine = 0.905 (the gap grows with the ratio of shared to class-specific decoder dimensions, per Corollary 2).
+Fisher overlap (Section 6): VAE PBMC decoder-output cosine = 0.485 vs classifier = 0.018, ratio ~27× (global-parameter cosine 0.209). TCGA-BRCA global cosine = 0.753 (the gap grows with the ratio of shared to class-specific decoder dimensions, per Corollary 2).
 
 ## Citation
 

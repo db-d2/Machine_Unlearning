@@ -69,7 +69,7 @@ MARKER_GENES = ['CD3D', 'CD3E', 'MS4A1', 'CD79A', 'CD14', 'LYZ', 'NKG7',
 # kNN reference size (sample retain set for speed, matching NB03)
 KNN_RETAIN_SAMPLE = 5000
 
-DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+DEVICE = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
 
 
 def load_vae_model(checkpoint_path):

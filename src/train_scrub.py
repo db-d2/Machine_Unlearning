@@ -148,7 +148,7 @@ def train_scrub(baseline_checkpoint, data_path, split_path, output_dir,
     Returns:
         Path to saved checkpoint.
     """
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
 
     torch.manual_seed(seed)
     np.random.seed(seed)

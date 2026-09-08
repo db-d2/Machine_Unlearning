@@ -1,0 +1,188 @@
+<title>Fishing for Privacy Stage 1</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ground: #F5F7F9; --surface: #FFFFFF; --ink: #1A222C; --muted: #5C6B7A; --rule: #D9E0E6;
+    --block: #A8261D; --block-soft: #F7E6E4; --hold: #256D4D; --hold-soft: #E2F0EA;
+    --warn: #A66B0F; --warn-soft: #F8EDD8; --code-bg: #EEF2F5; --accent: #2F5D8A; --accent-soft: #E3ECF5;
+    --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+    --mono: "IBM Plex Mono", "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #12181F; --surface: #1A222C; --ink: #E4EAF0; --muted: #97A5B3; --rule: #2A3541;
+      --block: #E0574C; --block-soft: #3A1F1C; --hold: #4FB283; --hold-soft: #16302A;
+      --warn: #E0A64A; --warn-soft: #382A14; --code-bg: #232D38; --accent: #7FB0E0; --accent-soft: #1E2F42;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #12181F; --surface: #1A222C; --ink: #E4EAF0; --muted: #97A5B3; --rule: #2A3541;
+    --block: #E0574C; --block-soft: #3A1F1C; --hold: #4FB283; --hold-soft: #16302A;
+    --warn: #E0A64A; --warn-soft: #382A14; --code-bg: #232D38; --accent: #7FB0E0; --accent-soft: #1E2F42;
+  }
+  body { background: var(--ground); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.55; margin: 0; }
+  main { max-width: 82ch; margin: 0 auto; padding: 40px 24px 80px; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+  h1 { font-size: 2.1rem; line-height: 1.15; }
+  h2 { font-size: 1.45rem; line-height: 1.25; margin-top: 2.8rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); }
+  h3 { font-size: 1.1rem; margin-top: 1.6rem; }
+  p { margin: 0.9rem 0; max-width: 72ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 0.35rem; }
+  .lede { color: var(--muted); font-size: 1.02rem; max-width: 68ch; }
+  code, .path { font-family: var(--mono); font-size: 0.86em; background: var(--code-bg); padding: 0.08em 0.35em; border-radius: 3px; }
+  .tablewrap { overflow-x: auto; margin: 1rem 0 1.4rem; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 6px 9px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-weight: 600; font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+  td.num, th.num { text-align: right; font-family: var(--mono); font-size: 0.84rem; white-space: nowrap; }
+  tr.ref td { background: var(--hold-soft); }
+  tr.over td { background: var(--warn-soft); }
+  tr.intact td { background: var(--block-soft); }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.82rem; color: var(--muted); margin: -0.6rem 0 1rem; }
+  .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+  .legend .l-ref::before { background: var(--hold-soft); border: 1px solid var(--hold); }
+  .legend .l-intact::before { background: var(--block-soft); border: 1px solid var(--block); }
+  .legend .l-over::before { background: var(--warn-soft); border: 1px solid var(--warn); }
+  .finding { border-left: 4px solid var(--accent); padding: 0.2rem 0 0.2rem 1.1rem; margin: 1.4rem 0; }
+  .finding .t { font-family: var(--serif); font-weight: 600; font-size: 1.08rem; display: block; margin-bottom: 0.3rem; }
+  .verdict { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 1.4rem 0; }
+  .verdict div { background: var(--surface); border: 1px solid var(--rule); padding: 12px 14px; }
+  .verdict .k { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; display: block; margin-bottom: 6px; }
+  .verdict .holds .k { color: var(--hold); } .verdict .changes .k { color: var(--warn); } .verdict .fails .k { color: var(--block); }
+  .verdict ul { margin: 0; padding-left: 1.1rem; font-size: 0.9rem; }
+  .verdict li { margin: 0.3rem 0; }
+  .options { counter-reset: opt; }
+  .option { background: var(--surface); border: 1px solid var(--rule); padding: 14px 16px; margin: 12px 0; }
+  .option.rec { border-color: var(--accent); background: var(--accent-soft); }
+  .option .name { font-family: var(--serif); font-weight: 600; font-size: 1.05rem; }
+  .option .tag { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-left: 8px; }
+  ul, ol { padding-left: 1.3rem; max-width: 72ch; } li { margin: 0.4rem 0; }
+  .method { font-size: 0.88rem; color: var(--muted); border-top: 1px solid var(--rule); margin-top: 3rem; padding-top: 1rem; }
+  @media (max-width: 720px) { .verdict { grid-template-columns: 1fr; } h1 { font-size: 1.7rem; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<main>
+  <span class="eyebrow">Stage 1 and 1b re-derivation · 2026-09-08</span>
+  <h1>Nothing to forget, nowhere to aim</h1>
+  <p class="lede">Every method checkpoint re-derived from one baseline with the fixed code, the leaky retrain replaced by five clean retain-split retrains, everything scored by one CPU attacker, utility recomputed for every checkpoint, and a reference-model likelihood-ratio audit added. <span class="path">CLAIMS_AUDIT.md</span> holds the claim-by-claim verdicts; this page holds the picture and the decision it forces.</p>
+
+  <h2>The picture in one table</h2>
+  <p>PBMC-33k, cluster 13, 30 forget cells against 194 matched negatives. MLP is the canonical attacker (advantage 2|AUC − 0.5|, nested 95% CI). LR is the reference-model likelihood-ratio audit: negative ELBO under clean retrain seed 42 minus negative ELBO under the target. Near 1 means the forget cells are still fitted better than a never-trained model fits them; near 0 means they are now fitted worse. Utility is held-out ELBO and marker-gene correlation.</p>
+  <div class="legend"><span class="l-ref">in the retrain band</span><span class="l-intact">signal intact</span><span class="l-over">over-corrected</span></div>
+  <div class="tablewrap"><table>
+    <tr><th>Model</th><th class="num">MLP AUC</th><th class="num">MLP adv [CI]</th><th class="num">LR AUC</th><th class="num">ELBO</th><th class="num">marker r</th></tr>
+    <tr><td>Baseline</td><td class="num">0.792</td><td class="num">0.584</td><td class="num">0.993</td><td class="num">364.0</td><td class="num">0.831</td></tr>
+    <tr class="ref"><td>Retrain, clean (5 seeds)</td><td class="num">0.529</td><td class="num">0.057 [0.044, 0.182]</td><td class="num">0.441 (retrain vs retrain; 0.33 to 0.53)</td><td class="num">364.2</td><td class="num">0.831</td></tr>
+    <tr class="intact"><td>Retain-only fine-tune (5)</td><td class="num">0.669</td><td class="num">0.339 [0.24, 0.44]</td><td class="num">0.936</td><td class="num">363.0</td><td class="num">0.832</td></tr>
+    <tr class="intact"><td>Gradient ascent (5)</td><td class="num">0.706</td><td class="num">0.412 [0.31, 0.51]</td><td class="num">0.967</td><td class="num">363.2</td><td class="num">0.831</td></tr>
+    <tr class="intact"><td>SSD (3)</td><td class="num">0.701</td><td class="num">0.402 [0.28, 0.53]</td><td class="num">0.939</td><td class="num">363.6</td><td class="num">0.831</td></tr>
+    <tr class="intact"><td>SCRUB (3)</td><td class="num">0.716</td><td class="num">0.431 [0.30, 0.56]</td><td class="num">0.951</td><td class="num">363.6</td><td class="num">0.831</td></tr>
+    <tr class="intact"><td>Moon (3)</td><td class="num">0.740</td><td class="num">0.480 [0.35, 0.60]</td><td class="num">0.979</td><td class="num">364.4</td><td class="num">0.831</td></tr>
+    <tr class="intact"><td>Fisher, fixed, step 1e-3 (3)</td><td class="num">0.673</td><td class="num">0.345 [0.22, 0.47]</td><td class="num">0.905</td><td class="num">363.6</td><td class="num">0.832</td></tr>
+    <tr class="over"><td>Fisher, step 3e-3 (1)</td><td class="num">0.312</td><td class="num">0.376</td><td class="num">0.204</td><td class="num">363.8</td><td class="num">0.831</td></tr>
+    <tr class="over"><td>Fisher, step 1e-2 (1)</td><td class="num">0.445</td><td class="num">0.110</td><td class="num">0.273</td><td class="num">370.7</td><td class="num">0.830</td></tr>
+    <tr class="over"><td>Extra-gradient λ=10 (10)</td><td class="num">0.411</td><td class="num">0.225 [0.15, 0.33]</td><td class="num">0.248 (7 seeds 0.01 to 0.15; 3 seeds 0.59 to 0.70)</td><td class="num">363.8</td><td class="num">0.832</td></tr>
+    <tr class="over"><td>Extra-gradient λ=1 (10)</td><td class="num">0.336</td><td class="num">0.327 [0.20, 0.48]</td><td class="num">0.107 (all seeds 0.01 to 0.25)</td><td class="num">363.2</td><td class="num">0.831</td></tr>
+    <tr class="over"><td>Contrastive (3)</td><td class="num">0.170</td><td class="num">0.661 [0.56, 0.75]</td><td class="num">0.077</td><td class="num">363.7</td><td class="num">0.831</td></tr>
+    <tr class="ref"><td>DP-SGD (3)</td><td class="num">0.466</td><td class="num">0.068 [0.03, 0.19]</td><td class="num">0.515</td><td class="num">402.9</td><td class="num">0.789</td></tr>
+  </table></div>
+  <p>Success threshold 0.182. Every post-hoc method's difference from retrain has a nested CI that excludes zero (extra-gradient λ=10: [0.015, 0.243], P = 0.987, Holm-corrected). DP-SGD's does not. The refit control puts the clean retrain at advantage 0.035 [−0.03, 0.10] against a baseline positive control of 0.797.</p>
+
+  <h2>What the evidence says</h2>
+  <div class="finding"><span class="t">The membership signal on cluster 13 is large and cleanly measured.</span>
+    With a reference that never saw the negatives, the retrain sits at chance under both attackers and at 0.44 under the reference audit; the baseline sits at 0.79 and 0.99. The genuine gap is 0.53 in advantage, not 0.43, and the sentence that the retrain sits above chance because of biology is withdrawn for PBMC. Biology is what the cross-class protocol measures on the other cohorts (TCGA-BRCA retrain 0.830 above baseline 0.803; Tabula Muris 0.943 above 0.903; cluster 7; cluster 12 clean retrain 0.814 against baseline 0.869), and within-subtype matching or a clean retrain removes it. That contribution stands, with cluster 13 as its clean positive control.</div>
+  <div class="finding"><span class="t">No post-hoc method lands where retraining lands, and the failure has two modes.</span>
+    The utility-preserving methods leave the forget cells fitted almost as well as the baseline fits them (reference audit 0.90 to 0.98 against 0.99), which the MLP attacker reads as advantage 0.34 to 0.48. The methods that push harder overshoot: the forget cells end up fitted worse than a never-trained model fits them (reference audit 0.01 to 0.27, MLP AUC 0.10 to 0.45). Extra-gradient at λ=10 is bimodal, seven seeds over-correct and three under-correct, and none of ten lands in the retrain band. Only the from-scratch models, retrain and DP-SGD, do.</div>
+  <div class="finding"><span class="t">Nothing costs utility any more.</span>
+    Every post-hoc method sits at baseline ELBO (363 to 364) and marker correlation (0.831 to 0.832). The paper's posterior collapse for Fisher and the 40-point ELBO cost of extra-gradient were the loss-weighting bug. Only DP-SGD pays a utility price. The privacy-utility trade-off among post-hoc methods does not exist in the re-derived data; what exists is a calibration failure. Methods move the forget cells' treatment freely, in either direction, without disturbing the retain cells, and none can aim at the retrain point because none has access to it.</div>
+  <div class="finding"><span class="t">The Fisher-overlap section loses its stated role and gains a narrower one.</span>
+    The overlap measurements are correct and unchanged (0.35 to 0.49 at every layer against a classifier's 0.02, the factorization, the controls). The claim that the overlap is why parameter-space edits cannot reduce forget-set loss without proportionally disturbing the retain set is not what the re-derived methods show: they move the forget cells' fit by any amount asked with held-out ELBO unchanged to the first decimal. The phase audit below shows what the overlap does cause: the edit damages the retain set along shared directions, and the retain fine-tune that repairs it undoes the edit. That is the mechanism of the signal-intact mode; it does not explain the over-corrected mode.</div>
+  <div class="finding"><span class="t">The attack-suite table is rewritten.</span>
+    With the library size restored, the reconstruction threshold is a genuine membership attack (baseline 0.78, clean retrain 0.54), the KL and k-NN attacks are biology (they score the clean retrain at advantage 0.74 and 0.96), and the old likelihood-ratio row was one statistic reported twice with opposite signs. The reference audit replaces it, with retrain-versus-retrain (0.33 to 0.53 across seeds) as its floor.</div>
+
+  <h2>Claim verdicts</h2>
+  <div class="verdict">
+    <div class="holds"><span class="k">Holds</span><ul>
+      <li>Structured subpopulations are memorized; the cluster-13 signal is real and now larger.</li>
+      <li>No post-hoc method reaches retrain-level privacy on PBMC (every difference CI excludes zero).</li>
+      <li>DP-SGD and retrain are the only models in the retrain band; DP-SGD pays in utility.</li>
+      <li>The biology confound on TCGA-BRCA, Tabula Muris, cluster 7, cluster 12.</li>
+      <li>Contrastive over-corrects (Streisand).</li>
+      <li>The Fisher-overlap measurements, Proposition 1, the conditional-decoder result.</li>
+    </ul></div>
+    <div class="changes"><span class="k">Changes</span><ul>
+      <li>Retrain floor 0.057 [0.044, 0.182], threshold 0.182, refit 0.035 (at chance).</li>
+      <li>Extra-gradient: separable from retrain, bimodal, no utility cost, at either weight.</li>
+      <li>All nine post-hoc methods preserve utility; only DP-SGD degrades it.</li>
+      <li>TCGA methods: five at 0.83, fixed Fisher 0.784 (within-subtype 0.543).</li>
+      <li>Tabula Muris: baseline 0.903, retrain 0.943, extra-gradient 0.723, Fisher 0.944.</li>
+      <li>Cluster 12: Fisher no longer collapses; extra-gradient bimodal (0.34, 0.28, 0.61).</li>
+      <li>Attack suite: reconstruction carries membership; KL and k-NN are biology.</li>
+    </ul></div>
+    <div class="fails"><span class="k">Fails</span><ul>
+      <li>"Posterior collapse" as a failure mode (Fisher: AUC 0.673, ELBO 363.6, KL 10.8).</li>
+      <li>"Retrain sits above chance because of biology" on PBMC.</li>
+      <li>"Methods that reduce the signal destroy the model."</li>
+      <li>Fisher overlap as the reason for all failure (it explains the signal-intact mode only).</li>
+      <li>"Reconstruction quality is preserved; the signal lives in KL and latent geometry."</li>
+      <li>"Fisher works on scattered sets" and the size-ablation reading of over- then under-unlearning.</li>
+    </ul></div>
+  </div>
+
+  <h2>Stage 1b: the re-derived families and the phase audit</h2>
+  <p>Everything the paper had in appendices or on single seeds was re-derived from the July baseline with the fixed code: frozen critics (four configurations, three seeds), the structured extra-gradient size ablation and the scattered Fisher size ablation, each with per-size clean retrains, synthetic augmentation, and RAU, both against the clean retrain. A new phase audit records what the two-phase methods do at each phase.</p>
+
+  <h3>The phase audit ties the proposition to the outcome</h3>
+  <p>Negative ELBO per cell. The clean retrain puts the forget cells at 333, the same level as never-seen cells; the baseline puts them at 270.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Stage</th><th class="num">forget</th><th class="num">retain</th><th class="num">held-out</th><th class="num">MLP AUC</th><th class="num">reference-LR</th></tr>
+    <tr><td>Baseline</td><td class="num">270</td><td class="num">363</td><td class="num">363</td><td class="num">0.799</td><td class="num">0.995</td></tr>
+    <tr><td>Fisher step 1e-3, after scrub</td><td class="num">5,652</td><td class="num">1,254</td><td class="num">1,262</td><td class="num">0.015</td><td class="num">0.018</td></tr>
+    <tr class="intact"><td>Fisher step 1e-3, after fine-tune</td><td class="num">301</td><td class="num">362</td><td class="num">362</td><td class="num">0.691</td><td class="num">0.914</td></tr>
+    <tr class="over"><td>Fisher step 3e-3, after fine-tune</td><td class="num">384</td><td class="num">363</td><td class="num">363</td><td class="num">0.422</td><td class="num">0.208</td></tr>
+    <tr class="over"><td>Fisher step 1e-2, after fine-tune</td><td class="num">518</td><td class="num">370</td><td class="num">369</td><td class="num">0.393</td><td class="num">0.168</td></tr>
+    <tr><td>Gradient ascent, after ascent</td><td class="num">271</td><td class="num">363</td><td class="num">363</td><td class="num">0.798</td><td class="num">0.993</td></tr>
+    <tr class="intact"><td>Gradient ascent, after fine-tune</td><td class="num">297</td><td class="num">362</td><td class="num">362</td><td class="num">0.698</td><td class="num">0.945</td></tr>
+  </table></div>
+  <p>The scrub is not selective: forget loss up 21-fold, retain and held-out up 3.5-fold, the shared damage Proposition 1 predicts. The retain fine-tune that repairs the retain set restores the forget set with it, undoing 99 percent of the displacement through the shared parameters. At larger steps the fine-tune cannot bring the forget set back and it ends over-corrected. The gradient-ascent phase at the paper's setting does nothing (270 to 271); that method reports the retain fine-tune's own drift. Entangled parameters do not block the edit; they make the retain fine-tune undo it. Where a method lands between 270 and beyond 333 is set by how hard it pushed first, and nothing in any method encodes 333.</p>
+
+  <h3>The four families</h3>
+  <ul>
+    <li><span class="tag warn">Flips</span><strong>Frozen critics.</strong> AUC 0.003 to 0.008 across all configurations and seeds (the paper had 0.992), reference-LR 0.004 to 0.006. Same advantage, opposite direction: the forget cells become the least member-like cells in the data. Single-critic runs keep baseline utility; the three-critic runs are the only post-hoc runs with a utility cost (ELBO 403 to 406).</li>
+    <li><span class="tag warn">Changes</span><strong>Structured size ablation.</strong> With per-size clean retrains the reference moves (0.452 at n=10, 0.574 at n=50, 0.670 at n=100), so the multi-cluster sets are confound-affected like cluster 12. Extra-gradient over-corrects at every size (AUC 0.35 to 0.42, reference-LR 0.14 to 0.19); "over-unlearns at n=10, under-unlearns at n=100" does not survive.</li>
+    <li><span class="tag block">Fails</span><strong>Scattered size ablation.</strong> Baseline, clean retrain, and Fisher coincide within 0.02 AUC at every size from 10 to 500. The attacker sees nothing on scattered cells and Fisher removes nothing; "Fisher works on scattered sets" goes.</li>
+    <li><span class="tag hold">Holds</span><strong>RAU.</strong> Matches the retrain's posterior to within 0.03 nats (from 180) at every weight, yet cross-cluster AUC 0.28 to 0.35 against the retrain's 0.548 and reference-LR 0.01 to 0.08. A posterior target is not a likelihood target: the one method handed a target still over-corrects.</li>
+    <li><span class="tag hold">Holds, and sharper</span><strong>Augmentation.</strong> Models trained on synthetic megakaryocytes and never on the forget cells score 0.74 to 0.80 under the MLP attacker (baseline 0.80, retrain 0.55) and 0.96 to 0.98 under the reference audit. They learned megakaryocytes. For a forget set that is the whole training subpopulation, membership and subpopulation knowledge are one quantity, and no membership evaluation can separate them. This is the confound thesis at the level of the individual and belongs in the measurement section as the stated limit of "unlearning a subpopulation".</li>
+  </ul>
+
+  <h2>The decision this forces</h2>
+  <p>The spine question survives with a cleaner answer. Can a gene-expression VAE selectively forget a rare subpopulation without retraining? No. Not because the methods destroy the model, but because post-hoc methods cannot aim at the point retraining reaches. On the axis of the forget cells' negative ELBO the baseline sits at 270, the retrain at 333, and every post-hoc method lands short of 333 or past it, at no cost to the rest of the model. Each mode now has a mechanism. Edit-then-fine-tune methods land short because the fine-tune undoes the edit through shared parameters, which is Proposition 1's implication observed directly. Methods that push with a continuous forget-set objective land past because nothing in the objective encodes the retrain level, and RAU shows that even a target stated as a posterior does not calibrate the likelihood. Only training from scratch lands on the target.</p>
+  <p>The measurement contribution gets stronger: the clean-retrain reference, within-subtype matching, the confound on four cohorts, the reference audit as the per-sample instrument, and the augmentation result as the honest statement of its limit. The Fisher-overlap section keeps a real role, narrower than before: it is the mechanism of the signal-intact mode, with the phase audit as its test, and it no longer claims to explain the over-corrected mode.</p>
+  <div class="options">
+    <div class="option"><span class="name">1. Keep the structure, rewrite the middle.</span>
+      <p>Sections 4 to 6 from the new numbers, the attack table replaced by the reference audit, the two-mode description replacing collapse-or-Streisand, Section 7 rescoped to entangled repair with the phase audit as its evidence.</p></div>
+    <div class="option rec"><span class="name">2. Promote the measurement and the calibration finding.</span><span class="tag">recommended</span>
+      <p>Lead with the corrected measurement as the round-4 plan intended, make the clean-retrain protocol and the reference audit the main instrument, present the calibration failure and its two mechanisms as the unlearning finding, and keep Section 7 as the mechanism section it now is.</p></div>
+    <div class="option"><span class="name">3. Rebuild around calibration.</span>
+      <p>Treat the missing target as the hypothesis and test whether supplying it in the right quantity fixes a method: a matched-negative critic, or early stopping on the forget cells' likelihood against a held-out reference. RAU is the first data point and a negative one; a likelihood-targeted variant would be the test. About a week.</p></div>
+  </div>
+  <p>Recommendation: option 2, with the option-3 likelihood-targeted variant as the one addition worth the time, since it would turn "nowhere to aim" from a diagnosis into a tested claim.</p>
+
+  <h3>Questions for the author</h3>
+  <ul>
+    <li>Section 7 as the mechanism section (entangled repair, phase audit) rather than as the explanation of all failure: agreed?</li>
+    <li>The reference audit as a main instrument, presented as an auditor's tool with the augmentation result as its stated limit: agreed?</li>
+    <li>Extra-gradient: report both weights, or λ=10 as the paper's regime with λ=1 as an ablation?</li>
+    <li>The likelihood-targeted variant (option 3): worth a week before the rewrite, or after?</li>
+  </ul>
+
+  <h2>Residuals</h2>
+  <ul>
+    <li>The reference audit exists for PBMC only; Tabula Muris and TCGA versions are cheap and would put their tables on the same instrument.</li>
+    <li>The rules file, both <span class="path">CLAUDE.md</span> files, and the Markdown mirrors still quote the old numbers and follow the paper rewrite.</li>
+  </ul>
+
+  <p class="method">Sources: <span class="path">outputs/p4/multiseed/nested_ci_all.json</span>, <span class="path">persample/*.json</span>, <span class="path">utility_all.json</span>, <span class="path">retrain_refit.json</span>, <span class="path">outputs/attack_lr_reference.json</span>, <span class="path">outputs/attack_suite_results.json</span>, <span class="path">outputs/p1_c12/scores_c12_v2.json</span>, <span class="path">outputs/tabula_muris/unlearning_results.json</span>, <span class="path">outputs/tcga_brca/unlearning/unlearning_results.json</span>, <span class="path">outputs/checkpoint_manifest.json</span>, <span class="path">outputs/claims_audit.json</span>. Superseded inputs in <span class="path">outputs/_superseded_20260908/</span>. Markdown source <span class="path">STAGE1_ANALYSIS.md</span>; verdicts in <span class="path">CLAIMS_AUDIT.md</span>, tables in <span class="path">CLAIMS_AUDIT_TABLES.md</span>.</p>
+</main>

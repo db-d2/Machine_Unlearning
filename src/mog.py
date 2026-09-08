@@ -446,7 +446,7 @@ def run_mog_experiment(
     Run full MoG experiment: generate data, train VAE, create forget set,
     retrain, evaluate privacy/utility.
     """
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu')
     print(f"\n{'='*80}")
     print(f"Running MoG experiment: K={K}, d={d}, n={n}, scenario={scenario}")
     print(f"Forget scenario: {forget_scenario}")

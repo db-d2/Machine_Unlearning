@@ -127,112 +127,98 @@ def classifier_layer_category(name):
 # ---------------------------------------------------------------------------
 
 def compute_vae_fisher(model, dataloader, device, damping=1e-8):
-    """Diagonal Fisher information for a VAE using ELBO loss.
+    """Diagonal empirical Fisher for a VAE using the negative ELBO.
 
-    Uses reduction='sum' then divides by n_samples (matching NB26 methodology).
+    Per-sample gradients: F_ii = (1/N) sum_n (dL(x_n)/dtheta_i)^2, eval mode
+    (no dropout), deterministic latent z=mu. Deterministic and reproducible.
     Returns (fisher_dict, n_samples).
     """
-    model.train()
-    fisher = {}
-    for name, param in model.named_parameters():
-        if param.requires_grad:
-            fisher[name] = torch.zeros_like(param.data)
+    model.eval()
+    fisher = {name: torch.zeros_like(p.data)
+              for name, p in model.named_parameters() if p.requires_grad}
     n_samples = 0
-
     for x_batch, lib_batch in dataloader:
         x_batch, lib_batch = x_batch.to(device), lib_batch.to(device)
-        model.zero_grad()
-        mu, logvar = model.encode(x_batch)
-        z = model.reparameterize(mu, logvar)
-        if model.likelihood == 'nb':
-            mean, dispersion = model.decode(z, lib_batch)
-            recon_loss = nn.functional.mse_loss(mean, x_batch, reduction='sum')
-        else:
-            recon_mu, recon_logvar = model.decode(z)
-            recon_loss = 0.5 * (
-                recon_logvar
-                + ((x_batch - recon_mu) ** 2) / torch.exp(recon_logvar)
-                + np.log(2 * np.pi)
-            ).sum()
-        kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
-        loss = recon_loss + kl_loss
-        loss.backward()
-        for name, param in model.named_parameters():
-            if param.requires_grad and param.grad is not None:
-                fisher[name] += param.grad.data ** 2
-        n_samples += x_batch.size(0)
-
+        for i in range(x_batch.size(0)):
+            xi, li = x_batch[i:i + 1], lib_batch[i:i + 1]
+            model.zero_grad()
+            mu, logvar = model.encode(xi)
+            z = mu
+            if model.likelihood == 'nb':
+                mean, dispersion = model.decode(z, li)
+                recon_loss = nn.functional.mse_loss(mean, xi, reduction='sum')
+            else:
+                recon_mu, recon_logvar = model.decode(z)
+                recon_loss = 0.5 * (recon_logvar
+                                    + ((xi - recon_mu) ** 2) / torch.exp(recon_logvar)
+                                    + np.log(2 * np.pi)).sum()
+            kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+            (recon_loss + kl_loss).backward()
+            for name, p in model.named_parameters():
+                if p.requires_grad and p.grad is not None:
+                    fisher[name] += p.grad.data ** 2
+            n_samples += 1
     for name in fisher:
-        fisher[name] /= n_samples
-        fisher[name] += damping
-    model.train(False)
+        fisher[name] = fisher[name] / n_samples + damping
     return fisher, n_samples
 
 
 def compute_classifier_fisher(model, dataloader, device, damping=1e-8):
-    """Diagonal Fisher information for a classifier using cross-entropy loss.
+    """Diagonal empirical Fisher for a classifier (per-sample cross-entropy).
 
+    F_ii = (1/N) sum_n (dL(x_n)/dtheta_i)^2, eval mode. Consistent with the VAE
+    estimator so VAE-vs-classifier overlap is an apples-to-apples comparison.
     Returns (fisher_dict, n_samples).
     """
-    model.train()
-    fisher = {}
-    for name, param in model.named_parameters():
-        if param.requires_grad:
-            fisher[name] = torch.zeros_like(param.data)
+    model.eval()
+    fisher = {name: torch.zeros_like(p.data)
+              for name, p in model.named_parameters() if p.requires_grad}
     n_samples = 0
-
     for x_batch, y_batch in dataloader:
         x_batch, y_batch = x_batch.to(device), y_batch.to(device)
-        model.zero_grad()
-        logits = model(x_batch)
-        loss = nn.functional.cross_entropy(logits, y_batch, reduction='sum')
-        loss.backward()
-        for name, param in model.named_parameters():
-            if param.requires_grad and param.grad is not None:
-                fisher[name] += param.grad.data ** 2
-        n_samples += x_batch.size(0)
-
+        for i in range(x_batch.size(0)):
+            model.zero_grad()
+            logits = model(x_batch[i:i + 1])
+            loss = nn.functional.cross_entropy(logits, y_batch[i:i + 1], reduction='sum')
+            loss.backward()
+            for name, p in model.named_parameters():
+                if p.requires_grad and p.grad is not None:
+                    fisher[name] += p.grad.data ** 2
+            n_samples += 1
     for name in fisher:
-        fisher[name] /= n_samples
-        fisher[name] += damping
-    model.train(False)
+        fisher[name] = fisher[name] / n_samples + damping
     return fisher, n_samples
 
 
 def compute_conditional_vae_fisher(model, dataloader, device, damping=1e-8):
-    """Diagonal Fisher information for a conditional VAE.
+    """Diagonal empirical Fisher for a conditional VAE (per-sample, eval, z=mu).
 
     Dataloader yields (x, library_size, cluster_onehot).
     Returns (fisher_dict, n_samples).
     """
-    model.train()
-    fisher = {}
-    for name, param in model.named_parameters():
-        if param.requires_grad:
-            fisher[name] = torch.zeros_like(param.data)
+    model.eval()
+    fisher = {name: torch.zeros_like(p.data)
+              for name, p in model.named_parameters() if p.requires_grad}
     n_samples = 0
-
     for x_batch, lib_batch, cluster_batch in dataloader:
         x_batch = x_batch.to(device)
         lib_batch = lib_batch.to(device)
         cluster_batch = cluster_batch.to(device)
-        model.zero_grad()
-        mu, logvar = model.encode(x_batch)
-        z = model.reparameterize(mu, logvar)
-        mean, dispersion = model.decode(z, lib_batch, cluster_onehot=cluster_batch)
-        recon_loss = nn.functional.mse_loss(mean, x_batch, reduction='sum')
-        kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
-        loss = recon_loss + kl_loss
-        loss.backward()
-        for name, param in model.named_parameters():
-            if param.requires_grad and param.grad is not None:
-                fisher[name] += param.grad.data ** 2
-        n_samples += x_batch.size(0)
-
+        for i in range(x_batch.size(0)):
+            model.zero_grad()
+            mu, logvar = model.encode(x_batch[i:i + 1])
+            z = mu
+            mean, dispersion = model.decode(z, lib_batch[i:i + 1],
+                                            cluster_onehot=cluster_batch[i:i + 1])
+            recon_loss = nn.functional.mse_loss(mean, x_batch[i:i + 1], reduction='sum')
+            kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+            (recon_loss + kl_loss).backward()
+            for name, p in model.named_parameters():
+                if p.requires_grad and p.grad is not None:
+                    fisher[name] += p.grad.data ** 2
+            n_samples += 1
     for name in fisher:
-        fisher[name] /= n_samples
-        fisher[name] += damping
-    model.train(False)
+        fisher[name] = fisher[name] / n_samples + damping
     return fisher, n_samples
 
 

@@ -67,6 +67,7 @@ def extract_mia_features(model, samples, device='cpu', variant='v1'):
     Returns:
         Feature tensor [n_samples, feature_dim]
     """
+    model = model.to(device)   # 2026-09-08: features are extracted on the evaluation device (CPU)
     model.eval()
     x = samples.to(device)
     lib = x.sum(dim=1, keepdim=True)

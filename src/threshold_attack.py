@@ -8,6 +8,10 @@ Assumption level: LOW
 - No auxiliary models, no training data access, no learned parameters
 
 Reference: Yeom et al. "Privacy Risk in Machine Learning"
+
+Revision 2026-09-08 (round-5 review). The decoder's mean is a softmax over genes scaled by the
+library size; decoding without the library size compared probabilities against log counts,
+which made the score independent of the model. The library size is now passed.
 """
 
 import numpy as np
@@ -39,7 +43,7 @@ def compute_reconstruction_loss(model, x: torch.Tensor, device: str = 'cpu') -> 
         # Sample z (use mean for deterministic scoring)
         z = mu
         # Decode - handle both NB (returns tuple) and Gaussian decoders
-        decode_output = model.decode(z)
+        decode_output = model.decode(z, x.sum(dim=1, keepdim=True)) if getattr(model, 'likelihood', None) == 'nb' else model.decode(z)
         if isinstance(decode_output, tuple):
             recon = decode_output[0]  # NB decoder returns (mean, dispersion)
         else:
@@ -70,7 +74,7 @@ def compute_elbo_components(model, x: torch.Tensor, device: str = 'cpu') -> Dict
         mu, logvar = model.encode(x)
         z = mu
         # Decode - handle both NB (returns tuple) and Gaussian decoders
-        decode_output = model.decode(z)
+        decode_output = model.decode(z, x.sum(dim=1, keepdim=True)) if getattr(model, 'likelihood', None) == 'nb' else model.decode(z)
         if isinstance(decode_output, tuple):
             recon = decode_output[0]  # NB decoder returns (mean, dispersion)
         else:

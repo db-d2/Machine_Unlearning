@@ -42,7 +42,7 @@ SPLIT_DIR = BASE_DIR / 'outputs' / 'p4' / 'size_ablation' / 'splits'
 
 SIZES = [10, 30, 50, 100, 500]
 KNN_RETAIN_SAMPLE = 5000
-DEVICE = 'cpu'
+DEVICE = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
 
 
 def load_vae_model(checkpoint_path):

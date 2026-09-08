@@ -124,7 +124,7 @@ def train_dp(data_path, split_path, output_dir,
     if hidden_dims is None:
         hidden_dims = [1024, 512, 128]
 
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device = 'cpu'  # DP-SGD/Opacus: per-sample-gradient hooks unreliable on MPS; keep on CPU
 
     torch.manual_seed(seed)
     np.random.seed(seed)

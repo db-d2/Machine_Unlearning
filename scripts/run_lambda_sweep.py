@@ -53,7 +53,7 @@ MATCHED_NEG_STRUCTURED = OUTPUT_BASE / 'matched_negatives.json'
 VARIANTS = ['v1', 'v2', 'v3']
 SEEDS = [42, 43, 44]
 KNN_RETAIN_SAMPLE = 5000
-DEVICE = 'cpu'
+DEVICE = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
 
 
 def load_vae_model(checkpoint_path, config=None):

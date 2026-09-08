@@ -83,21 +83,30 @@ def main(args):
     print(f"Cells to exclude: {len(forget_indices)}")
     print(f"Remaining cells (D\\F): {adata.shape[0] - len(forget_indices)}")
 
-    # Create train/val/test splits from remaining data
+    # Training cells. When the split file carries the baseline's own retain/unseen split,
+    # train on exactly the retain split and validate on the unseen split, so the retrain
+    # reference never sees the cells that serve as matched negatives. (Before 2026-09-08
+    # this script re-split ALL non-forget cells 85/15, which put ~85% of the unseen split,
+    # and 159-170 of the 194 PBMC matched negatives, into the retrain training set.)
     n_cells = adata.n_obs
-    all_indices = np.arange(n_cells)
-
-    # Remove forget set cells
-    retain_mask = np.ones(n_cells, dtype=bool)
-    retain_mask[forget_indices] = False
-    retain_indices = all_indices[retain_mask]
-
-    # Split retained data: 85% train, 15% val from D\F
-    np.random.shuffle(retain_indices)
-    n_train = int(0.85 * len(retain_indices))
-
-    train_indices = retain_indices[:n_train]
-    val_indices = retain_indices[n_train:]
+    with open(args.forget_set_path, 'r') as f:
+        _split = json.load(f)
+    if 'retain_indices' in _split and 'unseen_indices' in _split:
+        retain_indices = np.array(_split['retain_indices'])
+        train_indices = retain_indices.copy()
+        val_indices = np.array(_split['unseen_indices'])
+        assert not set(train_indices.tolist()) & set(forget_indices.tolist())
+        print("Using the split file's retain_indices for training and unseen_indices for validation")
+    else:
+        all_indices = np.arange(n_cells)
+        retain_mask = np.ones(n_cells, dtype=bool)
+        retain_mask[forget_indices] = False
+        retain_indices = all_indices[retain_mask]
+        np.random.shuffle(retain_indices)
+        n_train = int(0.85 * len(retain_indices))
+        train_indices = retain_indices[:n_train]
+        val_indices = retain_indices[n_train:]
+        print("WARNING: split file has no retain/unseen indices; re-splitting all non-forget cells 85/15")
 
     print(f"\nSplits from D\\F:")
     print(f"  Train: {len(train_indices)}")

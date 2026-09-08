@@ -104,7 +104,7 @@ def train_retain_finetune(baseline_checkpoint, data_path, split_path,
     Returns:
         Path to saved checkpoint.
     """
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
 
     # Seed
     torch.manual_seed(seed)

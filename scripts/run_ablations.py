@@ -101,7 +101,7 @@ def evaluate_model(model_path, split_path, attacker_variant='v1'):
     from sklearn.metrics import roc_auc_score, roc_curve
     from learning_curve import get_feature_dim
 
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
 
     # Load unlearned model
     unlearn_ckpt = torch.load(model_path, map_location=device)

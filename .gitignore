@@ -132,3 +132,6 @@ checkpoints/
 # *.hdf5
 # *.pkl
 # *.pickle
+
+# Reference PDFs (not committed)
+refs/

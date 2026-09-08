@@ -1,0 +1,227 @@
+<title>Fishing for Privacy Round 5</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ground: #F5F7F9; --surface: #FFFFFF; --ink: #1A222C; --muted: #5C6B7A; --rule: #D9E0E6;
+    --block: #A8261D; --block-soft: #F7E6E4; --hold: #256D4D; --hold-soft: #E2F0EA;
+    --warn: #A66B0F; --warn-soft: #F8EDD8; --code-bg: #EEF2F5;
+    --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+    --mono: "IBM Plex Mono", "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #12181F; --surface: #1A222C; --ink: #E4EAF0; --muted: #97A5B3; --rule: #2A3541;
+      --block: #E0574C; --block-soft: #3A1F1C; --hold: #4FB283; --hold-soft: #16302A;
+      --warn: #E0A64A; --warn-soft: #382A14; --code-bg: #232D38;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #12181F; --surface: #1A222C; --ink: #E4EAF0; --muted: #97A5B3; --rule: #2A3541;
+    --block: #E0574C; --block-soft: #3A1F1C; --hold: #4FB283; --hold-soft: #16302A;
+    --warn: #E0A64A; --warn-soft: #382A14; --code-bg: #232D38;
+  }
+  body { background: var(--ground); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.55; margin: 0; }
+  main { max-width: 78ch; margin: 0 auto; padding: 40px 24px 80px; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+  h1 { font-size: 2.1rem; line-height: 1.15; }
+  h2 { font-size: 1.45rem; line-height: 1.25; margin-top: 2.8rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); }
+  h3 { font-size: 1.12rem; margin-top: 1.8rem; }
+  p { margin: 0.9rem 0; max-width: 70ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 0.35rem; }
+  .lede { color: var(--muted); font-size: 1.02rem; max-width: 66ch; }
+  code, .path { font-family: var(--mono); font-size: 0.86em; background: var(--code-bg); padding: 0.08em 0.35em; border-radius: 3px; }
+  .verdict { margin-top: 2rem; border-left: 4px solid var(--block); padding: 0.2rem 0 0.2rem 1.1rem; }
+  .verdict .word { font-family: var(--serif); font-size: 1.35rem; font-weight: 600; color: var(--block); }
+  .defects { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 1.6rem 0 0.4rem; }
+  .defect { background: var(--surface); border: 1px solid var(--rule); border-top: 3px solid var(--block); padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .defect .id { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.12em; color: var(--block); }
+  .defect .claim { font-family: var(--serif); font-size: 1.05rem; font-weight: 600; line-height: 1.3; }
+  .defect .breaks { font-size: 0.9rem; color: var(--muted); line-height: 1.45; }
+  .defect .cost { font-size: 0.84rem; margin-top: auto; padding-top: 8px; border-top: 1px dashed var(--rule); }
+  .holds { background: var(--hold-soft); border-left: 4px solid var(--hold); padding: 0.6rem 1.1rem; margin: 1.4rem 0; }
+  .holds p { margin: 0.4rem 0; }
+  .tablewrap { overflow-x: auto; margin: 1rem 0 1.4rem; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-weight: 600; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+  td.num, th.num { text-align: right; font-family: var(--mono); font-size: 0.86rem; white-space: nowrap; }
+  tr.hi td { background: var(--block-soft); }
+  tr.ok td { background: var(--hold-soft); }
+  ol, ul { padding-left: 1.3rem; max-width: 70ch; }
+  li { margin: 0.45rem 0; }
+  li::marker { color: var(--muted); font-family: var(--mono); font-size: 0.85em; }
+  .tag { display: inline-block; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 7px; border-radius: 3px; margin-right: 6px; vertical-align: middle; }
+  .tag.block { background: var(--block-soft); color: var(--block); }
+  .tag.hold { background: var(--hold-soft); color: var(--hold); }
+  .tag.warn { background: var(--warn-soft); color: var(--warn); }
+  .stage { display: grid; grid-template-columns: 6.5rem 1fr; gap: 6px 16px; margin: 1rem 0; align-items: start; }
+  .stage .k { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); padding-top: 3px; }
+  .method { font-size: 0.88rem; color: var(--muted); border-top: 1px solid var(--rule); margin-top: 3rem; padding-top: 1rem; }
+  @media (max-width: 720px) { .defects { grid-template-columns: 1fr; } .stage { grid-template-columns: 1fr; } h1 { font-size: 1.7rem; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<main>
+  <span class="eyebrow">Peer review · round 5 · 2026-09-08</span>
+  <h1>Fishing for Privacy, reviewed against the code and the checkpoints</h1>
+  <p class="lede">Rounds 1 to 4 checked that the paper's numbers trace to JSON files. This round checked the JSON files against the scripts that wrote them and the checkpoints they describe. The paper, the 40 notebooks, everything under <span class="path">src/</span> and <span class="path">scripts/</span>, the result JSONs, and the weights on disk were all read.</p>
+
+  <div class="verdict">
+    <span class="word">Not submittable as it stands.</span>
+    <p>Three defects in the evidence base sit underneath the text and invalidate most of the headline numbers. None is visible from the paper or the JSONs, which is why four rounds passed them. Each is established from files on disk, and each has a bounded repair.</p>
+  </div>
+
+  <div class="defects">
+    <div class="defect">
+      <span class="id">B1</span>
+      <span class="claim">The retrain reference trained on 82 to 88 percent of its own matched negatives.</span>
+      <span class="breaks">Retrain floor, success threshold, refit control, cluster-12 reference, PBMC confound fractions, every "not separable from retrain" claim.</span>
+      <span class="cost">Five clean seeds trained today, 90 s each. Clean floor is 0.049, not 0.156.</span>
+    </div>
+    <div class="defect">
+      <span class="id">B2</span>
+      <span class="claim">The baseline checkpoint was regenerated on July 4, after most method checkpoints were derived from the old one.</span>
+      <span class="breaks">Table 2 mixes two parents; the SSD, SCRUB, and contrastive utility columns describe checkpoints that no longer exist.</span>
+      <span class="cost">Re-derive four method families from one baseline; re-score in one pass.</span>
+    </div>
+    <div class="defect">
+      <span class="id">B3</span>
+      <span class="claim">Fisher scrubbing and extra-gradient, as implemented, are not the methods the paper describes.</span>
+      <span class="breaks">Every Fisher and extra-gradient number; the "posterior collapse" and "unreliable across seeds" narratives; the attack-suite table.</span>
+      <span class="cost">Fix two loss functions and one training loop; re-run.</span>
+    </div>
+  </div>
+
+  <div class="holds">
+    <p><span class="tag hold">Holds</span>The biology-confound measurement on TCGA-BRCA and on PBMC cluster 7 is clean. The Fisher-overlap analysis of the current baseline is internally consistent. The SSD, SCRUB, contrastive, Moon, and DP-SGD privacy rows descend from the current baseline with correct loss functions and stand as reported.</p>
+  </div>
+
+  <h2><span class="eyebrow">B1</span>The retrain reference trained on its negatives</h2>
+  <p><span class="path">src/retrain.py</span> reads only the forget indices from the split file, removes those cells from the full dataset, shuffles the remaining 33,058 cells with the run seed, and trains on the first 85 percent. The baseline's unseen split, from which the 194 matched negatives were drawn, is therefore inside the retrain training set at the 85 percent rate. Replaying the seed and the shuffle gives the exact overlap.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Retrain seed</th><th class="num">Train size</th><th class="num">Matched negatives in training set</th><th class="num">Unseen cells in training set</th></tr>
+    <tr><td>42</td><td class="num">28,099</td><td class="num">159 / 194</td><td class="num">4,030 / 4,964</td></tr>
+    <tr><td>43</td><td class="num">28,099</td><td class="num">165 / 194</td><td class="num">4,200 / 4,964</td></tr>
+    <tr><td>44</td><td class="num">28,099</td><td class="num">166 / 194</td><td class="num">4,252 / 4,964</td></tr>
+    <tr><td>45</td><td class="num">28,099</td><td class="num">165 / 194</td><td class="num">4,201 / 4,964</td></tr>
+    <tr><td>46</td><td class="num">28,099</td><td class="num">170 / 194</td><td class="num">4,173 / 4,964</td></tr>
+  </table></div>
+  <p>The train size of 28,099 recorded in each <span class="path">metadata.json</span> is 85 percent of 33,058 and confirms the reconstruction. The forget set is correctly excluded in all five. The cluster-12 retrains come from the same script (train size 28,083, 85 percent of 33,039) and share the defect. The TCGA-BRCA retrain (notebook 32), the Tabula Muris retrain (notebook 12), and the cluster-7 and cluster-28 retrains (notebook 39) train on the retain split and are clean.</p>
+  <p>Under the canonical CPU attacker, the PBMC reference models score as follows.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Model</th><th>Training set</th><th class="num">AUC</th><th class="num">Advantage</th></tr>
+    <tr><td>Baseline, July 4 checkpoint</td><td>train split</td><td class="num">0.793</td><td class="num">0.585</td></tr>
+    <tr><td>Baseline, December checkpoint</td><td>train split</td><td class="num">0.785</td><td class="num">0.569</td></tr>
+    <tr><td>Retrain, notebook 3 (December, beta 1, no warm-up)</td><td>retain split</td><td class="num">0.506</td><td class="num">0.012</td></tr>
+    <tr class="hi"><td>Retrain seed 42, <span class="path">multiseed_retrain</span> (April, paper's reference)</td><td>85 percent of all non-forget cells</td><td class="num">0.570</td><td class="num">0.140</td></tr>
+    <tr class="ok"><td>Retrain, clean, recipe-matched, 5 seeds (today)</td><td>retain split</td><td class="num">0.521 (0.553, 0.499, 0.522, 0.538, 0.493)</td><td class="num">0.049, nested CI [0.042, 0.173]</td></tr>
+  </table></div>
+  <p>The paper's retrain floor (advantage 0.156, nested CI [0.082, 0.258]), its success threshold of 0.258, the refit control in Table 8 (which refits on the same five leaky seeds), the cluster-12 reference advantage of 0.64, the PBMC rows of the confound-fraction appendix, and the sentence "the retrain reference itself sits only marginally above chance, consistent with the biology confound" all rest on models that had seen most of the cells they were supposed to have never seen.</p>
+  <p>The clean reference changes the reading of PBMC-33k in three ways. The success threshold falls from 0.258 to 0.173, so every post-hoc method still fails, extra-gradient (0.281) is now clearly above the bar rather than borderline, and DP-SGD (0.045) still sits inside it. The clean retrain's mean advantage of 0.049 lies below the estimator's own permutation floor (0.091), so on PBMC the matched-negative protocol leaves no residual signal in a model that never saw the megakaryocytes; the claim that the retrain sits above chance because of biology is withdrawn for PBMC, while the cluster-7 and TCGA-BRCA results, which use clean retrains, stand. The genuine membership signal on cluster 13 is 0.585 against 0.049, larger than the paper states.</p>
+
+  <h2><span class="eyebrow">B2</span>Two baselines</h2>
+  <p><span class="path">outputs/p1/baseline/best_model.pt</span> is dated July 4, 01:21. It was written by the audit's re-execution of notebook 2 and differs from the July 4 snapshot copy (December 7) by a mean absolute weight change of 7.4e-3, the same order as what an unlearning method changes. Each method checkpoint sits close to exactly one of the two.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Checkpoint</th><th>Written</th><th class="num">To December baseline</th><th class="num">To July baseline</th><th>Parent</th></tr>
+    <tr><td>Extra-gradient seeds 42, 456</td><td>Feb 8</td><td class="num">1.3e-4, 4.5e-4</td><td class="num">7.4e-3</td><td>December</td></tr>
+    <tr><td>Retain-only fine-tune seed 42</td><td>Feb 8</td><td class="num">1.0e-2</td><td class="num">1.5e-2</td><td>December</td></tr>
+    <tr><td>Gradient ascent seed 42</td><td>Feb 8</td><td class="num">7.7e-3</td><td class="num">1.3e-2</td><td>December</td></tr>
+    <tr><td>Fisher scrubbing</td><td>Dec 8</td><td class="num">3.2e-3</td><td class="num">8.6e-3</td><td>December</td></tr>
+    <tr><td>Frozen critics (adversarial sweep)</td><td>Dec 9</td><td class="num">4.7e-4</td><td class="num">7.4e-3</td><td>December</td></tr>
+    <tr><td>SSD seed 42</td><td>Jul 4</td><td class="num">1.4e-2</td><td class="num">8.1e-3</td><td>July</td></tr>
+    <tr><td>SCRUB seed 42</td><td>Jul 4</td><td class="num">9.8e-3</td><td class="num">4.0e-3</td><td>July</td></tr>
+    <tr><td>Contrastive seed 42</td><td>Jul 4</td><td class="num">1.1e-2</td><td class="num">5.1e-3</td><td>July</td></tr>
+    <tr><td>Moon seed 42</td><td>Jul 5</td><td class="num">1.2e-2</td><td class="num">5.9e-3, encoder identical</td><td>July</td></tr>
+    <tr><td>DP-SGD, retrain seeds</td><td>from scratch</td><td class="num"></td><td class="num"></td><td>none</td></tr>
+  </table></div>
+  <p>The canonical attacker was trained on the July baseline and applied to checkpoints whose parent is the December baseline, so four of the nine method rows in Table 2 are scored against a model that is not their parent. The utility table draws SSD, SCRUB, and contrastive utility from a February file, but those February checkpoints were overwritten on July 4 by notebooks 21 to 24, so the privacy and utility columns of those rows describe different models. The Tabula Muris baseline and retrain on disk were also re-trained on July 4 (baseline AUC 0.897) while the paper's Tabula Muris numbers come from January (0.891); the January method checkpoints no longer have their parent. TCGA-BRCA was re-derived end to end on July 4 and is self-consistent, as are notebooks 26 to 30.</p>
+  <p>The two baselines score 0.785 and 0.793 under the same attacker, so the anchor row barely moves and the method rows are unlikely to move far. Provenance still has to be one model. Today's re-score of the July baseline gave 0.7926 against the cached 0.7912, so "CPU is bit-reproducible" should read "reproducible to about 0.01 AUC".</p>
+
+  <h2><span class="eyebrow">B3</span>Two methods are not what the paper says they are</h2>
+  <h3>Fisher scrubbing</h3>
+  <p>Three departures from the text in <span class="path">src/train_fisher_unlearn.py</span>.</p>
+  <ol>
+    <li>The paper says the diagonal Fisher is taken on the forget set. The code computes it on the retain set, in train mode with dropout active, from batch-summed gradients.</li>
+    <li>The scrub step is <code>clamp(lr * grad / F, -0.001, 0.001)</code> for 100 steps. With damping 0.1 the clamp saturates for most parameters, so the update is a signed ascent of 0.001 per step regardless of the Fisher weighting. The recorded forget loss rises from 283 to 218,000 during scrubbing and the post-scrub AUC is exactly 0.5. That is a destroyed model, not a scrubbed one.</li>
+    <li>The retain fine-tune that follows averages reconstruction error over genes while summing KL over latent dimensions. Training sums reconstruction over the 2,000 genes. The fine-tune therefore weights KL 2,000 times more heavily than training did, which forces the posterior toward the prior. The "posterior collapse" reported for Fisher (KL 10.55 to 0.007, marker r 0.628, ELBO 490) is the signature of this objective, not of Fisher overlap. Every other method fine-tunes with <code>vae_loss</code> and keeps KL near 10.</li>
+  </ol>
+  <p>Every Fisher-scrubbing number inherits this (PBMC 0.808 / 0.615, TCGA 0.500 under both matchings, Tabula Muris 0.946, cluster-12 marker r 0.21, the conditional-VAE scrub, the scattered-set table). The Fisher-overlap analysis in Section 7 uses a separate per-sample estimator and is not affected, but the paper's link from that analysis to "this is why Fisher scrubbing collapses the posterior" is not supported by the method as run.</p>
+
+  <h3>Extra-gradient co-training</h3>
+  <p>Four departures in <span class="path">src/train_unlearn_extragradient.py</span>.</p>
+  <ol>
+    <li>There is no extragradient step. The critic update is one backward pass and a plain SGD step at 1e-5; the Adam critic optimizer is constructed and never stepped.</li>
+    <li>The critics are trained to separate forget cells from retain cells, which is cluster identity, not membership.</li>
+    <li>The utility term has the same mean-over-genes reconstruction as the Fisher fine-tune, so its KL is over-weighted 2,000 times, and it is multiplied by lambda 10. The recorded privacy loss is about 0.8 per step against a utility term of about 110.</li>
+    <li>An "epoch" is one minibatch and one optimizer step. The paper's "50 epochs" never happened. The shadow-attacker early-stopping rule fires whenever a noisy AUC rises twice in a row, and the ten seeds stopped after 3, 4, 10, 10, 11, 11, 11, 12, 18, and 19 steps.</li>
+  </ol>
+  <div class="tablewrap"><table>
+    <tr><th>Extra-gradient seed</th><th class="num">Steps before early stop</th><th class="num">AUC (canonical attacker)</th><th class="num">Mean weight change from parent</th></tr>
+    <tr><td>789</td><td class="num">3</td><td class="num">0.718</td><td class="num">1.3e-4</td></tr>
+    <tr><td>42</td><td class="num">4</td><td class="num">0.647</td><td class="num">1.3e-4</td></tr>
+    <tr><td>123, 1819</td><td class="num">10</td><td class="num">0.310, 0.322</td><td class="num">3e-4</td></tr>
+    <tr><td>1011, 1213, 1617</td><td class="num">11</td><td class="num">0.342, 0.369, 0.358</td><td class="num">3e-4</td></tr>
+    <tr><td>1415</td><td class="num">12</td><td class="num">0.326</td><td class="num">3e-4</td></tr>
+    <tr><td>2021, 456</td><td class="num">18, 19</td><td class="num">0.458, 0.476</td><td class="num">4.5e-4</td></tr>
+  </table></div>
+  <p>The "high variance across seeds" that the paper builds the extra-gradient narrative on is the variance of a random stopping time. The size ablation (n=50 seed 42 stopped after 3 steps) and the cluster-12 result share it.</p>
+
+  <h3>Attack suite</h3>
+  <p>The threshold and likelihood-ratio attacks decode without the library size, so the "reconstruction" they score is a softmax probability vector against log-normalized counts. That is why Table 3 reports the same reconstruction-threshold advantage for every model.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Model</th><th class="num">Recon threshold AUC, as run</th><th class="num">Recon threshold AUC, library size restored</th><th class="num">KL threshold AUC</th></tr>
+    <tr><td>Baseline (July)</td><td class="num">0.719</td><td class="num">0.780</td><td class="num">0.073</td></tr>
+    <tr><td>Retrain seed 42 (leaky)</td><td class="num">0.719</td><td class="num">0.565</td><td class="num">0.141</td></tr>
+    <tr><td>Retrain, notebook 3 (clean)</td><td class="num">0.719</td><td class="num">0.501</td><td class="num">0.134</td></tr>
+  </table></div>
+  <p>Reconstruction does carry membership signal, and the sentence "reconstruction quality is preserved, so the membership signal lives in the KL and latent geometry" is reversed. The likelihood-ratio row is one statistic reported twice with opposite sign (baseline AUC 0.08 with retrain as reference, retrain AUC 0.92 with baseline as reference). The k-NN row's advantage of 0.986 comes from AUCs of 0.01 to 0.05, an attack whose membership predictions are exactly inverted.</p>
+
+  <h2>What holds</h2>
+  <ul>
+    <li><span class="tag hold">Holds</span><strong>The confound measurement.</strong> TCGA-BRCA cross-subtype 0.803 / 0.830 against within-subtype 0.580 / 0.572 on today's CPU re-run; the previous run's exact tie at 0.576 was a single-run coincidence and is gone. PBMC cluster 7, 80 held-out cells, cross 0.665 / 0.713 against within 0.527 / 0.480 with clean retrains.</li>
+    <li><span class="tag hold">Holds</span><strong>The Fisher-overlap analysis</strong> of the July baseline. Per-sample estimator, global 0.209, decoder output 0.485 against the classifier's 0.018, the deep-MLP and z=8 controls, the conditional-VAE decomposition, and the Proposition 1 check all trace and are consistent.</li>
+    <li><span class="tag hold">Holds</span><strong>SSD, SCRUB, contrastive, Moon, and DP-SGD privacy rows.</strong> Correct loss, July parent, scored by an attacker trained on their parent.</li>
+    <li><span class="tag warn">Re-derive</span><strong>Retain-only fine-tune and gradient ascent</strong> use the correct loss and only need re-deriving from the July baseline.</li>
+    <li><span class="tag hold">Holds</span><strong>The reframing plan</strong> from the round-4 handoff is still the right shape, and B1 strengthens it. With a clean floor at chance, the genuine PBMC signal is larger than stated and the claim that the retrain sits above chance because of biology is withdrawn for PBMC.</li>
+  </ul>
+
+  <h2>Secondary findings</h2>
+  <ul>
+    <li>Section 5 says all six TCGA methods converge to 0.830. Fisher scrubbing collapses to 0.500; the other five sit at 0.829 to 0.831.</li>
+    <li>Table 1 lists 121 TCGA matched negatives. The file has 89.</li>
+    <li>TCGA within-subtype is now 0.580 (baseline) and 0.572 (retrain); patient level n=5 0.360 / 0.327, n=10 0.443 / 0.417, n=20 0.422 / 0.415.</li>
+    <li>Table 6's effective-rank ratios do not trace; the global value is 0.0126, not 0.010.</li>
+    <li>Section 5 and Appendix C say separate within-cluster runs give 0.53 to 0.60. Only 0.596 exists on disk; the 0.527 was a typed constant in notebook 40 from an overwritten run.</li>
+    <li>The cluster-conditional appendix compares against a standard-VAE advantage of 0.54 (single seed, December). The canonical value is 0.58.</li>
+    <li>Section 6 "Constructive approaches" quotes a within-cluster baseline of 0.63 that does not trace to any file.</li>
+    <li>The reproducibility text should name the July 4 baseline as the single parent once B2 is repaired, and drop "bit-reproducible".</li>
+    <li><span class="path">.claude/rules/results-reference.md</span> presents single-seed MPS-era numbers as established results without labeling the regime.</li>
+    <li>The round-4 items (four calibration citations, retitle, positioning paragraphs, Corollary 2 sigma-bar, abstract closer) are unchanged and still open.</li>
+  </ul>
+
+  <h2>What was fixed today</h2>
+  <ul>
+    <li><span class="path">src/canonical.py</span> is a single loader module for every canonical number, keyed to the JSON its experiment wrote.</li>
+    <li>Eleven notebooks (12, 14, 21 to 24, 30, 34b, 35, 36, 40) no longer carry typed-in numbers. Notebooks 14, 34b, 35, 36, and 40 were re-executed, 34b pinned to CPU. Notebook 30's two reference cells and the new reference cells in 21 to 24 were executed in isolation and their outputs transplanted, because re-running those notebooks whole would retrain models. A pre-existing MPS-to-numpy crash in notebook 35 was fixed.</li>
+    <li><span class="path">figures/make_result_figures.py</span> loads every value through the loaders; the three figure PNGs and the confound figure were regenerated, and the paper's copy of the confound figure (an April 9 snapshot matching no notebook output) was replaced.</li>
+    <li><span class="path">outputs/p2/moon/utility.json</span> now exists, so Moon's ELBO 364.5 and marker r 0.831 trace.</li>
+    <li><span class="path">scripts/retrain_clean.py</span> trains a retrain reference on the retain split with notebook 2's recipe; five seeds sit in <span class="path">outputs/p1/retrain_clean/</span>, scored into <span class="path">outputs/p4/multiseed/persample/retrain_clean.json</span>.</li>
+  </ul>
+
+  <h2>Repair plan</h2>
+  <div class="stage">
+    <span class="k">Stage 1</span><div><strong>Evidence base</strong> (about one working day of compute and scripting).
+      <ol>
+        <li>Adopt the July 4 baseline as the single parent. Re-derive retain-only fine-tune (5 seeds) and gradient ascent (5 seeds) from it with the existing scripts.</li>
+        <li>Fix Fisher scrubbing (forget-set per-sample Fisher as the text says, a step size that does not saturate the clamp, <code>vae_loss</code> for the fine-tune) and re-run three seeds. If the posterior still collapses, the narrative stands; if not, it goes.</li>
+        <li>Fix extra-gradient (implement the extragradient step or rename the method; <code>vae_loss</code> for utility; a fixed step budget with no shadow early stop; an epoch as a pass over the retain set) and re-run ten seeds.</li>
+        <li>Pass the library size in the two attack files and re-run notebook 15.</li>
+        <li>Re-score every checkpoint, including the clean retrain, with one CPU attacker, and recompute utility for every current checkpoint in one pass. Regenerate tables and figures through the loaders.</li>
+        <li>Add a checkpoint manifest with hashes and parents, and stop re-executing training notebooks in audits.</li>
+      </ol></div>
+    <span class="k">Stage 2</span><div><strong>Text.</strong> Rewrite Sections 4 to 6 and the appendices from the re-scored JSON, then apply the round-4 reframing (measurement as lead finding, calibration citations, retrain as floor, title).</div>
+  </div>
+
+  <p class="method">Every claim above was checked against a file. Weight distances are mean absolute differences over all floating-point parameters. Overlaps were reconstructed by replaying <code>set_global_seed</code> and the shuffle in <span class="path">retrain.py</span> for each seed. AUCs in this document were produced by the <span class="path">eval_multiseed.py</span> machinery pinned to CPU with the attacker seed fixed at 42. The Markdown source is <span class="path">PEER_REVIEW_ROUND5.md</span> in the repository.</p>
+</main>

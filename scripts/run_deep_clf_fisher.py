@@ -115,7 +115,7 @@ def compute_fisher_batch(model, dataloader, device, damping=DAMPING):
 
 def main():
     start_time = time.time()
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu')
     print(f'Device: {device}')
 
     # Load data

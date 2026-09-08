@@ -9,6 +9,10 @@ Assumption level: HIGH
 - Document this assumption explicitly in writeup
 
 Reference: Carlini et al. "Membership Inference Attacks From First Principles"
+
+Revision 2026-09-08 (round-5 review). The decoder's mean is a softmax over genes scaled by the
+library size; decoding without the library size compared probabilities against log counts,
+which made the score independent of the model. The library size is now passed.
 """
 
 import numpy as np
@@ -45,7 +49,7 @@ def compute_log_likelihood(model, x: torch.Tensor, device: str = 'cpu',
         if n_samples == 1:
             # Simple ELBO estimate using mean
             z = mu
-            decode_output = model.decode(z)
+            decode_output = model.decode(z, x.sum(dim=1, keepdim=True)) if getattr(model, 'likelihood', None) == 'nb' else model.decode(z)
             # Handle both NB (returns tuple) and Gaussian decoders
             if isinstance(decode_output, tuple):
                 recon = decode_output[0]
@@ -69,7 +73,7 @@ def compute_log_likelihood(model, x: torch.Tensor, device: str = 'cpu',
                 eps = torch.randn_like(std)
                 z = mu + eps * std
 
-                decode_output = model.decode(z)
+                decode_output = model.decode(z, x.sum(dim=1, keepdim=True)) if getattr(model, 'likelihood', None) == 'nb' else model.decode(z)
                 # Handle both NB (returns tuple) and Gaussian decoders
                 if isinstance(decode_output, tuple):
                     recon = decode_output[0]

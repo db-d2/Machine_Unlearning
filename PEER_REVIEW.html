@@ -1,0 +1,416 @@
+<title>Peer Review — Fishing for Privacy (Round 3)</title>
+<style>
+  :root{
+    --bg:#F5F7F8; --surface:#FFFFFF; --surface-2:#EDF1F3; --raise:#FFFFFF;
+    --ink:#171A1E; --ink-2:#48535C; --ink-3:#7A8791; --line:#DBE1E6; --line-2:#C8D1D7;
+    --accent:#0E7A84; --accent-2:#0A5960; --accent-tint:#E1F0F1;
+    --crit:#BE3B34; --crit-tint:#F7E4E2;
+    --major:#A8701A; --major-tint:#F6ECDA;
+    --minor:#556572; --minor-tint:#E7ECEF;
+    --good:#37855A; --good-tint:#E1F0E7;
+    --shadow:0 1px 2px rgba(20,30,38,.04),0 6px 20px rgba(20,30,38,.06);
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --maxw:940px;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#111419; --surface:#171B21; --surface-2:#1E232B; --raise:#1B2027;
+      --ink:#E9EDF0; --ink-2:#A8B2BA; --ink-3:#6C7882; --line:#29313A; --line-2:#333C46;
+      --accent:#31B2BC; --accent-2:#7FD3D9; --accent-tint:#12333A;
+      --crit:#E76860; --crit-tint:#3A211F;
+      --major:#D5A24C; --major-tint:#37301E;
+      --minor:#8B99A5; --minor-tint:#242B33;
+      --good:#5DB07F; --good-tint:#1D2E25;
+      --shadow:0 1px 2px rgba(0,0,0,.30),0 8px 26px rgba(0,0,0,.34);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#F5F7F8; --surface:#FFFFFF; --surface-2:#EDF1F3; --raise:#FFFFFF;
+    --ink:#171A1E; --ink-2:#48535C; --ink-3:#7A8791; --line:#DBE1E6; --line-2:#C8D1D7;
+    --accent:#0E7A84; --accent-2:#0A5960; --accent-tint:#E1F0F1;
+    --crit:#BE3B34; --crit-tint:#F7E4E2; --major:#A8701A; --major-tint:#F6ECDA;
+    --minor:#556572; --minor-tint:#E7ECEF; --good:#37855A; --good-tint:#E1F0E7;
+    --shadow:0 1px 2px rgba(20,30,38,.04),0 6px 20px rgba(20,30,38,.06);
+  }
+  :root[data-theme="dark"]{
+    --bg:#111419; --surface:#171B21; --surface-2:#1E232B; --raise:#1B2027;
+    --ink:#E9EDF0; --ink-2:#A8B2BA; --ink-3:#6C7882; --line:#29313A; --line-2:#333C46;
+    --accent:#31B2BC; --accent-2:#7FD3D9; --accent-tint:#12333A;
+    --crit:#E76860; --crit-tint:#3A211F; --major:#D5A24C; --major-tint:#37301E;
+    --minor:#8B99A5; --minor-tint:#242B33; --good:#5DB07F; --good-tint:#1D2E25;
+    --shadow:0 1px 2px rgba(0,0,0,.30),0 8px 26px rgba(0,0,0,.34);
+  }
+  *{box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;
+    -webkit-font-smoothing:antialiased;margin:0}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:clamp(20px,5vw,56px) clamp(16px,4vw,32px) 96px}
+  h1,h2,h3{text-wrap:balance;line-height:1.2}
+  a{color:var(--accent);text-underline-offset:2px}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+  code,.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+  /* Masthead */
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);font-weight:600}
+  .masthead{border-bottom:1px solid var(--line);padding-bottom:26px;margin-bottom:30px}
+  .paper-title{font-size:clamp(26px,4.6vw,40px);font-weight:800;letter-spacing:-.02em;margin:.35em 0 .1em}
+  .paper-sub{color:var(--ink-2);font-size:16px;margin:0}
+  .meta-row{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:18px;color:var(--ink-3);
+    font-family:var(--mono);font-size:13px}
+  .meta-row b{color:var(--ink-2);font-weight:600}
+
+  /* Verdict banner */
+  .verdict{display:flex;flex-wrap:wrap;align-items:center;gap:18px 28px;margin:26px 0 8px;
+    padding:22px 24px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--major);
+    border-radius:12px;box-shadow:var(--shadow)}
+  .verdict .big{font-size:clamp(22px,3.4vw,30px);font-weight:800;letter-spacing:-.01em;color:var(--major)}
+  .verdict .stat{display:flex;flex-direction:column;gap:1px}
+  .verdict .stat .n{font-family:var(--mono);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+  .verdict .stat .l{font-size:12px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em}
+  .verdict .sep{width:1px;align-self:stretch;background:var(--line)}
+
+  /* Scorecard */
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:22px 0 8px}
+  @media(max-width:720px){.grid-4{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:430px){.grid-4{grid-template-columns:1fr}}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+  .rev{padding:16px 16px 18px}
+  .rev .rid{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:700}
+  .rev .lens{font-weight:700;font-size:15px;margin:2px 0 10px}
+  .rev .verd{display:inline-block;font-size:12px;font-weight:700;color:var(--major);
+    background:var(--major-tint);padding:2px 8px;border-radius:999px}
+  .rev .conf{margin-top:10px;font-family:var(--mono);font-size:12px;color:var(--ink-3);
+    display:flex;align-items:center;gap:8px}
+  .dots{display:inline-flex;gap:3px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--line-2)}
+  .dot.on{background:var(--accent)}
+
+  section{margin-top:44px}
+  h2.sec{font-size:13px;font-family:var(--mono);letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-3);font-weight:600;margin:0 0 4px;display:flex;align-items:center;gap:10px}
+  h2.sec::after{content:"";flex:1;height:1px;background:var(--line)}
+  .sec-lead{font-size:clamp(18px,2.6vw,22px);font-weight:750;letter-spacing:-.01em;margin:8px 0 16px}
+
+  .callout{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px 24px;
+    box-shadow:var(--shadow)}
+  .callout p{margin:0 0 12px}.callout p:last-child{margin:0}
+  .lead-quote{border-left:3px solid var(--accent);padding-left:16px;color:var(--ink);font-size:17px}
+
+  ul.clean{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
+  ul.clean li{display:flex;gap:11px;align-items:flex-start;color:var(--ink-2)}
+  ul.clean li .mk{flex:none;margin-top:9px;width:7px;height:7px;border-radius:50%;background:var(--good)}
+  ul.clean li b{color:var(--ink);font-weight:650}
+
+  /* Issue cards */
+  .tier{margin-top:26px}
+  .tier-h{display:flex;align-items:baseline;gap:12px;margin:0 0 12px}
+  .tier-h .t{font-weight:750;font-size:16px}
+  .tier-h .c{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+  .issues{display:flex;flex-direction:column;gap:12px}
+  .issue{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--minor);
+    border-radius:11px;padding:16px 18px;box-shadow:var(--shadow)}
+  .issue.sev-crit{border-left-color:var(--crit)}
+  .issue.sev-major{border-left-color:var(--major)}
+  .issue.sev-minor{border-left-color:var(--minor)}
+  .issue-top{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:7px}
+  .issue-top .num{font-family:var(--mono);font-size:13px;color:var(--ink-3);font-weight:700}
+  .issue-top .ttl{font-weight:700;font-size:15.5px;flex:1;min-width:200px}
+  .chip{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.03em;
+    padding:2px 8px;border-radius:999px;text-transform:uppercase}
+  .chip.crit{color:var(--crit);background:var(--crit-tint)}
+  .chip.major{color:var(--major);background:var(--major-tint)}
+  .chip.minor{color:var(--minor);background:var(--minor-tint)}
+  .revtags{display:inline-flex;gap:4px}
+  .rtag{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--accent-2);
+    background:var(--accent-tint);padding:2px 6px;border-radius:5px}
+  .issue p{margin:6px 0 0;color:var(--ink-2);font-size:14.5px}
+  .issue .fix{margin-top:9px;font-size:14px;color:var(--ink)}
+  .issue .fix b{color:var(--accent-2);font-weight:700;font-family:var(--mono);font-size:12px;
+    letter-spacing:.04em;text-transform:uppercase}
+
+  /* Reviewer detail */
+  details.rd{background:var(--surface);border:1px solid var(--line);border-radius:11px;
+    box-shadow:var(--shadow);margin-bottom:11px;overflow:hidden}
+  details.rd>summary{cursor:pointer;list-style:none;padding:15px 18px;display:flex;
+    align-items:center;gap:12px;font-weight:700}
+  details.rd>summary::-webkit-details-marker{display:none}
+  details.rd>summary .rid{font-family:var(--mono);color:var(--accent);font-size:13px}
+  details.rd>summary .chev{margin-left:auto;color:var(--ink-3);transition:transform .2s}
+  @media(prefers-reduced-motion:reduce){details.rd>summary .chev{transition:none}}
+  details.rd[open]>summary .chev{transform:rotate(90deg)}
+  details.rd .body{padding:2px 18px 18px;color:var(--ink-2);font-size:14.5px;border-top:1px solid var(--line)}
+  details.rd .body p{margin:12px 0 0}
+  details.rd .body b{color:var(--ink)}
+
+  table.tr{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:4px}
+  .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+  table.tr th,table.tr td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+  table.tr th{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--ink-3);font-weight:600}
+  table.tr td.mono{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink)}
+  table.tr tr:last-child td{border-bottom:none}
+  .tag-no{color:var(--good);font-weight:700}
+  .tag-yes{color:var(--crit);font-weight:700}
+
+  .checklist{display:flex;flex-direction:column;gap:9px}
+  .ck{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);
+    border-radius:9px;padding:12px 15px}
+  .ck .box{flex:none;width:17px;height:17px;border:2px solid var(--line-2);border-radius:5px;margin-top:2px}
+  .ck .txt{font-size:14.5px;color:var(--ink)}
+  .ck .txt span{display:block;color:var(--ink-3);font-size:13px;margin-top:2px}
+
+  .foot{margin-top:52px;padding-top:22px;border-top:1px solid var(--line);color:var(--ink-3);font-size:13px}
+  .foot b{color:var(--ink-2)}
+  .note{background:var(--good-tint);border:1px solid var(--line);border-radius:11px;padding:16px 20px;
+    color:var(--ink);font-size:14.5px}
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Consolidated Peer Review · Round 3</div>
+    <h1 class="paper-title">Fishing for Privacy: Machine Unlearning for Single-Cell VAEs</h1>
+    <p class="paper-sub">Four independent reviewers, each reading the 18-page draft through a distinct lens, then synthesized into a single decision.</p>
+    <div class="meta-row">
+      <span><b>Venue</b> TMLR (NeurIPS as stretch)</span>
+      <span><b>Draft</b> 18 pp · 9 methods + DP-SGD</span>
+      <span><b>Reviewed</b> 9 July 2026</span>
+    </div>
+  </header>
+
+  <div class="verdict" role="group" aria-label="Decision">
+    <div class="big">Major Revision</div>
+    <div class="sep" aria-hidden="true"></div>
+    <div class="stat"><span class="n">4 / 4</span><span class="l">reviewers agree</span></div>
+    <div class="sep" aria-hidden="true"></div>
+    <div class="stat"><span class="n">4.0 / 5</span><span class="l">mean confidence</span></div>
+    <div class="sep" aria-hidden="true"></div>
+    <div class="stat"><span class="n">0</span><span class="l">fabricated numbers found</span></div>
+  </div>
+
+  <div class="grid-4">
+    <div class="card rev"><div class="rid">R1</div><div class="lens">Novelty &amp; positioning</div>
+      <span class="verd">Major revision</span>
+      <div class="conf">confidence <span class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot"></i></span> 4/5</div></div>
+    <div class="card rev"><div class="rid">R2</div><div class="lens">Experimental rigor</div>
+      <span class="verd">Major revision</span>
+      <div class="conf">confidence <span class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot"></i></span> 4/5</div></div>
+    <div class="card rev"><div class="rid">R3</div><div class="lens">Theory / Proposition 1</div>
+      <span class="verd">Major revision</span>
+      <div class="conf">confidence <span class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot"></i></span> 4/5</div></div>
+    <div class="card rev"><div class="rid">R4</div><div class="lens">Clarity &amp; reproducibility</div>
+      <span class="verd">Major revision</span>
+      <div class="conf">confidence <span class="dots"><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot on"></i><i class="dot"></i></span> 4/5</div></div>
+  </div>
+
+  <section>
+    <h2 class="sec">The one thing all four reviewers said</h2>
+    <div class="callout">
+      <p class="lead-quote">The paper's real contribution is a <b>measurement correction</b> — a biology confound inflates membership-inference attacks on gene-expression models — but it is packaged as a broad <b>unlearning-failure verdict</b> that the evidence does not carry.</p>
+      <p>By the paper's own retrain-versus-baseline logic, four of the five cohorts (Tabula Muris, TCGA-BRCA, PBMC cluster 7, and the newly added PBMC cluster 12) show <b>absence of a membership signal</b>, not <b>failure of unlearning</b>. The strong claim — "no post-hoc method reaches retrain-level privacy" — is demonstrated on essentially <b>one forget set</b>: PBMC cluster 13, 30 megakaryocytes. Three reviewers reached this independently; the fourth reached it from the theory side. The fix is reframing, not new experiments: lead with the confound result and scope the failure claim to the single cohort that carries a signal.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec">What is working</h2>
+    <p class="sec-lead">A publishable core, and honest reporting underneath it.</p>
+    <ul class="clean">
+      <li><span class="mk"></span><div><b>The biology-confound correction is genuinely valuable and well-instrumented.</b> That the TCGA-BRCA retrain model detects Basal patients <em>better</em> than the baseline (0.860 vs 0.821), and that within-subtype matching collapses the gap, cleanly reframes recent transcriptomics MIA benchmarks as biological fidelity rather than memorization. (all four)</div></li>
+      <li><span class="mk"></span><div><b>The numbers trace and nothing is fabricated.</b> R2 and R3 independently checked the main table, attack suite, and Fisher values against the canonical JSON outputs and found them faithful. Proposition 1's factorization is algebraically correct and its rank-1 prediction holds (94–98% of Frobenius norm). (R2, R3)</div></li>
+      <li><span class="mk"></span><div><b>Broad, mechanism-level method coverage.</b> Nine post-hoc methods plus DP-SGD plus two constructive approaches, each failure attributed to a named mechanism (posterior collapse, Streisand, encoder-signal survival) rather than a bare leaderboard. (R1, R2)</div></li>
+      <li><span class="mk"></span><div><b>Unusually candid statistics.</b> The permutation-null floor, the folded per-seed estimator, and the disclosure that the retrain reference sits only marginally above chance are rigor most unlearning papers omit. (R2, R4)</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="sec">Issues, ranked by severity and consensus</h2>
+    <p class="sec-lead">Fifteen findings. None fatal, none requiring new core experiments — but the top tier blocks acceptance as framed.</p>
+
+    <div class="tier">
+      <div class="tier-h"><span class="t">Tier 1 — Claims &amp; framing</span><span class="c">blocks acceptance as written</span></div>
+      <div class="issues">
+        <div class="issue sev-crit">
+          <div class="issue-top"><span class="num">1</span><span class="ttl">A confound result is sold as a broad unlearning-failure verdict</span>
+            <span class="chip crit">Blocker</span><span class="revtags"><span class="rtag">R1</span><span class="rtag">R2</span><span class="rtag">R4</span></span></div>
+          <p>The title, Contribution 2, and the abstract's closing line ("If privacy actually matters, retrain") read as a general negative result on unlearning. The genuine-signal test reduces to one forget set (cluster 13, n=30).</p>
+          <p class="fix"><b>Fix</b> Re-title and re-abstract around the measurement/confound contribution; scope "no post-hoc method reaches retrain-level privacy" to PBMC-33k explicitly wherever it appears.</p>
+        </div>
+        <div class="issue sev-major">
+          <div class="issue-top"><span class="num">2</span><span class="ttl">"Eleven methods across three datasets" overstates the grid</span>
+            <span class="chip major">Major</span><span class="revtags"><span class="rtag">R1</span><span class="rtag">R2</span><span class="rtag">R4</span></span></div>
+          <p>The full suite runs on PBMC only. Tabula Muris gets extra-gradient + Fisher; TCGA-BRCA gets six methods. The systematic-evaluation claim is not honestly scoped.</p>
+          <p class="fix"><b>Fix</b> State that the eleven-method suite is PBMC-only and that TM/TCGA receive method subsets.</p>
+        </div>
+        <div class="issue sev-crit">
+          <div class="issue-top"><span class="num">3</span><span class="ttl">Extra-gradient's verdict is estimator-dependent and incoherent on cluster 12</span>
+            <span class="chip crit">Blocker</span><span class="revtags"><span class="rtag">R2</span><span class="rtag">R3</span><span class="rtag">R4</span></span></div>
+          <p>Extra-gradient is the only method that materially reduces the signal, and its FAIL label flips with the estimator (folded per-seed 0.281 → FAIL; advantage-of-pooled-AUC 0.134 → PASS; diff-from-retrain CI includes zero). On cluster 12 it reaches AUC 0.497 (chance), which <em>passes</em> the paper's own success rule (advantage ≤ 0.64), yet is labeled "over-unlearn / FAIL." Sections 5 and 6 also disagree on the value (0.03 vs 0.00).</p>
+          <p class="fix"><b>Fix</b> Rest the verdict on variance/reliability (σ<sub>AUC</sub> 0.142, per-seed AUC 0.24–0.66), not the point estimate. Report the cluster-12 AUC, reconcile 0.00 vs 0.03, and reframe cluster 12 as hyperparameter brittleness, not signal-removal failure.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tier">
+      <div class="tier-h"><span class="t">Tier 2 — Theory overreach</span><span class="c">the explanation claims more than it proves</span></div>
+      <div class="issues">
+        <div class="issue sev-crit">
+          <div class="issue-top"><span class="num">4</span><span class="ttl">The paper's own experiment relocates the cause to the encoder</span>
+            <span class="chip crit">Blocker</span><span class="revtags"><span class="rtag">R3</span></span></div>
+          <p>The headline mechanism is the shared decoder output (0.485 vs a classifier's 0.018). But the cluster-conditional experiment orthogonalizes exactly that layer (cosine 5.5e-9) and unlearning still fails — because the MIA reads 64 of 70 features from the <em>encoder</em>. The advertised locus is not where the attack signal lives.</p>
+          <p class="fix"><b>Fix</b> Reframe the structural argument around encoder/bottleneck overlap as the binding constraint, and add the encoder-side comparison that is the correct control.</p>
+        </div>
+        <div class="issue sev-major">
+          <div class="issue-top"><span class="num">5</span><span class="ttl">"High overlap ⇒ must fail" is necessary-not-sufficient, and the scaling is overstated</span>
+            <span class="chip major">Major</span><span class="revtags"><span class="rtag">R3</span></span></div>
+          <p>A cosine of 0.485 is a 61° angle — closer to orthogonal than parallel — leaving a large subspace to perturb the forget set alone; no threshold separates "fail" (0.485) from "succeed" (0.018). And full overlap = cos(σ)·cos(ν) saturates at cos(ν) ≈ 0.60, not 1, so the abstract's "grows as 1 − O(M/D)" describes only one of two factors.</p>
+          <p class="fix"><b>Fix</b> Present the theory as an explanation for observed alignment, not a proof of impossibility; correct the "grows to 1" language to the ≈0.60 saturation.</p>
+        </div>
+        <div class="issue sev-major">
+          <div class="issue-top"><span class="num">6</span><span class="ttl">The theory covers 3 of 9 methods</span>
+            <span class="chip major">Major</span><span class="revtags"><span class="rtag">R3</span></span></div>
+          <p>The Fisher-overlap mechanism bears only on the diagonal-Fisher methods (Fisher, SSD, SCRUB). Extra-gradient — the one method not separable from retrain — is entirely outside its scope, yet the abstract states Fisher overlap as the blanket cause.</p>
+          <p class="fix"><b>Fix</b> Narrow the causal claim to Fisher-based methods, or supply a separate argument for the others.</p>
+        </div>
+        <div class="issue sev-major">
+          <div class="issue-top"><span class="num">7</span><span class="ttl">The Cheng (2026) rebuttal is untested and uses the wrong quantity</span>
+            <span class="chip major">Major</span><span class="revtags"><span class="rtag">R1</span><span class="rtag">R3</span></span></div>
+          <p>Cheng's Wasserstein-2 projection acts on <em>mean-gradient</em> directions, but the rebuttal applies the <em>diagonal-Fisher</em> (second-moment) cosine of 0.485 — a category slip — and the method is never run on the VAE. A rebuttal-by-prediction invites "then run it."</p>
+          <p class="fix"><b>Fix</b> Label it a conjecture and report the mean-gradient cosine, or instantiate Cheng on the PBMC VAE.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tier">
+      <div class="tier-h"><span class="t">Tier 3 — Traceability &amp; validity</span><span class="c">numbers that don't reconcile</span></div>
+      <div class="issues">
+        <div class="issue sev-crit">
+          <div class="issue-top"><span class="num">8</span><span class="ttl">The flagship within-subtype control is flagged invalid by the authors' own tool</span>
+            <span class="chip crit">Blocker</span><span class="revtags"><span class="rtag">R2</span></span></div>
+          <p><code>confound_fraction_cis.json</code> marks the PBMC c13 decomposition <code>valid: false</code> (<code>small_n</code>, CI [−0.373, 0.985]) — it rests on 5 unseen megakaryocytes. And the within-cluster numbers don't trace: the text uses baseline 0.527 / retrain 0.609, but <code>matched_negative_validation.json</code> gives 0.596 / 0.653.</p>
+          <p class="fix"><b>Fix</b> Reconcile the two files, disclose the invalidity, and rest the corroboration on cluster 7 (80 negatives), not c13's 5.</p>
+        </div>
+        <div class="issue sev-major">
+          <div class="issue-top"><span class="num">9</span><span class="ttl">Several secondary headline numbers don't match the canonical JSON</span>
+            <span class="chip major">Major</span><span class="revtags"><span class="rtag">R2</span></span></div>
+          <p>TCGA cross-subtype is 0.821 / 0.860 in text vs 0.802 / 0.830 in <code>unlearning_results.json</code>; the cluster-12 baseline is 0.75 in Section 5 vs 0.731 in the summary; baseline drifts across 0.769 / 0.781 / 0.791 and retrain across 0.481 / 0.513 / 0.578 by section.</p>
+          <p class="fix"><b>Fix</b> Reconcile every in-text number to one canonical file; standardize the main narrative on the multi-seed regime and confine single-seed values to a labeled appendix.</p>
+        </div>
+        <div class="issue sev-minor">
+          <div class="issue-top"><span class="num">10</span><span class="ttl">Cluster-12 vs cluster-13 comparison mixes units</span>
+            <span class="chip minor">Fix</span><span class="revtags"><span class="rtag">R4</span></span></div>
+          <p>"Genuine gap ≈ 0.11 … less than cluster 13's 0.21" compares an advantage gap (0.11) against an AUC gap (0.21). In advantage units cluster 13's gap is ≈ 0.42.</p>
+          <p class="fix"><b>Fix</b> Restate both gaps in the same metric. <em>(Introduced in this session's cluster-12 edit.)</em></p>
+        </div>
+        <div class="issue sev-major">
+          <div class="issue-top"><span class="num">11</span><span class="ttl">"Retrain ≥ baseline ⇒ no memorization" may reflect a saturated attacker</span>
+            <span class="chip major">Major</span><span class="revtags"><span class="rtag">R2</span></span></div>
+          <p>On TCGA within-subtype, baseline and retrain AUC are identical to 15 significant figures — two different models producing a byte-identical score suggests the attacker cannot discriminate at n=30, not that leakage is provably zero.</p>
+          <p class="fix"><b>Fix</b> Refit a dedicated attacker on the retrain model to show even a targeted adversary finds nothing.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tier">
+      <div class="tier-h"><span class="t">Tier 4 — Reproducibility, positioning &amp; clarity</span><span class="c">quick to fix, worth fixing</span></div>
+      <div class="issues">
+        <div class="issue sev-major">
+          <div class="issue-top"><span class="num">12</span><span class="ttl">No reproducibility statement; determinism caveat omitted</span>
+            <span class="chip major">Major</span><span class="revtags"><span class="rtag">R2</span><span class="rtag">R4</span></span></div>
+          <p>No environment, no split seed, no note that scoring must be deterministic (CPU) because MPS is not bit-reproducible, and no definition of the advantage estimator that changes the extra-gradient number (0.281 vs 0.134).</p>
+          <p class="fix"><b>Fix</b> Add a Reproducibility appendix with environment, the CPU-scoring requirement, seeds, and the estimator definition.</p>
+        </div>
+        <div class="issue sev-minor">
+          <div class="issue-top"><span class="num">13</span><span class="ttl">Generalization to non-VAE generative models is asserted, VAE-only</span>
+            <span class="chip minor">Fix</span><span class="revtags"><span class="rtag">R1</span><span class="rtag">R3</span></span></div>
+          <p>Every experiment uses one scVI-style VAE; "extends to other generative models with shared output parameters" is a conjecture.</p>
+          <p class="fix"><b>Fix</b> Hedge consistently, or add one non-VAE decoder to substantiate the structural claim.</p>
+        </div>
+        <div class="issue sev-minor">
+          <div class="issue-top"><span class="num">14</span><span class="ttl">Related-work gaps</span>
+            <span class="chip minor">Fix</span><span class="revtags"><span class="rtag">R1</span></span></div>
+          <p>Directly relevant entries sit in the bib but are uncited (Pawelczyk 2025 on unlearning failing to remove poisoning; Basu 2021 on influence-function fragility); generative-unlearning and named distance-attack citations are missing.</p>
+          <p class="fix"><b>Fix</b> Cite the uncited-but-relevant entries; add 2–3 generative-unlearning references; attribute the distance attacks.</p>
+        </div>
+        <div class="issue sev-minor">
+          <div class="issue-top"><span class="num">15</span><span class="ttl">Clarity: undefined terms, prose colons, section ordering</span>
+            <span class="chip minor">Fix</span><span class="revtags"><span class="rtag">R4</span></span></div>
+          <p>Undefined "Eff. rank ratio (F)" column and TTUR / ARI acronyms; three prose colons against the authors' own convention; cluster-12 unlearning results sit in the confound section but forward-reference Table 4 in the results section.</p>
+          <p class="fix"><b>Fix</b> Define or drop the metric, expand acronyms, remove prose colons, move cluster-12 results into Section 6.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec">Suggested revision plan</h2>
+    <p class="sec-lead">Ordered by leverage. The first three change the paper's thesis; the rest are reconciliation and polish.</p>
+    <div class="checklist">
+      <div class="ck"><div class="box"></div><div class="txt">Reframe the paper around the confound correction; scope the unlearning-failure claim to PBMC cluster 13.<span>Retitle, rewrite the abstract, rescope Contribution 2. Highest leverage; addresses issues 1, 2.</span></div></div>
+      <div class="ck"><div class="box"></div><div class="txt">Rebuild the extra-gradient narrative on variance, and reframe cluster 12 as brittleness.<span>Report the cluster-12 AUC, reconcile 0.00/0.03, fix the unit mismatch. Issues 3, 10.</span></div></div>
+      <div class="ck"><div class="box"></div><div class="txt">Reframe the theory: encoder overlap as the binding constraint; explanation not proof; correct the "grows to 1" scaling; narrow to Fisher-based methods.<span>Issues 4, 5, 6. Consider demoting the Cheng rebuttal to a stated conjecture (issue 7).</span></div></div>
+      <div class="ck"><div class="box"></div><div class="txt">Reconcile every in-text number to one canonical JSON and disclose the within-subtype validity flag.<span>TCGA, within-cluster PBMC, c12 baseline, the baseline/retrain drift. Issues 8, 9.</span></div></div>
+      <div class="ck"><div class="box"></div><div class="txt">Add a Reproducibility appendix and, ideally, a retrain-refit attacker to firm up "no signal."<span>Environment, CPU-scoring, seeds, estimator definition. Issues 11, 12.</span></div></div>
+      <div class="ck"><div class="box"></div><div class="txt">Fill related-work gaps and clean up undefined terms, prose colons, and section ordering.<span>Issues 13, 14, 15.</span></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec">Where the signal actually lives</h2>
+    <p class="sec-lead">Reviewer 2's cohort-by-cohort audit — the evidence base for the framing critique.</p>
+    <div class="scroll">
+      <table class="tr">
+        <thead><tr><th>Cohort</th><th>Baseline</th><th>Retrain</th><th>Genuine signal?</th><th>What it shows</th></tr></thead>
+        <tbody>
+          <tr><td>PBMC cluster 13 (n=30)</td><td class="mono">0.791</td><td class="mono">0.578</td><td class="tag-yes">Yes</td><td>Signal present; methods fail</td></tr>
+          <tr><td>PBMC cluster 12 (n=49)</td><td class="mono">0.75</td><td class="mono">0.64</td><td class="tag-no">Marginal</td><td>Confound-dominated (gap ~0.11)</td></tr>
+          <tr><td>PBMC cluster 7 (n=80)</td><td class="mono">0.665</td><td class="mono">0.655</td><td class="tag-no">No</td><td>Confound only</td></tr>
+          <tr><td>Tabula Muris</td><td class="mono">0.891</td><td class="mono">0.944</td><td class="tag-no">No</td><td>Retrain &gt; baseline</td></tr>
+          <tr><td>TCGA-BRCA (within)</td><td class="mono">0.576</td><td class="mono">0.576</td><td class="tag-no">No</td><td>Identical to 15 sig figs</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec">The four reviews in full</h2>
+    <p class="sec-lead">Each reviewer's summary and headline points.</p>
+
+    <details class="rd"><summary><span class="rid">R1</span> Novelty, contribution &amp; positioning <span class="chev">›</span></summary>
+      <div class="body">
+        <p><b>Summary.</b> The bare negative result ("approximate unlearning does not match retraining") is not new, but the combination of the confound correction, the classifier-vs-generative Fisher contrast with a closed-form scaling law, and the transcriptomics domain is a genuine if moderate contribution.</p>
+        <p><b>Top points.</b> The three-dataset framing oversells evidence that reduces to one dataset. The generative-model generality rests entirely on scVI-style VAEs. The Cheng rebuttal is a prediction about a method that is never run — Moon, by contrast, is run and fails for a concrete reason. Three directly relevant references (Pawelczyk 2025, Basu 2021, Goldman 2020) sit uncited in the bib.</p>
+      </div>
+    </details>
+
+    <details class="rd"><summary><span class="rid">R2</span> Experimental rigor &amp; claim support <span class="chev">›</span></summary>
+      <div class="body">
+        <p><b>Summary.</b> Most core numbers trace cleanly and the confound finding is well-instrumented, but the "unlearning fails" headline is supported, in the strong sense, by essentially a single forget set, and several secondary numbers do not trace to the canonical files.</p>
+        <p><b>Top points.</b> Four of five additional cohorts fall in the "no signal to unlearn" bucket. The cluster-12 "FAIL" contradicts the paper's own success criterion (extra-gradient reaches chance AUC 0.497). The within-subtype PBMC control is flagged <code>valid: false</code> by the authors' own tool. TCGA and within-cluster numbers don't match the primary JSON. The extra-gradient verdict flips with the estimator; rest it on variance instead.</p>
+      </div>
+    </details>
+
+    <details class="rd"><summary><span class="rid">R3</span> Theoretical correctness <span class="chev">›</span></summary>
+      <div class="body">
+        <p><b>Summary.</b> The algebra is sound — Proposition 1's factorization is correct and its rank-1 prediction is verified — but the inferential chain from "Fisher directions are aligned" to "no method can selectively unlearn" is necessary-not-sufficient and, in one place, contradicted by the paper's own experiment.</p>
+        <p><b>Top points.</b> The cluster-conditional experiment orthogonalizes the decoder output yet still fails because encoder overlap dominates, relocating the causal mechanism away from the advertised layer. A cosine of 0.485 is a 61° angle with no established threshold; full overlap saturates at ≈0.60, not 1. The theory covers only the three diagonal-Fisher methods. The Cheng rebuttal substitutes a second-moment cosine for a first-moment gradient direction.</p>
+      </div>
+    </details>
+
+    <details class="rd"><summary><span class="rid">R4</span> Clarity, framing honesty &amp; reproducibility <span class="chev">›</span></summary>
+      <div class="body">
+        <p><b>Summary.</b> The work is careful and mostly candid about the confound, but the packaging presents a measurement result as a broad unlearning-failure result, and several load-bearing numbers are scattered, unit-mismatched, or reported at two values across sections.</p>
+        <p><b>Top points.</b> The headline over-generalizes a confound result. The extra-gradient verdict is contradictory across six locations. The cluster-12 vs cluster-13 comparison mixes advantage and AUC units. There is no reproducibility statement and no determinism caveat despite the CPU-scoring requirement. An undefined "Eff. rank ratio" column and three prose colons violate the authors' own conventions.</p>
+      </div>
+    </details>
+  </section>
+
+  <div class="note" style="margin-top:36px">
+    <b>What this review is not.</b> No reviewer found fabricated or manipulated data — R2 and R3 verified the numbers against the canonical JSON outputs. Every finding is a matter of framing, scope, theory-overreach, or internal consistency, all addressable by re-analysis and rewriting rather than new experiments. That is why the decision is revision, not rejection, and why the underlying science is regarded as a publishable core for TMLR.
+  </div>
+
+  <div class="foot">
+    <p><b>Method, and its bias.</b> Four independent reviewer agents each read the current <code>Writeup.tex</code> and the canonical output JSONs through one assigned lens, with no visibility into each other's conclusions, then were synthesized into this packet. This is a deliberately <em>adversarial</em> internal review meant to pre-empt real reviewers, not a calibrated accept/reject prediction. Two of the four were explicitly pointed at the confound-versus-unlearning framing tension, so the unanimity on that point partly reflects the brief rather than the paper alone; the traceability, theory, and internal-consistency findings were surfaced independently by the reviewers grepping the outputs. Two concrete findings (issues 3 and 10) trace to edits made in the same working session that produced this review, and are flagged as such.</p>
+  </div>
+
+</div>

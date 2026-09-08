@@ -117,7 +117,7 @@ def main():
     start_time = time.time()
     torch.manual_seed(42)
     np.random.seed(42)
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu')
     print(f'Device: {device}')
 
     # Load data

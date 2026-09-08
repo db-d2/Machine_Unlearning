@@ -62,7 +62,7 @@ MATCHED_NEG_SCATTERED = OUTPUT_BASE / 'matched_negatives_scattered.json'
 VARIANTS = ['v1', 'v2', 'v3']
 SEEDS = [42, 43, 44]
 KNN_RETAIN_SAMPLE = 5000
-DEVICE = 'cpu'
+DEVICE = os.environ.get('MIA_DEVICE') or ('cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu')
 
 
 def load_vae_model(checkpoint_path, config=None):
@@ -282,12 +282,11 @@ def run_extragradient():
         '--split_path', str(SPLIT_STRUCTURED),
         '--baseline_checkpoint', str(BASELINE_CHECKPOINT),
         '--attacker_paths', *attacker_paths,
-        '--lambda_retain', '10',
+        '--lambda_privacy', os.environ.get('EG_LAMBDA', '10'),
         '--epochs', '50',
         '--lr_vae', '0.0001',
         '--lr_critic', '0.00001',
         '--critic_steps', '2',
-        '--abort_threshold', '3',
         '--batch_size', '256',
         '--output_dir', str(output_dir),
         '--seed', '42',
@@ -296,7 +295,7 @@ def run_extragradient():
     env = os.environ.copy()
     env['PYTHONPATH'] = str(SRC_DIR)
 
-    print("Lambda: 10, Epochs: 50, LR_VAE: 1e-4, LR_Critic: 1e-5")
+    print("lambda_privacy: {}, Epochs: 50 (retain passes), LR_VAE: 1e-4, LR_Critic: 1e-5".format(os.environ.get('EG_LAMBDA', '10')))
     print("Output: {}".format(output_dir))
     print()
 
@@ -324,6 +323,8 @@ def run_fisher(forget_type):
         '--finetune_epochs', '10',
         '--finetune_lr', '0.0001',
         '--fisher_damping', '0.1',
+        '--max_step', '0.001',
+        '--fisher_cache', str(output_dir / 'fisher_retain_persample.pt'),
         '--batch_size', '256',
         '--output_dir', str(output_dir),
         '--seed', '42',
@@ -332,7 +333,7 @@ def run_fisher(forget_type):
     env = os.environ.copy()
     env['PYTHONPATH'] = str(SRC_DIR)
 
-    print("Scrub LR: 1e-4, Steps: 100, Finetune: 10 epochs")
+    print("Scrub LR: 1e-4, Steps: 100 (max step 1e-3), Finetune: 10 epochs")
     print("Output: {}".format(output_dir))
     print()
 
@@ -353,6 +354,20 @@ def evaluate_all():
     baseline_model, config = load_vae_model(BASELINE_CHECKPOINT)
 
     experiments = [
+        # baseline and retrain are scored by the same fresh attacker as the methods, so
+        # every Tabula Muris number in unlearning_results.json comes from one attacker
+        {
+            'name': 'baseline (structured)',
+            'model_path': OUTPUT_BASE / 'baseline' / 'best_model.pt',
+            'split_path': SPLIT_STRUCTURED,
+            'matched_neg': MATCHED_NEG_STRUCTURED,
+        },
+        {
+            'name': 'retrain (structured)',
+            'model_path': OUTPUT_BASE / 'retrain' / 'best_model.pt',
+            'split_path': SPLIT_STRUCTURED,
+            'matched_neg': MATCHED_NEG_STRUCTURED,
+        },
         {
             'name': 'extra-gradient (structured)',
             'model_path': OUTPUT_BASE / 'extragradient_structured' / 'best_model.pt',
@@ -364,6 +379,12 @@ def evaluate_all():
             'model_path': OUTPUT_BASE / 'fisher_structured' / 'unlearned_model.pt',
             'split_path': SPLIT_STRUCTURED,
             'matched_neg': MATCHED_NEG_STRUCTURED,
+        },
+        {
+            'name': 'baseline (scattered)',
+            'model_path': OUTPUT_BASE / 'baseline' / 'best_model.pt',
+            'split_path': SPLIT_SCATTERED,
+            'matched_neg': MATCHED_NEG_SCATTERED,
         },
         {
             'name': 'fisher (scattered)',
@@ -442,23 +463,14 @@ def evaluate_all():
 
     if 'structured' in baseline_results:
         b = baseline_results['structured']
-        print("{:<30} {:.4f}     PBMC: 0.769".format(
-            'Baseline (structured)', b['baseline_auc']))
+        print("{:<30} {:.4f}".format('Baseline (structured, NB12 attacker)', b['baseline_auc']))
 
     if 'scattered' in baseline_results:
         b = baseline_results['scattered']
-        print("{:<30} {:.4f}     PBMC: 0.769".format(
-            'Baseline (scattered)', b['baseline_auc']))
+        print("{:<30} {:.4f}".format('Baseline (scattered, NB12 attacker)', b['baseline_auc']))
 
     for name, metrics in results.items():
-        pbmc_ref = ""
-        if "extra-gradient" in name and "structured" in name:
-            pbmc_ref = "PBMC: 0.48 (target)"
-        elif "fisher" in name and "structured" in name:
-            pbmc_ref = "PBMC: 0.81 (fails)"
-        elif "fisher" in name and "scattered" in name:
-            pbmc_ref = "PBMC: 0.50 (works)"
-        print("{:<30} {:.4f}     {}".format(name, metrics['auc'], pbmc_ref))
+        print("{:<30} {:.4f}".format(name, metrics['auc']))
 
     # Save combined results
     summary = {
@@ -468,13 +480,8 @@ def evaluate_all():
                                 'F vs matched (canonical NB03)',
         'baseline': baseline_results,
         'unlearning': results,
-        'pbmc_reference': {
-            'baseline_auc': 0.769,
-            'retrain_floor': 0.481,
-            'extragradient_structured': 0.48,
-            'fisher_structured': 0.81,
-            'fisher_scattered': 0.50,
-        }
+        'attacker_device': DEVICE,
+        'revision': '2026-09-08: fixed extra-gradient and Fisher code; baseline and retrain scored by the same attacker; PBMC references live in src/canonical.py',
     }
 
     out_path = OUTPUT_BASE / 'unlearning_results.json'

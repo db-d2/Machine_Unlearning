@@ -111,7 +111,7 @@ def main(args):
     set_global_seed(args.seed)
 
     # Setup device
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu')
     print(f"Using device: {device}")
 
     # Create output directory

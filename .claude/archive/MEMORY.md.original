@@ -1,0 +1,177 @@
+# Project Memory
+
+## Python Environment
+- Use `~/.pyenv/versions/stat4243/bin/python` or `pyenv activate stat4243` for correct env
+- System Python lacks numpy/torch; always use the pyenv env
+- `PYTHONPATH=src` needed when running scripts from project root
+
+## Key File Paths
+- Baseline checkpoint: `outputs/p1/baseline/best_model.pt` (has 'config' and 'model_state_dict')
+- Retrain checkpoint: `outputs/p1/retrain_structured/best_model.pt`
+- Split: `outputs/p1/split_structured.json` (forget/retain/unseen indices, no matched_neg)
+- Matched negatives: `outputs/p1.5/s1_matched_negatives.json` (194 matched indices)
+- Pre-trained attackers: `outputs/p2/attackers/attacker_{v1,v2,v3}_seed{42,43,44}.pt`
+
+## VAE Checkpoint Format
+```python
+{'model_state_dict': ..., 'config': {'input_dim': 2000, 'latent_dim': 32,
+ 'hidden_dims': [1024, 512, 128], 'likelihood': 'nb', 'dropout': 0.1,
+ 'use_layer_norm': True}}
+```
+
+## Existing Result Files
+- `outputs/attack_suite_results.json` - keyed by method (NB15, canonical attacker)
+- `outputs/utility_suite_results.json` - keyed by method name (NB18)
+- `outputs/p4/ablation_results.json` - Fisher multiseed (NB09, canonical attacker)
+- `outputs/p4/extragradient_size/summary.json` - CORRECTED 2026-02-08 with fresh attackers
+- `outputs/p4/multiseed/eval/` - CORRECTED 2026-02-08 with fresh attackers
+- `outputs/p6/fisher_overlap_results.json` - CANONICAL (NB26, damping=1e-8)
+- `outputs/p6/fisher_overlap.json` - SUPERSEDED (script, damping=1e-5)
+- `outputs/p6/fisher_overlap_deep_clf.json` - NB27, deep MLP classifier
+- `outputs/p6/fisher_overlap_z8.json` - NB28, VAE z=8
+- `outputs/p6/fisher_overlap_conditional.json` - NB29, conditional VAE
+- `outputs/p6/vae_z8_best_model.pt` - NB28 checkpoint
+- `outputs/p6/cvae_best_model.pt` - NB29 checkpoint
+- `outputs/p6/nb30_results.json` - NB30, proposition verification + CVAE scrubbing
+
+## CRITICAL: MIA Attacker Methodology
+Bug found 2026-02-08: eval scripts loaded pre-trained attackers (F vs RETAIN=28k).
+Fixed in all 6 scripts. Canonical approach: train FRESH attacker on F vs matched neg
+from BASELINE model. 70 dims, spectral norm, [256,256], dropout 0.3.
+
+## Corrected Multi-seed Results (Table 1)
+- Baseline: AUC=0.783, advantage=0.565
+- Retrain: AUC=0.523, advantage=0.046, CI upper=0.266
+- EG 10-seed: AUC=0.429 +/- 0.142, advantage=0.300 (FAIL)
+- Retain-FT 5-seed: advantage=0.331 (FAIL)
+- Gradient ascent 5-seed: advantage=0.404 (FAIL)
+- Fisher 3-seed: advantage=0.628 (FAIL)
+
+## Phase 6a: Fisher Overlap (COMPLETE, 2026-02-15)
+Canonical numbers from NB26 (damping=1e-8):
+- VAE global cosine: 0.306
+- Encoder: 0.273, Bottleneck: 0.291, Decoder hidden: 0.232, Decoder output: 0.362
+- fc_mean cosine: 0.360, fc_dispersion cosine: 0.998
+- Classifier (linear, 462 params): 0.018
+- Ratio: 17x (0.306 / 0.018)
+- Gene-level: 1462/2000 genes cos>0.5, median=0.877
+- Log-Fisher correlation: 0.727
+- Top-1% overlap: 20.5%, top-10% overlap: 49.6%
+
+**Damping matters:** 1e-5 gives 0.378 global cosine; 1e-8 gives 0.306. Paper uses 1e-8.
+
+## Phase 6b: Theory Strengthening (ALL TASKS COMPLETE 2026-02-16)
+- W1: DONE (NB28) - W2: DONE - W3: DONE (NB27) - W4: DONE (NB29)
+- W6: DONE - W7: DONE (Proposition 1)
+
+## Proposition 1 (W7, COMPLETE 2026-02-16)
+For linear decoder f(z)=Wz+b with MSE loss, diagonal Fisher factorizes:
+cos(F^F, F^R) = cos(σ^F, σ^R) · cos(ν^F, ν^R)
+where σ = residual variance profile (R^D), ν = latent second moment (R^H).
+**CRITICAL:** For fc_mean, "z" is h (1024-dim decoder hidden output), NOT
+z_vae (32-dim KL-regularized latent). KL acts on z_vae, not h. So ν ≠ 1.
+**Empirical verification (NB30):** fc_mean Fisher is ~95% rank-1 (SVD).
+Factorized product = 0.41, measured = 0.37, ratio = 1.11 (11% error).
+cos(σ) = 0.51, cos(ν) = 0.80.
+
+## NB27: Deep MLP Classifier (W3, COMPLETE 2026-02-16)
+Architecture: 2000->[512,128]->14, 1.09M params, dropout=0.3, weight_decay=1e-2
+Stopped at 95.2% accuracy (8 epochs) to keep Fisher meaningful.
+- Shared hidden cosine: 0.262 (matches VAE encoder 0.273, decoder hidden 0.232)
+- Class-specific output cosine: 0.010 (matches linear clf 0.018)
+- Log-Fisher correlation: 0.752
+- Confirms overlap depends on shared-vs-class-specific, not model capacity
+
+## NB28: VAE z=8 (W1, COMPLETE 2026-02-16)
+Same hidden dims, latent_dim=8 instead of 32. Best epoch 77, val_loss 366.3.
+- Global cosine: 0.846 (higher than z=32's 0.306, driven by bottleneck)
+- Bottleneck cosine: 0.858 (vs z=32's 0.291 - smaller z concentrates overlap)
+- Encoder: 0.314, Decoder hidden: 0.216, Decoder output: 0.299
+- Confirms overlap persists (increases) with smaller latent dim
+
+## NB29: Conditional VAE (W4, COMPLETE 2026-02-16)
+fc_mean takes [h; cluster_onehot], shape [2000, 1038]. Best epoch 95, val_loss 365.8.
+- Global cosine: 0.432
+- Decoder output cosine: 0.246 (vs standard 0.362)
+- fc_mean decomposition: shared cols 0.222, cluster cols ~0.000 (1.2e-8)
+- Cluster columns achieve full disentanglement (like classifier)
+- Shared columns retain irreducible overlap from shared hidden features
+
+## NB30: Proposition Test + CVAE Scrubbing (COMPLETE 2026-02-16)
+**Part A (Proposition 1 verification):**
+- fc_mean Fisher ~95% rank-1 (SVD top-1 explains 94%/96%)
+- Factorized cos(σ)·cos(ν) = 0.41, measured = 0.37, ratio = 1.11
+**Part B (CVAE Fisher scrubbing):**
+- CVAE baseline: AUC=0.864, advantage=0.727 (memorizes MORE than std VAE)
+- CVAE after scrub: AUC=0.858, advantage=0.717 (negligible change)
+- Standard VAE scrub: advantage=0.628
+- **Key finding:** conditional architecture does NOT improve scrubbing.
+  Bottleneck is the ENTIRE shared network (encoder 0.433, bottleneck 0.508,
+  decoder hidden 0.346), not just shared fc_mean columns (0.222). Encoder
+  overlap dominates because 64/69 MIA features are mu+logvar.
+
+## Opacus/PyTorch Compatibility
+- PyTorch 2.2.2, **Opacus 1.4.0 WORKS**
+- Must use `PrivacyEngine(accountant='rdp')` + `make_private()`
+- Must freeze `vae.decoder.fc_dispersion`
+
+## Writeup Conventions
+- No "we" pronouns, no colons in prose, no em-dashes
+- Bold only for run-in paragraph headers
+- Advantage metric: 2|AUC-0.5| (adapted from Yeom 2018)
+- All numbers must match `outputs/p6/fisher_overlap_results.json`
+
+## Fisher Utils Module
+`src/fisher_utils.py` consolidates datasets, metrics, and Fisher functions for NB27-29.
+Imports: AnnDataDataset, GeneExprDataset, ConditionalAnnDataDataset, DeepMLPClassifier,
+compute_vae_fisher, compute_classifier_fisher, compute_conditional_vae_fisher,
+cosine_sim, effective_rank, top_k_overlap, vae_layer_category, classifier_layer_category.
+
+## Classifier Fisher Gotcha
+If classifier reaches 100% accuracy, forget-set Fisher becomes damping-dominated
+(eff_rank = n_params). Must regularize (dropout=0.3, weight_decay=1e-2) and
+early-stop at ~95% accuracy to keep gradients meaningful.
+
+## VAE Config Gotcha
+Checkpoint config has extra keys (lr, etc). Filter with:
+`{k: v for k, v in config.items() if k in ['input_dim', 'latent_dim',
+'hidden_dims', 'likelihood', 'dropout', 'use_layer_norm']}`
+
+## Session 2026-02-17: Writeup Polish + Docs Update (COMPLETE)
+
+### Writeup.tex changes made:
+1. **Corollary 2 added** (after Proposition 1): Dimensional scaling bounds
+   - Part (i): cos(σ) >= (D-M)/(D-M+MV^2) for generative models
+   - Part (ii): cos(σ) = 1/√C for single-class classifier forget sets
+   - `\newtheorem{corollary}[proposition]{Corollary}` added (shares numbering)
+2. **Fixed bound violation** in interpretation paragraph: referenced data-direct
+   cos(σ)=0.83 (satisfies bound 0.68) instead of Fisher-marginal cos(σ)=0.51
+3. **Split dense Section 6 paragraph** with `\paragraph{Empirical verification.}`
+4. **Updated contribution item 5** to mention scaling behavior
+5. **Fixed wolf2018 citation context** (SCANPY is the tool, not the dataset)
+
+### references.bib fixes:
+- Hayes year: 2025 → 2024
+- Kunstner author order: swapped Hennig and Balles to match NeurIPS proceedings
+
+### Documentation rewrites (all 3 now match current paper):
+- **README.md**: 8 methods, 2 datasets, Fisher theory, notebooks 01-30
+- **Writeup.md**: Full markdown summary of paper with all sections
+- **index.md**: Site homepage with results table, figures, findings
+
+### Key verification done:
+- All ~13 numerical claims in Section 6 verified against nb30_results.json and fisher_overlap_results.json
+- The "> 0.99" claim (Fisher-marginal ν matches data-direct hidden second moments) verified from NB30 cell 8: ν_forget cos=0.9905, ν_retain cos=0.9979
+- Corollary bound: data-direct cos(σ)=0.83 > bound 0.68 ✓
+
+### Paper review assessment (my analysis):
+- NeurIPS: 25-35% acceptance chance
+- TMLR: 55-65%
+- Workshop: 80%+
+- Main gaps: single domain (scRNA only), negative results without solution, narrow theory
+- Improvements suggested: test non-biological VAE, add recent methods, constructive result
+
+### Advantage metric decision: KEEP
+- Correctly handles Streisand effect (AUC=0.153), high-variance methods (extra-gradient)
+- Cited to Yeom 2018, both AUC+advantage in every table
+- Cost to revert would be massive with high error risk

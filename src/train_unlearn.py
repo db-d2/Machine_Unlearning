@@ -284,10 +284,14 @@ def train_vae_multi_step(
 
         # === UTILITY TERM ===
         output_r = vae(x_r, library_size=lib_r)
+        # Revision 2026-09-08 (round-5 review): per_cell=True averaged reconstruction over
+        # genes and KL over latent dims, over-weighting KL ~60x relative to training. Use the
+        # training objective and divide by the gene count for an O(1) magnitude instead.
         utility_loss, _, _ = vae_loss(
             x_r, output_r, likelihood=vae.likelihood,
-            library_size=lib_r, per_cell=True  # per-cell for O(1) magnitude
+            library_size=lib_r, per_cell=False
         )
+        utility_loss = utility_loss / x_r.shape[1]
 
         # Update EMA trackers
         if ema_priv is None:
@@ -410,7 +414,7 @@ def compute_unlearning_objective(
 
 def main(args):
     set_global_seed(args.seed)
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu')
     print(f"Using device: {device}")
 
     output_dir = Path(args.output_dir)

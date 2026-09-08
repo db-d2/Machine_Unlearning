@@ -10,7 +10,7 @@ import yaml
 
 
 # Device configuration (CPU for Intel Mac, CUDA if available)
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+DEVICE = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
 
 
 def set_global_seed(seed: int = 42):

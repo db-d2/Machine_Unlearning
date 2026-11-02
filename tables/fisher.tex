@@ -1,0 +1,20 @@
+\begin{tabular}{lrc}
+\toprule
+Parameter group & Parameters & Forget--retain Fisher cosine \\
+\midrule
+VAE encoder & 2,642,816 & 0.345 \\
+VAE bottleneck & 8,256 & 0.428 \\
+VAE decoder hidden & 598,912 & 0.351 \\
+VAE decoder output & 4,100,000 & 0.493 \\
+VAE, all parameters & 7,349,984 & 0.209 \\
+\midrule
+Linear classifier, 14 classes (class-specific output weights) & 462 & 0.018 \\
+Deep MLP classifier, shared hidden layers & 1,091,456 & 0.527 \\
+Deep MLP classifier, class-specific output & 1,806 & 0.006 \\
+\midrule
+VAE with $z=8$, all parameters & 7,340,720 & 0.348 \\
+Conditional VAE, cluster-specific output columns & -- & 0.000 \\
+Conditional VAE, encoder & 2,642,816 & 0.617 \\
+TCGA-BRCA VAE, all parameters & 4,208,356 & 0.753 \\
+\bottomrule
+\end{tabular}

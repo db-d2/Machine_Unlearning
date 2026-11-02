@@ -1,0 +1,23 @@
+\begin{tabular}{lccccccccccc}
+\toprule
+Edit & Scrub steps & Forget after edit & Held-out after edit & Adam, 10 & Adam, 50 & Adam, 200 & SGD, 10 & SGD, 50 & SGD, 200 & Held-out, Adam 200 & Held-out, SGD 200 \\
+\midrule
+\multicolumn{12}{l}{\emph{PBMC-33k cluster 13: baseline forget 269, held-out 363 (mean negative ELBO per cell)}} \\
+No edit & 0 & 269 & 363 & 284 & 306 & 329 & 273 & 282 & 296 & 362 & 362 \\
+Published scrub (moderate damage, twice the starting forget loss) & 26 & 572 & 402 & 292 & 312 & 332 & 296 & 292 & 299 & 362 & 362 \\
+Retain-active directions & 26 & 582 & 406 & 290 & 310 & 332 & 292 & 289 & 298 & 362 & 362 \\
+Retain-null directions & 124 & 549 & 363 & 431 & 405 & 387 & 467 & 438 & 429 & 362 & 362 \\
+Published scrub (damage of the published scrub) & 100 & 5,601 & 1,271 & 298 & 309 & 331 & 321 & 316 & 309 & 362 & 371 \\
+Retain-active directions & 86 & 5,684 & 1,343 & 294 & 308 & 331 & 321 & 304 & 308 & 362 & 371 \\
+Retain-null directions & 268 & 6,239 & 371 & 540 & 426 & 404 & 556 & 440 & 399 & 362 & 362 \\
+\midrule
+\multicolumn{12}{l}{\emph{PBMC-68k cluster 9: baseline forget 488, held-out 479 (mean negative ELBO per cell)}} \\
+No edit & 0 & 488 & 479 & 540 & 689 & 800 & 488 & 499 & 534 & 481 & 479 \\
+Published scrub (moderate damage, twice the starting forget loss) & 40 & 1,106 & 481 & 542 & 682 & 801 & 611 & 530 & 541 & 481 & 479 \\
+Retain-active directions & 50 & 1,038 & 481 & 541 & 684 & 799 & 570 & 514 & 536 & 481 & 479 \\
+Retain-null directions & 9 & 1,483 & 482 & 551 & 678 & 801 & 1,015 & 757 & 595 & 481 & 479 \\
+Published scrub (damage of the published scrub) & 100 & 49,193 & 671 & 971 & 679 & 804 & 3,039 & 1,123 & 664 & 481 & 479 \\
+Retain-active directions & 128 & 48,945 & 702 & 832 & 681 & 804 & 1,740 & 689 & 576 & 481 & 479 \\
+Retain-null directions & 25 & 60,925 & 668 & 4,652 & 911 & 797 & 13,204 & 6,960 & 1,273 & 481 & 480 \\
+\bottomrule
+\end{tabular}

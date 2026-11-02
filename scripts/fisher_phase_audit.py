@@ -26,7 +26,7 @@ BASE = Path(__file__).parent.parent
 sys.path.insert(0, str(BASE / 'src')); sys.path.insert(0, str(BASE / 'scripts'))
 import eval_multiseed as EM
 EM.DEVICE = 'cpu'
-from likelihood_audit import neg_elbo_per_cell
+from likelihood_audit import neg_elbo_per_cell, lr_auc_ci
 from eval_multiseed import (load_vae_model, train_fresh_attacker, get_retain_latent_codes, get_features,
                             DATA_PATH, SPLIT_PATH, MATCHED_NEG_PATH, BASELINE_CHECKPOINT)
 from fisher_utils import AnnDataDataset
@@ -67,7 +67,8 @@ def main():
         nf, nm = neg_elbo(model, xf), neg_elbo(model, xm)
         rec = {'forget_neg_elbo': float(nf.mean()), 'matched_neg_elbo': float(nm.mean()),
                'retain_neg_elbo': float(neg_elbo(model, xr).mean()), 'unseen_neg_elbo': float(neg_elbo(model, xu).mean()),
-               'mlp_auc': float(roc_auc_score(labels, s)), 'lr_auc': float(roc_auc_score(labels, np.r_[ref_f - nf, ref_m - nm]))}
+               'mlp_auc': float(roc_auc_score(labels, s)), 'lr_auc': float(roc_auc_score(labels, np.r_[ref_f - nf, ref_m - nm])),
+               'lr_auc_ci': lr_auc_ci(ref_f, ref_m, nf, nm)['ci95']}
         print(f"  {tag:34s} forget={rec['forget_neg_elbo']:.1f} matched={rec['matched_neg_elbo']:.1f} retain={rec['retain_neg_elbo']:.1f} "
               f"unseen={rec['unseen_neg_elbo']:.1f} | MLP {rec['mlp_auc']:.3f} LR {rec['lr_auc']:.3f}", flush=True)
         return rec

@@ -83,10 +83,11 @@ class Evaluator:
     one as scripts/attack_lr_reference.py, so the notebook and the audit JSON agree.
     """
 
-    def __init__(self, attacker, reference, X_forget, X_matched, X_retain_sample, device):
-        self.attacker = attacker.to('cpu').eval()
+    def __init__(self, attacker, reference, X_forget, X_matched, X_retain_sample, device, extra_sets=None):
+        self.attacker = attacker.to('cpu').eval() if attacker is not None else None
         self.X_forget, self.X_matched, self.X_retain_sample = X_forget, X_matched, X_retain_sample
         self.device = device
+        self.extra_sets = dict(extra_sets or {})   # name -> tensor; each adds '<name>_neg_elbo' to the record
         self.labels = np.r_[np.ones(len(X_forget)), np.zeros(len(X_matched))]
         ref = reference.to('cpu').eval()
         self.ref_f = audit_neg_elbo(ref, X_forget)
@@ -100,17 +101,23 @@ class Evaluator:
         nm = audit_neg_elbo(model, self.X_matched)
         nr = audit_neg_elbo(model, self.X_retain_sample)
         targets = nm[neighbors.numpy()].mean(1)
-        rz = retain_latents(model, self.X_retain_sample, dev)
-        feats = torch.cat([attack_features(model, self.X_forget, rz, dev),
-                           attack_features(model, self.X_matched, rz, dev)], 0)
-        with torch.no_grad():
-            scores = torch.sigmoid(self.attacker(feats).squeeze()).numpy()
+        if self.attacker is not None:
+            rz = retain_latents(model, self.X_retain_sample, dev)
+            feats = torch.cat([attack_features(model, self.X_forget, rz, dev),
+                               attack_features(model, self.X_matched, rz, dev)], 0)
+            with torch.no_grad():
+                scores = torch.sigmoid(self.attacker(feats).squeeze()).numpy()
+            mlp_auc = float(roc_auc_score(self.labels, scores))
+        else:
+            mlp_auc = float('nan')
         lr = np.r_[self.ref_f - nf, self.ref_m - nm]
-        return {'forget_neg_elbo': float(nf.mean()), 'target_neg_elbo': float(targets.mean()),
-                'matched_neg_elbo': float(nm.mean()), 'retain_neg_elbo': float(nr.mean()),
-                'gap': float((nf - targets).mean()), 'abs_gap': float(np.abs(nf - targets).mean()),
-                'mlp_auc': float(roc_auc_score(self.labels, scores)),
-                'lr_auc': float(roc_auc_score(self.labels, lr))}
+        out = {'forget_neg_elbo': float(nf.mean()), 'target_neg_elbo': float(targets.mean()),
+               'matched_neg_elbo': float(nm.mean()), 'retain_neg_elbo': float(nr.mean()),
+               'gap': float((nf - targets).mean()), 'abs_gap': float(np.abs(nf - targets).mean()),
+               'mlp_auc': mlp_auc, 'lr_auc': float(roc_auc_score(self.labels, lr))}
+        for name, Xe in self.extra_sets.items():
+            out[f'{name}_neg_elbo'] = float(audit_neg_elbo(model, Xe).mean())
+        return out
 
 
 def train_targeted(baseline, X_forget, X_matched, X_retain, neighbors, evaluator, device,

@@ -1,0 +1,7624 @@
+[
+ {
+  "text": "0.062",
+  "anchor": "with paired differences of",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.arms.retain_finetune.diff",
+  "note": "introduction: the smallest cluster-8 difference"
+ },
+ {
+  "text": "0.283",
+  "anchor": "in AUC whose intervals exclude zero",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.arms.extragradient.diff",
+  "note": "introduction: the largest cluster-8 difference"
+ },
+ {
+  "text": "0.008",
+  "anchor": "paired difference from the retrained arm is ",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.long_finetune.diff",
+  "note": "introduction: the 200-epoch fine-tune on cluster 9"
+ },
+ {
+  "text": "0.062",
+  "anchor": "an interval of $-0.062$ to 0.080",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.long_finetune.diff_ci.0",
+  "reduce": "abs"
+ },
+ {
+  "text": "0.080",
+  "anchor": "an interval of $-0.062$ to 0.080",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.long_finetune.diff_ci.1"
+ },
+ {
+  "text": "0.02",
+  "anchor": "that share orders the settings",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "pbmc33k",
+   "groups",
+   "global",
+   "survival",
+   "10.0"
+  ],
+  "note": "contribution 2: survival S(10)"
+ },
+ {
+  "text": "0.22",
+  "anchor": "where a rare type is routed through hidden units",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "pbmc68k_mk",
+   "groups",
+   "global",
+   "survival",
+   "10.0"
+  ]
+ },
+ {
+  "text": "0.77",
+  "anchor": "0.77 in a classifier",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "classifier_linear",
+   "groups",
+   "global",
+   "survival",
+   "10.0"
+  ]
+ },
+ {
+  "text": "0.509",
+  "anchor": "retrained models score between",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.retrain.auc_per_seed",
+  "reduce": "min"
+ },
+ {
+  "text": "0.567",
+  "anchor": "under the PBMC-33k attacker",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.retrain.auc_per_seed",
+  "reduce": "max"
+ },
+ {
+  "text": "0.797",
+  "anchor": "out of fold, scores the baseline at",
+  "source": "outputs/p4/multiseed/retrain_refit.json",
+  "key": "models.baseline.cv_auc",
+  "note": "Section 3: the out-of-fold refit control"
+ },
+ {
+  "text": "0.801",
+  "anchor": "against the transferred",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.baseline.auc"
+ },
+ {
+  "text": "0.984",
+  "anchor": "on a retrained model (Table",
+  "source": "outputs/feature_group_check.json",
+  "key": "pbmc33k/c13_cross/retrain_42.all 70.0",
+  "note": "the standardized logistic on all 70 features, clean retrain seed 42 (the 32 posterior means alone give 0.9839, the same value at three decimals)"
+ },
+ {
+  "text": "0.990",
+  "anchor": "at 0.990 on the baseline and 0.984",
+  "source": "outputs/feature_group_check.json",
+  "key": "pbmc33k/c13_cross/baseline.all 70.0",
+  "note": "the standardized logistic on all 70 features, baseline (the 32 posterior means alone give 0.9902, the same value at three decimals)"
+ },
+ {
+  "text": "1,014",
+  "anchor": "siblings equally badly, at medians of",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.retrain.forget_median.per_seed",
+  "reduce": "min"
+ },
+ {
+  "text": "1,154",
+  "anchor": "against the baseline's 491",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.retrain.forget_median.per_seed",
+  "reduce": "max"
+ },
+ {
+  "text": "491",
+  "anchor": "against the baseline's 491",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.baseline.gap_median.per_seed.0"
+ },
+ {
+  "text": "0.965",
+  "anchor": "by scoring the baseline at",
+  "source": "outputs/pbmc68k/results_mk.json",
+  "key": "per_checkpoint.baseline.per_seed.0.attacker_cross"
+ },
+ {
+  "text": "0.683",
+  "anchor": "finds the cells the baseline trained on at",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.baseline.mean"
+ },
+ {
+  "text": "0.472",
+  "anchor": "against 0.472 to 0.538 for the eight retrained",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.retrain.per_seed_auc",
+  "reduce": "min"
+ },
+ {
+  "text": "0.538",
+  "anchor": "against 0.472 to 0.538 for the eight retrained",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.retrain.per_seed_auc",
+  "reduce": "max"
+ },
+ {
+  "text": "0.168",
+  "anchor": "an excess of 0.168",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.baseline_excess"
+ },
+ {
+  "text": "0.087",
+  "anchor": "interval 0.087 to 0.247",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.baseline_excess_ci.0"
+ },
+ {
+  "text": "0.247",
+  "anchor": "interval 0.087 to 0.247",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.baseline_excess_ci.1"
+ },
+ {
+  "text": "0.647",
+  "anchor": "SSD (0.647, a difference of",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.ssd.mean"
+ },
+ {
+  "text": "0.132",
+  "anchor": "SSD (0.647, a difference of",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.ssd.diff"
+ },
+ {
+  "text": "0.057",
+  "anchor": ", interval 0.057 to 0.204)",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.ssd.diff_ci.0"
+ },
+ {
+  "text": "0.204",
+  "anchor": ", interval 0.057 to 0.204)",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.ssd.diff_ci.1"
+ },
+ {
+  "text": "0.601",
+  "anchor": "SCRUB (0.601",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.scrub.mean"
+ },
+ {
+  "text": "0.086",
+  "anchor": ", interval 0.018 to 0.152)",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.scrub.diff"
+ },
+ {
+  "text": "0.018",
+  "anchor": ", interval 0.018 to 0.152)",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.scrub.diff_ci.0"
+ },
+ {
+  "text": "0.152",
+  "anchor": ", interval 0.018 to 0.152)",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.scrub.diff_ci.1"
+ },
+ {
+  "text": "0.603",
+  "anchor": "and Fisher scrubbing (0.603",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.fisher.mean"
+ },
+ {
+  "text": "0.088",
+  "anchor": ", interval 0.017 to 0.159)",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.fisher.diff"
+ },
+ {
+  "text": "0.017",
+  "anchor": ", interval 0.017 to 0.159)",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.fisher.diff_ci.0"
+ },
+ {
+  "text": "0.159",
+  "anchor": ", interval 0.017 to 0.159)",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.fisher.diff_ci.1"
+ },
+ {
+  "text": "0.556",
+  "anchor": "Retain-only fine-tuning (0.556)",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.retain_finetune.mean"
+ },
+ {
+  "text": "0.558",
+  "anchor": "contrastive unlearning (0.558)",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.contrastive.mean"
+ },
+ {
+  "text": "0.582",
+  "anchor": "gradient ascent (0.582)",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.gradient_ascent.mean"
+ },
+ {
+  "text": "0.137",
+  "anchor": "intervals include zero but reach to",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.gradient_ascent.diff_ci.1"
+ },
+ {
+  "text": "0.877",
+  "anchor": "The per-cell refit rises to",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.extragradient.mean"
+ },
+ {
+  "text": "0.361",
+  "anchor": "a difference of 0.361",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.extragradient.diff"
+ },
+ {
+  "text": "0.285",
+  "anchor": "(interval 0.285 to 0.438)",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.extragradient.diff_ci.0"
+ },
+ {
+  "text": "0.438",
+  "anchor": "(interval 0.285 to 0.438)",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.extragradient.diff_ci.1"
+ },
+ {
+  "text": "251",
+  "anchor": "below the retrained arm's median",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.fisher.gap_median.gap",
+  "reduce": "abs"
+ },
+ {
+  "text": "814",
+  "anchor": "a median of 814 to 831",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.fisher.gap_median.per_seed",
+  "reduce": "min"
+ },
+ {
+  "text": "831",
+  "anchor": "a median of 814 to 831",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.fisher.gap_median.per_seed",
+  "reduce": "max"
+ },
+ {
+  "text": "672",
+  "anchor": "has retrained medians of",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.retrain.forget_median.per_seed",
+  "reduce": "min"
+ },
+ {
+  "text": "684",
+  "anchor": "has retrained medians of",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.retrain.forget_median.per_seed",
+  "reduce": "max"
+ },
+ {
+  "text": "532",
+  "anchor": "against the baseline's 532",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.baseline.gap_median.per_seed.0"
+ },
+ {
+  "text": "0.603",
+  "anchor": "The baseline scores 0.603 against",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.arms.baseline.mean"
+ },
+ {
+  "text": "0.450",
+  "anchor": "0.450 to 0.503 for the retrained models",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.arms.retrain.per_seed_auc",
+  "reduce": "min"
+ },
+ {
+  "text": "0.503",
+  "anchor": "0.450 to 0.503 for the retrained models",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.arms.retrain.per_seed_auc",
+  "reduce": "max"
+ },
+ {
+  "text": "0.117",
+  "anchor": "an excess of 0.117",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.baseline_excess"
+ },
+ {
+  "text": "0.075",
+  "anchor": "interval 0.075 to 0.159",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.baseline_excess_ci.0"
+ },
+ {
+  "text": "0.102",
+  "anchor": "a difference of 0.102",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.arms.fisher.diff"
+ },
+ {
+  "text": "0.632",
+  "anchor": "leaves the cells more identifiable than retrained at",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.arms.contrastive.mean"
+ },
+ {
+  "text": "0.769",
+  "anchor": "amplifies the per-cell signal, to",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.arms.extragradient.mean"
+ },
+ {
+  "text": "9.41",
+  "anchor": "held-out ELBO cost of",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_pdc.arms.fisher.elbo_cost"
+ },
+ {
+  "text": "0.466",
+  "anchor": "the forget cells, at 0.466",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.dp_sgd.auc"
+ },
+ {
+  "text": "0.533",
+  "anchor": "Its audit is 0.533, fitted as retrained",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.dp_sgd.audit_cross.mean"
+ },
+ {
+  "text": "0.411",
+  "anchor": "under the attacker (0.411",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.extragradient.auc"
+ },
+ {
+  "text": "0.250",
+  "anchor": "at 0.250 with a difference interval",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.extragradient.audit_cross.mean"
+ },
+ {
+  "text": "0.568",
+  "anchor": "scores the 200-epoch models at",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.long_finetune_200.auc"
+ },
+ {
+  "text": "0.039",
+  "anchor": "a difference of 0.039",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.long_finetune_200.diff"
+ },
+ {
+  "text": "0.009",
+  "anchor": "(interval 0.009 to 0.074)",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.long_finetune_200.diff_ci.0"
+ },
+ {
+  "text": "0.074",
+  "anchor": "(interval 0.009 to 0.074)",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.long_finetune_200.diff_ci.1"
+ },
+ {
+  "text": "0.524",
+  "anchor": "The per-cell refit ends at",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.long_finetune.mean"
+ },
+ {
+  "text": "247",
+  "anchor": "a paired median gap of",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.gap_median.gap",
+  "reduce": "abs"
+ },
+ {
+  "text": "2.19",
+  "anchor": "The held-out utility cost is",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.elbo_cost"
+ },
+ {
+  "text": "1.71",
+  "anchor": "(interval 1.71 to 2.67)",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.elbo_cost_ci.0"
+ },
+ {
+  "text": "2.67",
+  "anchor": "(interval 1.71 to 2.67)",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.elbo_cost_ci.1"
+ },
+ {
+  "text": "0.0069",
+  "anchor": "in marker correlation (interval",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.marker_cost"
+ },
+ {
+  "text": "0.0037",
+  "anchor": "(interval 0.0037 to 0.0099)",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.marker_cost_ci.0"
+ },
+ {
+  "text": "0.0099",
+  "anchor": "(interval 0.0037 to 0.0099)",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.marker_cost_ci.1"
+ },
+ {
+  "text": "0.133",
+  "anchor": "more identifiable than retrained (0.133",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.0015",
+   "diff"
+  ]
+ },
+ {
+  "text": "0.086",
+  "anchor": ", interval 0.086 to 0.184)",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.0015",
+   "diff_ci",
+   "0"
+  ]
+ },
+ {
+  "text": "0.184",
+  "anchor": ", interval 0.086 to 0.184)",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.0015",
+   "diff_ci",
+   "1"
+  ]
+ },
+ {
+  "text": "0.049",
+  "anchor": "the difference is 0.049",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.002",
+   "diff"
+  ]
+ },
+ {
+  "text": "0.011",
+  "anchor": "to 0.110) and at",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.002",
+   "diff_ci",
+   "0"
+  ],
+  "reduce": "abs"
+ },
+ {
+  "text": "0.110",
+  "anchor": "to 0.110) and at",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.002",
+   "diff_ci",
+   "1"
+  ]
+ },
+ {
+  "text": "0.044",
+  "anchor": "it is $-0.044$",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.0025",
+   "diff"
+  ],
+  "reduce": "abs"
+ },
+ {
+  "text": "0.108",
+  "anchor": "(interval $-0.108$ to 0.019)",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.0025",
+   "diff_ci",
+   "0"
+  ],
+  "reduce": "abs"
+ },
+ {
+  "text": "0.019",
+  "anchor": "(interval $-0.108$ to 0.019)",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.0025",
+   "diff_ci",
+   "1"
+  ]
+ },
+ {
+  "text": "0.150",
+  "anchor": "cells are less identifiable than retrained ($-0.150$",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.003",
+   "diff"
+  ],
+  "reduce": "abs"
+ },
+ {
+  "text": "0.243",
+  "anchor": ", interval $-0.243$ to $-0.072$)",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.003",
+   "diff_ci",
+   "0"
+  ],
+  "reduce": "abs"
+ },
+ {
+  "text": "0.072",
+  "anchor": ", interval $-0.243$ to $-0.072$)",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.003",
+   "diff_ci",
+   "1"
+  ],
+  "reduce": "abs"
+ },
+ {
+  "text": "0.052",
+  "anchor": "a difference of 0.052",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.ltu_avg.diff"
+ },
+ {
+  "text": "0.174",
+  "anchor": "interval $-0.066$ to 0.174",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.ltu_avg.diff_ci.1"
+ },
+ {
+  "text": "0.416",
+  "anchor": "The reference-free audit reads 0.416",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.ltu_avg.audit_cross.mean"
+ },
+ {
+  "text": "0.223",
+  "anchor": "more identifiable than retrained (0.223",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.ltu.diff"
+ },
+ {
+  "text": "0.118",
+  "anchor": ", interval 0.118 to 0.334,",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.ltu.diff_ci.0"
+ },
+ {
+  "text": "0.334",
+  "anchor": ", interval 0.118 to 0.334,",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.ltu.diff_ci.1"
+ },
+ {
+  "text": "0.306",
+  "anchor": "and 0.306, interval",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.ltu_disjoint.diff"
+ },
+ {
+  "text": "0.196",
+  "anchor": ", interval 0.196 to 0.421)",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.ltu_disjoint.diff_ci.0"
+ },
+ {
+  "text": "0.421",
+  "anchor": ", interval 0.196 to 0.421)",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.ltu_disjoint.diff_ci.1"
+ },
+ {
+  "text": "0.019",
+  "anchor": "is 0.019 for the whole model",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "pbmc33k",
+   "groups",
+   "global",
+   "survival",
+   "10.0"
+  ],
+  "note": "Section 6.1, the survival sentence"
+ },
+ {
+  "text": "0.225",
+  "anchor": "On cluster 9 it is",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "pbmc68k_mk",
+   "groups",
+   "global",
+   "survival",
+   "10.0"
+  ],
+  "note": "Section 6.1, the survival sentence"
+ },
+ {
+  "text": "0.768",
+  "anchor": "the survival is 0.768",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "classifier_linear",
+   "groups",
+   "global",
+   "survival",
+   "10.0"
+  ],
+  "note": "Section 6.1, the survival sentence"
+ },
+ {
+  "text": "0.427",
+  "anchor": "of the forget cells' output-layer mass sits on the 5 percent",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "pbmc68k_mk",
+   "decoder_output_columns",
+   "forget_mass_on_bottom_5pct_retain_units"
+  ],
+  "note": "Section 6.1, typed in prose and in no table"
+ },
+ {
+  "text": "0.011",
+  "anchor": "against 0.011 on PBMC-33k and 0.136 on cluster",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "pbmc33k",
+   "decoder_output_columns",
+   "forget_mass_on_bottom_5pct_retain_units"
+  ],
+  "note": "Section 6.1, typed in prose and in no table"
+ },
+ {
+  "text": "0.136",
+  "anchor": "against 0.011 on PBMC-33k and 0.136 on cluster",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "pbmc68k_pdc",
+   "decoder_output_columns",
+   "forget_mass_on_bottom_5pct_retain_units"
+  ],
+  "note": "Section 6.1, typed in prose and in no table"
+ },
+ {
+  "text": "0.853",
+  "anchor": "which carries 0.888 of the forget mass",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "classifier_linear",
+   "groups",
+   "forget_class_row",
+   "survival",
+   "10.0"
+  ],
+  "note": "Section 6.1, the classifier's forget-class row"
+ },
+ {
+  "text": "0.988",
+  "anchor": "fold splits; ",
+  "source": "outputs/within_type_standardized_check.json",
+  "key": "results.pbmc33k/c13_cross/baseline.logistic_std.mean",
+  "note": "Section 3: standardized logistic over 20 splits"
+ },
+ {
+  "text": "0.984",
+  "anchor": "0.988 and ",
+  "source": "outputs/within_type_standardized_check.json",
+  "key": "results.pbmc33k/c13_cross/retrain_seed42.logistic_std.mean",
+  "note": "Section 3: the retrained model over 20 splits"
+ },
+ {
+  "text": "0.0437",
+  "anchor": "unrounded margin, ",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.margin",
+  "note": "Section 3: unrounded margin"
+ },
+ {
+  "text": "0.0376",
+  "anchor": "0.0437 on cluster 9 and ",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.margin",
+  "note": "Section 3: unrounded margin"
+ },
+ {
+  "text": "0.073",
+  "anchor": "intervals narrow enough, ",
+  "source": "outputs/equivalence_reachability.json",
+  "key": [
+   "cohorts",
+   "probe_pdc",
+   "arms",
+   "fisher_cap0.01",
+   "width"
+  ],
+  "note": "Section 3: the two narrow probe arms (0.0729 and 0.0727)"
+ },
+ {
+  "text": "0.17",
+  "anchor": "against another (",
+  "source": "outputs/audit_band_symmetric.json",
+  "key": "pbmc33k.all_pairs_range.0",
+  "note": "tab:reference caption"
+ },
+ {
+  "text": "0.83",
+  "anchor": "another (0.17 to ",
+  "source": "outputs/audit_band_symmetric.json",
+  "key": "pbmc33k.all_pairs_range.1"
+ },
+ {
+  "text": "0.17",
+  "anchor": "clean retrains (",
+  "source": "outputs/audit_band_symmetric.json",
+  "key": "pbmc33k.all_pairs_range.0",
+  "note": "tab:sweeps caption"
+ },
+ {
+  "text": "0.83",
+  "anchor": "retrains (0.17 to ",
+  "source": "outputs/audit_band_symmetric.json",
+  "key": "pbmc33k.all_pairs_range.1"
+ },
+ {
+  "text": "0.529",
+  "anchor": "near chance under cross-type negatives, ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.retrain.auc",
+  "note": "Section 3: why the negatives matter"
+ },
+ {
+  "text": "0.801",
+  "anchor": "0.529 against the baseline's ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.baseline.auc"
+ },
+ {
+  "text": "0.007",
+  "anchor": "confound. The retrained models score ",
+  "source": "outputs/pbmc68k/results_mk.json",
+  "key": "per_checkpoint.retrain.per_seed.4.attacker_cross",
+  "note": "Section 3: cluster-9 cross-type attacker, retrain seed 46"
+ },
+ {
+  "text": "0.017",
+  "anchor": "The retrained models score 0.007 to ",
+  "source": "outputs/pbmc68k/results_mk.json",
+  "key": "per_checkpoint.retrain.per_seed.7.attacker_cross",
+  "note": "retrain seed 49"
+ },
+ {
+  "text": "0.965",
+  "anchor": "0.017 against the baseline's ",
+  "source": "outputs/pbmc68k/results_mk.json",
+  "key": "per_checkpoint.baseline.per_seed.0.attacker_cross"
+ },
+ {
+  "text": "334",
+  "anchor": "(means of ",
+  "source": "outputs/p7/calibration_levels.json",
+  "key": "mean_neg_elbo.retrain_clean_seed_42.forget",
+  "note": "Section 4.1: retrained mean fit"
+ },
+ {
+  "text": "342",
+  "anchor": "(means of 334 to ",
+  "source": "outputs/p7/calibration_levels.json",
+  "key": "mean_neg_elbo.retrain_clean_seed_46.forget"
+ },
+ {
+  "text": "333",
+  "anchor": "the negatives' ",
+  "source": "outputs/p7/calibration_levels.json",
+  "key": "mean_neg_elbo.baseline.matched_negatives"
+ },
+ {
+  "text": "0.965",
+  "anchor": "scoring the baseline at ",
+  "source": "outputs/pbmc68k/results_mk.json",
+  "key": "per_checkpoint.baseline.per_seed.0.attacker_cross",
+  "note": "Section 4.1"
+ },
+ {
+  "text": "0.007",
+  "anchor": "0.965 and the retrained models at ",
+  "source": "outputs/pbmc68k/results_mk.json",
+  "key": "per_checkpoint.retrain.per_seed.4.attacker_cross"
+ },
+ {
+  "text": "0.017",
+  "anchor": "at 0.007 to ",
+  "source": "outputs/pbmc68k/results_mk.json",
+  "key": "per_checkpoint.retrain.per_seed.7.attacker_cross"
+ },
+ {
+  "text": "0.472",
+  "anchor": "0.683, against ",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.retrain_range.0",
+  "note": "Section 4.1: the retrained spread"
+ },
+ {
+  "text": "0.538",
+  "anchor": "against 0.472 to ",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.retrain_range.1"
+ },
+ {
+  "text": "0.653",
+  "anchor": "its cross-type audit, ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.fisher.audit_cross.mean",
+  "note": "Section 4.1"
+ },
+ {
+  "text": "0.592",
+  "anchor": "0.653 against the arm's ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.retrain.audit_cross.arm_mean"
+ },
+ {
+  "text": "-0.07",
+  "anchor": "resolved (difference interval $",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.fisher.audit_cross.diff_ci.0"
+ },
+ {
+  "text": "0.27",
+  "anchor": "$-0.07$ to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.fisher.audit_cross.diff_ci.1"
+ },
+ {
+  "text": "-251",
+  "anchor": "cells sit $",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.fisher.gap_median.gap"
+ },
+ {
+  "text": "-356",
+  "anchor": "median (interval $",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.fisher.gap_median.gap_ci.0"
+ },
+ {
+  "text": "-56",
+  "anchor": "$-356$ to $",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.fisher.gap_median.gap_ci.1"
+ },
+ {
+  "text": "0.489",
+  "anchor": "Its audit, ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.fisher.audit_cross.mean",
+  "note": "Section 4.1 cluster 8"
+ },
+ {
+  "text": "0.510",
+  "anchor": "0.489 against the arm's ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.retrain.audit_cross.arm_mean"
+ },
+ {
+  "text": "60",
+  "anchor": "median gap, ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.fisher.gap_median.gap"
+ },
+ {
+  "text": "-6",
+  "anchor": "60 (interval $",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.fisher.gap_median.gap_ci.0"
+ },
+ {
+  "text": "226",
+  "anchor": "$-6$ to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.fisher.gap_median.gap_ci.1"
+ },
+ {
+  "text": "9.41",
+  "anchor": "ELBO cost of ",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_pdc.arms.fisher.elbo_cost"
+ },
+ {
+  "text": "0.669",
+  "anchor": "them between ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.retain_finetune.auc",
+  "note": "Section 4.2"
+ },
+ {
+  "text": "0.740",
+  "anchor": "them between 0.669 and ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.moon.auc"
+ },
+ {
+  "text": "0.980",
+  "anchor": "0.529, and the audit between ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.scrub.audit_cross.mean"
+ },
+ {
+  "text": "0.996",
+  "anchor": "0.980 and ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.moon.audit_cross.mean"
+ },
+ {
+  "text": "0.995",
+  "anchor": "0.801 and ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.baseline.audit_cross.mean"
+ },
+ {
+  "text": "0.336",
+  "anchor": "attacker between 0.003 and ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.extragradient_lambda1.auc"
+ },
+ {
+  "text": "0.044",
+  "anchor": "audit between 0.003 and ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.extragradient_lambda1.audit_cross.mean"
+ },
+ {
+  "text": "0.411",
+  "anchor": "under the attacker (",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.extragradient.auc"
+ },
+ {
+  "text": "-0.117",
+  "anchor": "(0.411, a difference of $",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.extragradient.diff"
+ },
+ {
+  "text": "-0.187",
+  "anchor": "$-0.117$, interval $",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.extragradient.diff_ci.0"
+ },
+ {
+  "text": "-0.050",
+  "anchor": "$-0.187$ to $",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.extragradient.diff_ci.1"
+ },
+ {
+  "text": "0.250",
+  "anchor": "resolved, at ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.extragradient.audit_cross.mean"
+ },
+ {
+  "text": "-0.56",
+  "anchor": "difference interval of $",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.extragradient.audit_cross.diff_ci.0"
+ },
+ {
+  "text": "0.42",
+  "anchor": "$-0.56$ to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.extragradient.audit_cross.diff_ci.1"
+ },
+ {
+  "text": "0.466",
+  "anchor": "forget cells, at ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.dp_sgd.auc"
+ },
+ {
+  "text": "-0.063",
+  "anchor": "(a difference of $",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.dp_sgd.diff"
+ },
+ {
+  "text": "-0.120",
+  "anchor": "$-0.063$, interval $",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.dp_sgd.diff_ci.0"
+ },
+ {
+  "text": "-0.011",
+  "anchor": "$-0.120$ to $",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.dp_sgd.diff_ci.1"
+ },
+ {
+  "text": "0.533",
+  "anchor": "Its audit is ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.dp_sgd.audit_cross.mean"
+ },
+ {
+  "text": "0.12",
+  "anchor": "retrained (difference interval $-$",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.dp_sgd.audit_cross.diff_ci.0",
+  "reduce": "abs"
+ },
+ {
+  "text": "0.19",
+  "anchor": "(difference interval $-$0.12 to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.dp_sgd.audit_cross.diff_ci.1"
+ },
+ {
+  "text": "0.985",
+  "anchor": "critics, at ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.frozen_multi_lambda10.advantage",
+  "note": "Section 4.2 frozen critics advantage range (smallest arm)"
+ },
+ {
+  "text": "0.995",
+  "anchor": "0.985 to ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.frozen_single_lambda5.advantage",
+  "note": "largest arm"
+ },
+ {
+  "text": "334",
+  "anchor": "models at means of ",
+  "source": "outputs/p7/calibration_levels.json",
+  "key": "mean_neg_elbo.retrain_clean_seed_42.forget",
+  "note": "Section 4.2 calibration axis"
+ },
+ {
+  "text": "342",
+  "anchor": "models at means of 334 to ",
+  "source": "outputs/p7/calibration_levels.json",
+  "key": "mean_neg_elbo.retrain_clean_seed_46.forget"
+ },
+ {
+  "text": "333",
+  "anchor": "are fitted (",
+  "source": "outputs/p7/calibration_levels.json",
+  "key": "mean_neg_elbo.baseline.matched_negatives"
+ },
+ {
+  "text": "334",
+  "anchor": "seeds, against the retrained models' ",
+  "source": "outputs/p7/calibration_levels.json",
+  "key": "mean_neg_elbo.retrain_clean_seed_42.forget",
+  "note": "Section 5"
+ },
+ {
+  "text": "342",
+  "anchor": "models' 334 to ",
+  "source": "outputs/p7/calibration_levels.json",
+  "key": "mean_neg_elbo.retrain_clean_seed_46.forget"
+ },
+ {
+  "text": "328",
+  "anchor": "to means of ",
+  "source": "outputs/p8/long_finetune.json",
+  "key": "pbmc.checkpoints.4.forget_neg_elbo",
+  "note": "Section 5: seed 42 at epoch 200"
+ },
+ {
+  "text": "331",
+  "anchor": "328 to ",
+  "source": "outputs/p8/long_finetune.json",
+  "key": "pbmc.checkpoints.14.forget_neg_elbo",
+  "note": "seed 456 at epoch 200"
+ },
+ {
+  "text": "0.568",
+  "anchor": "200-epoch models at ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.long_finetune_200.auc"
+ },
+ {
+  "text": "0.529",
+  "anchor": "0.568 against the retrained models' ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.retrain.auc"
+ },
+ {
+  "text": "0.039",
+  "anchor": "0.529, a difference of ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.long_finetune_200.diff"
+ },
+ {
+  "text": "0.009",
+  "anchor": "0.039 (interval ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.long_finetune_200.diff_ci.0"
+ },
+ {
+  "text": "0.074",
+  "anchor": "0.009 to ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.long_finetune_200.diff_ci.1"
+ },
+ {
+  "text": "0.688",
+  "anchor": "retrained. The reference-free audit reads ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.long_finetune_200.audit_cross.mean"
+ },
+ {
+  "text": "0.48",
+  "anchor": "0.688 (interval ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.long_finetune_200.audit_cross.ci.0"
+ },
+ {
+  "text": "0.88",
+  "anchor": "0.688 (interval 0.48 to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.long_finetune_200.audit_cross.ci.1"
+ },
+ {
+  "text": "361.9",
+  "anchor": "sample's fit improves from ",
+  "source": "outputs/p8/long_finetune.json",
+  "key": "pbmc.histories.42.0.retain_neg_elbo"
+ },
+ {
+  "text": "354.5",
+  "anchor": "361.9 to between ",
+  "source": "outputs/p8/long_finetune.json",
+  "key": "pbmc.histories.456.40.retain_neg_elbo"
+ },
+ {
+  "text": "354.7",
+  "anchor": "354.5 and ",
+  "source": "outputs/p8/long_finetune.json",
+  "key": "pbmc.histories.123.40.retain_neg_elbo"
+ },
+ {
+  "text": "362.9",
+  "anchor": "fit moves from ",
+  "source": "outputs/p8/long_finetune.json",
+  "key": "pbmc.histories.42.0.unseen_neg_elbo"
+ },
+ {
+  "text": "362.1",
+  "anchor": "moves from 362.9 to ",
+  "source": "outputs/p8/long_finetune.json",
+  "key": "pbmc.histories.42.40.unseen_neg_elbo"
+ },
+ {
+  "text": "-247",
+  "anchor": "gap of $",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.gap_median.gap"
+ },
+ {
+  "text": "-290",
+  "anchor": "$-247$, interval $",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.gap_median.gap_ci.0"
+ },
+ {
+  "text": "-205",
+  "anchor": "$-290$ to $",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.gap_median.gap_ci.1"
+ },
+ {
+  "text": "0.524",
+  "anchor": "refit ends at ",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.long_finetune.mean"
+ },
+ {
+  "text": "0.008",
+  "anchor": "models of ",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.long_finetune.diff"
+ },
+ {
+  "text": "0.062",
+  "anchor": "0.008 (interval $-",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.long_finetune.diff_ci.0",
+  "reduce": "abs"
+ },
+ {
+  "text": "0.080",
+  "anchor": "0.008 (interval $-0.062$ to ",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.long_finetune.diff_ci.1"
+ },
+ {
+  "text": "2.19",
+  "anchor": "utility cost is ",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.elbo_cost"
+ },
+ {
+  "text": "1.71",
+  "anchor": "nats (interval ",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.elbo_cost_ci.0"
+ },
+ {
+  "text": "2.67",
+  "anchor": "(interval 1.71 to ",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.elbo_cost_ci.1"
+ },
+ {
+  "text": "0.0069",
+  "anchor": "2.67) and ",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.marker_cost"
+ },
+ {
+  "text": "0.0037",
+  "anchor": "correlation (interval ",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.marker_cost_ci.0"
+ },
+ {
+  "text": "0.0099",
+  "anchor": "(interval 0.0037 to ",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.marker_cost_ci.1"
+ },
+ {
+  "text": "0.007",
+  "anchor": "but the retrained models score ",
+  "source": "outputs/pbmc68k/results_mk.json",
+  "key": "per_checkpoint.retrain.per_seed.4.attacker_cross",
+  "note": "Section 5"
+ },
+ {
+  "text": "0.017",
+  "anchor": "the retrained models score 0.007 to ",
+  "source": "outputs/pbmc68k/results_mk.json",
+  "key": "per_checkpoint.retrain.per_seed.7.attacker_cross"
+ },
+ {
+  "text": "0.133",
+  "anchor": "are more identifiable than retrained (",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.0015",
+   "diff"
+  ]
+ },
+ {
+  "text": "0.049",
+  "anchor": "the difference is ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.002",
+   "diff"
+  ]
+ },
+ {
+  "text": "0.011",
+  "anchor": "0.049 (interval $-",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.002",
+   "diff_ci",
+   "0"
+  ],
+  "reduce": "abs"
+ },
+ {
+  "text": "0.110",
+  "anchor": "$-0.011$ to ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.002",
+   "diff_ci",
+   "1"
+  ]
+ },
+ {
+  "text": "-0.044",
+  "anchor": "10^{-3}$ it is $",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.0025",
+   "diff"
+  ]
+ },
+ {
+  "text": "-0.108",
+  "anchor": "$-0.044$ (interval $",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.0025",
+   "diff_ci",
+   "0"
+  ]
+ },
+ {
+  "text": "0.019",
+  "anchor": "$-0.108$ to ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.0025",
+   "diff_ci",
+   "1"
+  ]
+ },
+ {
+  "text": "-0.150",
+  "anchor": "than retrained ($",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": [
+   "arms",
+   "sweep_fisher_step0.003",
+   "diff"
+  ]
+ },
+ {
+  "text": "311",
+  "anchor": "models' medians of ",
+  "source": "outputs/p4/sweeps/sweep_scores.json",
+  "key": "retrain_forget_median.42"
+ },
+ {
+  "text": "326",
+  "anchor": "311 to ",
+  "source": "outputs/p4/sweeps/sweep_scores.json",
+  "key": "retrain_forget_median.46"
+ },
+ {
+  "text": "336.6",
+  "anchor": "end at a mean of ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.ltu_avg.gap_mean.target_mean"
+ },
+ {
+  "text": "337.2",
+  "anchor": "matching the retrained models' mean fit of ",
+  "source": "outputs/p8/long_finetune.json",
+  "key": "pbmc.retrained_forget_level"
+ },
+ {
+  "text": "0.580",
+  "anchor": "verdict is not resolved (",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.ltu_avg.auc"
+ },
+ {
+  "text": "0.052",
+  "anchor": "(0.580, a difference of ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.ltu_avg.diff"
+ },
+ {
+  "text": "0.066",
+  "anchor": "0.052, interval $-",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.ltu_avg.diff_ci.0",
+  "reduce": "abs"
+ },
+ {
+  "text": "0.174",
+  "anchor": "$-0.066$ to ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.ltu_avg.diff_ci.1"
+ },
+ {
+  "text": "0.241",
+  "anchor": "That interval, ",
+  "source": "outputs/equivalence_reachability.json",
+  "key": "cohorts.pbmc33k.arms.ltu_avg.width"
+ },
+ {
+  "text": "0.416",
+  "anchor": "(Section~\\ref{sec:measurement}). The reference-free audit reads ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.ltu_avg.audit_cross.mean"
+ },
+ {
+  "text": "309",
+  "anchor": "short, at means of ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.ltu.gap_mean.target_mean"
+ },
+ {
+  "text": "296",
+  "anchor": "nearest negatives and ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.ltu_disjoint.gap_mean.target_mean"
+ },
+ {
+  "text": "0.223",
+  "anchor": "neighbors, more identifiable than retrained (",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.ltu.diff"
+ },
+ {
+  "text": "334",
+  "anchor": "megakaryocytes at means of ",
+  "source": "outputs/p7/calibration_levels.json",
+  "key": "mean_neg_elbo.retrain_clean_seed_42.forget"
+ },
+ {
+  "text": "342",
+  "anchor": "megakaryocytes at means of 334 to ",
+  "source": "outputs/p7/calibration_levels.json",
+  "key": "mean_neg_elbo.retrain_clean_seed_46.forget"
+ },
+ {
+  "text": "298",
+  "anchor": "never-seen neighbors at ",
+  "source": "outputs/p7/calibration_levels.json",
+  "key": "mean_neg_elbo.retrain_clean_seed_42.ten_nearest_matched_per_forget_cell"
+ },
+ {
+  "text": "301",
+  "anchor": "at 298 to ",
+  "source": "outputs/p7/calibration_levels.json",
+  "key": "mean_neg_elbo.retrain_clean_seed_46.ten_nearest_matched_per_forget_cell"
+ },
+ {
+  "text": "287",
+  "anchor": "but worse than the baseline's ",
+  "source": "outputs/p7/calibration_levels.json",
+  "key": "mean_neg_elbo.baseline.ten_nearest_matched_per_forget_cell"
+ },
+ {
+  "text": "0.580",
+  "anchor": "still score ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.ltu_avg.auc",
+  "note": "Section 5 residual paragraph"
+ },
+ {
+  "text": "0.529",
+  "anchor": "attacker against the retrained models' ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.retrain.auc"
+ },
+ {
+  "text": "700",
+  "anchor": "medians from ",
+  "source": "outputs/pbmc68k/stopping_probe_pdc.json",
+  "key": [
+   "arms",
+   "fisher_cap0.002",
+   "per_seed",
+   "1",
+   "forget_median"
+  ]
+ },
+ {
+  "text": "166,282",
+  "anchor": "700 to ",
+  "source": "outputs/pbmc68k/stopping_probe_mk.json",
+  "key": [
+   "arms",
+   "fisher_cap0.003",
+   "per_seed",
+   "0",
+   "forget_median"
+  ]
+ },
+ {
+  "text": "504",
+  "anchor": "484 to between ",
+  "source": "outputs/pbmc68k/stopping_probe_pdc.json",
+  "key": [
+   "arms",
+   "fisher_cap0.01",
+   "heldout_elbo"
+  ]
+ },
+ {
+  "text": "1,750",
+  "anchor": "504 and ",
+  "source": "outputs/pbmc68k/stopping_probe_pdc.json",
+  "key": [
+   "arms",
+   "fisher_cap0.003",
+   "heldout_elbo"
+  ]
+ },
+ {
+  "text": "0.99",
+  "anchor": "rising, to ",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "arms.finetune_epoch200.refit_heldback.mean"
+ },
+ {
+  "text": "0.80",
+  "anchor": "0.99 on cluster 9 and ",
+  "source": "outputs/pbmc68k/stopping_probe80_pdc.json",
+  "key": "arms.finetune_epoch200.refit_heldback.mean"
+ },
+ {
+  "text": "0.59",
+  "anchor": "such models at ",
+  "source": "outputs/p9/synthetic_support.json",
+  "key": [
+   "configurations",
+   "6",
+   "table",
+   "6",
+   "attacker_within"
+  ],
+  "note": "Section 5: simulation, 8 sd whole component"
+ },
+ {
+  "text": "0.84",
+  "anchor": "0.59 to ",
+  "source": "outputs/p9/synthetic_support.json",
+  "key": [
+   "configurations",
+   "2",
+   "table",
+   "6",
+   "attacker_within"
+  ],
+  "note": "2 sd whole component"
+ },
+ {
+  "text": "0.49",
+  "anchor": "seven configurations and ",
+  "source": "outputs/p9/synthetic_support.json",
+  "key": [
+   "configurations",
+   "4",
+   "table",
+   "6",
+   "attacker_within"
+  ],
+  "note": "4 sd whole component, the exception"
+ },
+ {
+  "text": "0.45",
+  "anchor": "eighth, against ",
+  "source": "outputs/p9/synthetic_support.json",
+  "key": [
+   "configurations",
+   "7",
+   "table",
+   "1",
+   "attacker_within"
+  ]
+ },
+ {
+  "text": "0.55",
+  "anchor": "0.45 to ",
+  "source": "outputs/p9/synthetic_support.json",
+  "key": [
+   "configurations",
+   "6",
+   "table",
+   "1",
+   "attacker_within"
+  ]
+ },
+ {
+  "text": "0.019",
+  "anchor": "uncorrected is ",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "pbmc33k",
+   "groups",
+   "global",
+   "survival",
+   "10.0"
+  ]
+ },
+ {
+  "text": "0.011",
+  "anchor": "0.019 for the whole model and ",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "pbmc33k",
+   "groups",
+   "Decoder output",
+   "survival",
+   "10.0"
+  ]
+ },
+ {
+  "text": "0.48",
+  "anchor": "same model leaves ",
+  "source": "outputs/p6/sgd_survival_prediction.json",
+  "key": [
+   "settings",
+   "pbmc33k",
+   "epochs",
+   "10",
+   "survival"
+  ]
+ },
+ {
+  "text": "0.66",
+  "anchor": "0.48 on PBMC-33k and ",
+  "source": "outputs/p6/sgd_survival_prediction.json",
+  "key": [
+   "settings",
+   "pbmc68k_mk",
+   "epochs",
+   "10",
+   "survival"
+  ]
+ },
+ {
+  "text": "0.056",
+  "anchor": "the share is ",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "pbmc68k_pdc",
+   "groups",
+   "global",
+   "survival",
+   "10.0"
+  ]
+ },
+ {
+  "text": "0.225",
+  "anchor": "9 it is ",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "pbmc68k_mk",
+   "groups",
+   "global",
+   "survival",
+   "10.0"
+  ]
+ },
+ {
+  "text": "0.324",
+  "anchor": "0.225 for the whole model and ",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "pbmc68k_mk",
+   "groups",
+   "Decoder output",
+   "survival",
+   "10.0"
+  ]
+ },
+ {
+  "text": "0.768",
+  "anchor": "survival is ",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "classifier_linear",
+   "groups",
+   "global",
+   "survival",
+   "10.0"
+  ]
+ },
+ {
+  "text": "0.888",
+  "anchor": "which carries ",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": "settings.classifier_linear.groups.forget_class_row.forget_mass_share"
+ },
+ {
+  "text": "0.853",
+  "anchor": "forget mass, ",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "classifier_linear",
+   "groups",
+   "forget_class_row",
+   "survival",
+   "10.0"
+  ]
+ },
+ {
+  "text": "4,984,190",
+  "anchor": "its mean, ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": "cohorts.pbmc33k.n_null_coords"
+ },
+ {
+  "text": "4,975,282",
+  "anchor": "parameters on PBMC-33k and ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": "cohorts.pbmc68k_mk.n_null_coords"
+ },
+ {
+  "text": "362.9",
+  "anchor": "fit from ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": "cohorts.pbmc33k.baseline.heldout"
+ },
+ {
+  "text": "363.3",
+  "anchor": "fit from 362.9 to ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "null_only",
+   "after_edit",
+   "heldout"
+  ]
+ },
+ {
+  "text": "405.8",
+  "anchor": "takes it to ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "active_only",
+   "after_edit",
+   "heldout"
+  ]
+ },
+ {
+  "text": "572",
+  "anchor": "retain-active edits take the forget cells to ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "unrestricted",
+   "after_edit",
+   "forget"
+  ]
+ },
+ {
+  "text": "582",
+  "anchor": "572 and ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "active_only",
+   "after_edit",
+   "forget"
+  ]
+ },
+ {
+  "text": "292",
+  "anchor": "them back to ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "unrestricted",
+   "finetune",
+   "adam:1e-4",
+   "after_ft10",
+   "forget"
+  ]
+ },
+ {
+  "text": "290",
+  "anchor": "to 292 and ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "active_only",
+   "finetune",
+   "adam:1e-4",
+   "after_ft10",
+   "forget"
+  ]
+ },
+ {
+  "text": "284",
+  "anchor": "290, against ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "none",
+   "finetune",
+   "adam:1e-4",
+   "after_ft10",
+   "forget"
+  ]
+ },
+ {
+  "text": "549",
+  "anchor": "goes from ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "null_only",
+   "after_edit",
+   "forget"
+  ]
+ },
+ {
+  "text": "431",
+  "anchor": "549 to ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "null_only",
+   "finetune",
+   "adam:1e-4",
+   "after_ft10",
+   "forget"
+  ]
+ },
+ {
+  "text": "405",
+  "anchor": "after ten epochs, ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "null_only",
+   "finetune",
+   "adam:1e-4",
+   "after_ft50",
+   "forget"
+  ]
+ },
+ {
+  "text": "387",
+  "anchor": "fifty and ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "null_only",
+   "finetune",
+   "adam:1e-4",
+   "after_ft200",
+   "forget"
+  ]
+ },
+ {
+  "text": "334",
+  "anchor": "above the retrained models' mean fit of ",
+  "source": "outputs/p7/calibration_levels.json",
+  "key": "mean_neg_elbo.retrain_clean_seed_42.forget",
+  "note": "Section 6.1 intervention"
+ },
+ {
+  "text": "342",
+  "anchor": "above the retrained models' mean fit of 334 to ",
+  "source": "outputs/p7/calibration_levels.json",
+  "key": "mean_neg_elbo.retrain_clean_seed_46.forget"
+ },
+ {
+  "text": "0.075",
+  "anchor": "342, with the audit at ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "null_only",
+   "finetune",
+   "adam:1e-4",
+   "after_ft50",
+   "audit_meanref"
+  ]
+ },
+ {
+  "text": "0.973",
+  "anchor": "0.075 against ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "unrestricted",
+   "finetune",
+   "adam:1e-4",
+   "after_ft50",
+   "audit_meanref"
+  ]
+ },
+ {
+  "text": "426",
+  "anchor": "same holds, ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_opt",
+   "null_only",
+   "finetune",
+   "adam:1e-4",
+   "after_ft50",
+   "forget"
+  ]
+ },
+ {
+  "text": "309",
+  "anchor": "426 against ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_opt",
+   "unrestricted",
+   "finetune",
+   "adam:1e-4",
+   "after_ft50",
+   "forget"
+  ]
+ },
+ {
+  "text": "488",
+  "anchor": "itself takes the forget cells from ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": "cohorts.pbmc68k_mk.baseline.forget"
+ },
+ {
+  "text": "540",
+  "anchor": "itself takes the forget cells from 488 to ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_x2_opt",
+   "none",
+   "finetune",
+   "adam:1e-4",
+   "after_ft10",
+   "forget"
+  ]
+ },
+ {
+  "text": "689",
+  "anchor": "to 540, ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_x2_opt",
+   "none",
+   "finetune",
+   "adam:1e-4",
+   "after_ft50",
+   "forget"
+  ]
+ },
+ {
+  "text": "800",
+  "anchor": "689 and ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_x2_opt",
+   "none",
+   "finetune",
+   "adam:1e-4",
+   "after_ft200",
+   "forget"
+  ]
+ },
+ {
+  "text": "542",
+  "anchor": "three edits sit at ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_x2_opt",
+   "unrestricted",
+   "finetune",
+   "adam:1e-4",
+   "after_ft10",
+   "forget"
+  ]
+ },
+ {
+  "text": "541",
+  "anchor": "at 542, ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_x2_opt",
+   "active_only",
+   "finetune",
+   "adam:1e-4",
+   "after_ft10",
+   "forget"
+  ]
+ },
+ {
+  "text": "551",
+  "anchor": "541 and ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_x2_opt",
+   "null_only",
+   "finetune",
+   "adam:1e-4",
+   "after_ft10",
+   "forget"
+  ]
+ },
+ {
+  "text": "801",
+  "anchor": "epochs and at ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_x2_opt",
+   "unrestricted",
+   "finetune",
+   "adam:1e-4",
+   "after_ft200",
+   "forget"
+  ]
+ },
+ {
+  "text": "799",
+  "anchor": "at 801, ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_x2_opt",
+   "active_only",
+   "finetune",
+   "adam:1e-4",
+   "after_ft200",
+   "forget"
+  ]
+ },
+ {
+  "text": "679",
+  "anchor": "fifty epochs, ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_opt",
+   "unrestricted",
+   "finetune",
+   "adam:1e-4",
+   "after_ft50",
+   "forget"
+  ]
+ },
+ {
+  "text": "681",
+  "anchor": "679 and ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_opt",
+   "active_only",
+   "finetune",
+   "adam:1e-4",
+   "after_ft50",
+   "forget"
+  ]
+ },
+ {
+  "text": "689",
+  "anchor": "681 against ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_x2_opt",
+   "none",
+   "finetune",
+   "adam:1e-4",
+   "after_ft50",
+   "forget"
+  ]
+ },
+ {
+  "text": "911",
+  "anchor": "way, at ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_opt",
+   "null_only",
+   "finetune",
+   "adam:1e-4",
+   "after_ft50",
+   "forget"
+  ]
+ },
+ {
+  "text": "804",
+  "anchor": "three sit at ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_opt",
+   "unrestricted",
+   "finetune",
+   "adam:1e-4",
+   "after_ft200",
+   "forget"
+  ]
+ },
+ {
+  "text": "797",
+  "anchor": "804 and ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_opt",
+   "null_only",
+   "finetune",
+   "adam:1e-4",
+   "after_ft200",
+   "forget"
+  ]
+ },
+ {
+  "text": "800",
+  "anchor": "and 797 against ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_x2_opt",
+   "none",
+   "finetune",
+   "adam:1e-4",
+   "after_ft200",
+   "forget"
+  ]
+ },
+ {
+  "text": "971",
+  "anchor": "edits read ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_opt",
+   "unrestricted",
+   "finetune",
+   "adam:1e-4",
+   "after_ft10",
+   "forget"
+  ]
+ },
+ {
+  "text": "832",
+  "anchor": "read 971, ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_opt",
+   "active_only",
+   "finetune",
+   "adam:1e-4",
+   "after_ft10",
+   "forget"
+  ]
+ },
+ {
+  "text": "4,652",
+  "anchor": "832 and ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_opt",
+   "null_only",
+   "finetune",
+   "adam:1e-4",
+   "after_ft10",
+   "forget"
+  ]
+ },
+ {
+  "text": "3,285",
+  "anchor": "between MPS runs by up to ",
+  "formula": "abs(a - b)",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits",
+     "null_only",
+     "after_ft10",
+     "forget"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits_opt",
+     "null_only",
+     "finetune",
+     "adam:1e-4",
+     "after_ft10",
+     "forget"
+    ]
+   }
+  }
+ },
+ {
+  "text": "814",
+  "anchor": "forget medians of ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.fisher.gap_median.per_seed.2",
+  "note": "Section 6.1: what the tables show"
+ },
+ {
+  "text": "831",
+  "anchor": "forget medians of 814 to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.fisher.gap_median.per_seed.1"
+ },
+ {
+  "text": "0.225",
+  "anchor": "a survival of ",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "pbmc68k_mk",
+   "groups",
+   "global",
+   "survival",
+   "10.0"
+  ]
+ },
+ {
+  "text": "0.019",
+  "anchor": "0.225 rather than ",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "pbmc33k",
+   "groups",
+   "global",
+   "survival",
+   "10.0"
+  ]
+ },
+ {
+  "text": "292",
+  "anchor": "by 50 epochs, ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "unrestricted",
+   "finetune",
+   "sgd:1e-3",
+   "after_ft50",
+   "forget"
+  ]
+ },
+ {
+  "text": "282",
+  "anchor": "292 against ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "none",
+   "finetune",
+   "sgd:1e-3",
+   "after_ft50",
+   "forget"
+  ]
+ },
+ {
+  "text": "530",
+  "anchor": "282 on PBMC-33k and ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_x2_opt",
+   "unrestricted",
+   "finetune",
+   "sgd:1e-3",
+   "after_ft50",
+   "forget"
+  ]
+ },
+ {
+  "text": "499",
+  "anchor": "530 against ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits_x2_opt",
+   "none",
+   "finetune",
+   "sgd:1e-3",
+   "after_ft50",
+   "forget"
+  ]
+ },
+ {
+  "text": "0.46",
+  "anchor": "on cluster 9, with ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "50",
+   "rho"
+  ],
+  "note": "drift-corrected share of the edit left (tab:restricted_rho)"
+ },
+ {
+  "text": "0.56",
+  "anchor": "with 0.46 to ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "50",
+   "rho"
+  ]
+ },
+ {
+  "text": "0.97",
+  "anchor": "retain-null edit, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/null_only",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "rho"
+  ]
+ },
+ {
+  "text": "429",
+  "anchor": "forget fit, at ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "null_only",
+   "finetune",
+   "sgd:1e-3",
+   "after_ft200",
+   "forget"
+  ]
+ },
+ {
+  "text": "296",
+  "anchor": "429 against the no-edit ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "none",
+   "finetune",
+   "sgd:1e-3",
+   "after_ft200",
+   "forget"
+  ]
+ },
+ {
+  "text": "280",
+  "anchor": "a damage of ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits_x2_opt",
+     "null_only",
+     "after_edit",
+     "forget"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": "cohorts.pbmc33k.baseline.forget"
+   }
+  },
+  "note": "damage of the retain-null edit at the baseline"
+ },
+ {
+  "text": "0.82",
+  "anchor": "edit keeps ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/null_only",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "rho"
+  ]
+ },
+ {
+  "text": "0.06",
+  "anchor": "edit keeps 0.82 of its coordinates and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/null_only",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "share_meas"
+  ]
+ },
+ {
+  "text": "387",
+  "anchor": "PBMC-33k it sits at ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "null_only",
+   "finetune",
+   "adam:1e-4",
+   "after_ft200",
+   "forget"
+  ]
+ },
+ {
+  "text": "429",
+  "anchor": "387 to ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "null_only",
+   "finetune",
+   "sgd:1e-3",
+   "after_ft200",
+   "forget"
+  ]
+ },
+ {
+  "text": "273",
+  "anchor": "and the no-edit fine-tune at ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "none",
+   "finetune",
+   "sgd:1e-3",
+   "after_ft10",
+   "forget"
+  ]
+ },
+ {
+  "text": "296",
+  "anchor": "273 and ",
+  "source": "outputs/p6/restricted_scrub_test.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits_x2_opt",
+   "none",
+   "finetune",
+   "sgd:1e-3",
+   "after_ft200",
+   "forget"
+  ]
+ },
+ {
+  "text": "23.2",
+  "anchor": "form is ",
+  "formula": "a * b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits",
+     "edits_x2_opt/unrestricted",
+     "retain",
+     "diag_form"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits",
+     "edits_x2_opt/unrestricted",
+     "retain",
+     "fisher_over_diag"
+    ]
+   }
+  },
+  "note": "the empirical-Fisher quadratic form, diagonal form times its ratio"
+ },
+ {
+  "text": "46.2",
+  "anchor": "the Hessian's ",
+  "formula": "a * b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits",
+     "edits_x2_opt/unrestricted",
+     "retain",
+     "diag_form"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits",
+     "edits_x2_opt/unrestricted",
+     "retain",
+     "hess_over_diag"
+    ]
+   }
+  }
+ },
+ {
+  "text": "0.0045",
+  "anchor": "46.2, against ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "retain",
+   "diag_form"
+  ]
+ },
+ {
+  "text": "459",
+  "anchor": "the diagonal by ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "retain",
+   "fisher_over_diag"
+  ]
+ },
+ {
+  "text": "425",
+  "anchor": "459 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/active_only",
+   "retain",
+   "fisher_over_diag"
+  ]
+ },
+ {
+  "text": "220",
+  "anchor": "Hessian by ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "retain",
+   "hess_over_diag"
+  ]
+ },
+ {
+  "text": "193",
+  "anchor": "220 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/active_only",
+   "retain",
+   "hess_over_diag"
+  ]
+ },
+ {
+  "text": "0.51",
+  "anchor": "0.97 with ",
+  "formula": "(a - b) / c",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "states",
+     "edits_x2_opt/null_only",
+     "epochs",
+     "200",
+     "fit_residual",
+     "forget"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": "cohorts.pbmc33k.baseline.forget"
+   },
+   "c": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits",
+     "edits_x2_opt/null_only",
+     "damage"
+    ]
+   }
+  },
+  "note": "the measured residual applied to the baseline, as a share of the damage (tab:compensation Residual, 200)"
+ },
+ {
+  "text": "0.13",
+  "anchor": "0.82 with ",
+  "formula": "(a - b) / c",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "states",
+     "edits_x2_opt/null_only",
+     "epochs",
+     "200",
+     "fit_residual",
+     "forget"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": "cohorts.pbmc68k_mk.baseline.forget"
+   },
+   "c": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits",
+     "edits_x2_opt/null_only",
+     "damage"
+    ]
+   }
+  }
+ },
+ {
+  "text": "0.97",
+  "anchor": "0.54, against the measured ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/null_only",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "rho"
+  ]
+ },
+ {
+  "text": "0.82",
+  "anchor": "0.51 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/null_only",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "rho"
+  ]
+ },
+ {
+  "text": "1.02",
+  "anchor": "state it predicts ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "lanczos_gn",
+   "edits_x2_opt/null_only",
+   "epochs",
+   "200",
+   "share_sup_pred"
+  ]
+ },
+ {
+  "text": "0.36",
+  "anchor": "1.02 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "lanczos_gn",
+   "edits_x2_opt/null_only",
+   "epochs",
+   "200",
+   "share_sup_pred"
+  ]
+ },
+ {
+  "text": "0.47",
+  "anchor": "0.36 of the damage against ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/null_only",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "share_meas"
+  ]
+ },
+ {
+  "text": "0.06",
+  "anchor": "0.47 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/null_only",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "share_meas"
+  ]
+ },
+ {
+  "text": "46",
+  "anchor": "that moves ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "none",
+   "sgd:1e-3",
+   "200",
+   "disp_sq"
+  ]
+ },
+ {
+  "text": "-11.5",
+  "anchor": "\\Delta_T$ is $",
+  "formula": "r * c",
+  "vars": {
+   "r": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits",
+     "edits_x2_opt/unrestricted",
+     "arms",
+     "sgd:1e-3",
+     "200",
+     "rho"
+    ]
+   },
+   "c": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits",
+     "edits_x2_opt/unrestricted",
+     "arms",
+     "sgd:1e-3",
+     "200",
+     "coupling",
+     "hess"
+    ]
+   }
+  },
+  "note": "rho x (delta K_F Delta_T) with the Hessian"
+ },
+ {
+  "text": "-30",
+  "anchor": "of the $",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits",
+     "edits_x2_opt/unrestricted",
+     "arms",
+     "sgd:1e-3",
+     "200",
+     "excess_sup_rho"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits",
+     "edits_x2_opt/unrestricted",
+     "arms",
+     "sgd:1e-3",
+     "200",
+     "excess_rev_only"
+    ]
+   }
+  }
+ },
+ {
+  "text": "105",
+  "anchor": "edit gives ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "forget",
+   "eps0.01",
+   "quad_damage"
+  ]
+ },
+ {
+  "text": "613",
+  "anchor": "105 of the ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "damage"
+  ]
+ },
+ {
+  "text": "5,569",
+  "anchor": "from 270 to ",
+  "source": "outputs/p6/phase_audit.json",
+  "key": [
+   "runs",
+   "fisher_step0.001",
+   "after_scrub",
+   "forget_neg_elbo"
+  ]
+ },
+ {
+  "text": "1,250",
+  "anchor": "363 to ",
+  "source": "outputs/p6/phase_audit.json",
+  "key": [
+   "runs",
+   "fisher_step0.001",
+   "after_scrub",
+   "retain_neg_elbo"
+  ]
+ },
+ {
+  "text": "1,284",
+  "anchor": "1,250 and ",
+  "source": "outputs/p6/phase_audit.json",
+  "key": [
+   "runs",
+   "fisher_step0.001",
+   "after_scrub",
+   "unseen_neg_elbo"
+  ]
+ },
+ {
+  "text": "308",
+  "anchor": "cells back to ",
+  "source": "outputs/p6/phase_audit.json",
+  "key": [
+   "runs",
+   "fisher_step0.001",
+   "after_finetune",
+   "forget_neg_elbo"
+  ]
+ },
+ {
+  "text": "38",
+  "anchor": "to 308, ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/phase_audit.json",
+    "key": [
+     "runs",
+     "fisher_step0.001",
+     "after_finetune",
+     "forget_neg_elbo"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/phase_audit.json",
+    "key": "runs.baseline.forget_neg_elbo"
+   }
+  }
+ },
+ {
+  "text": "26",
+  "anchor": "started and ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p7/calibration_levels.json",
+    "key": "mean_neg_elbo.retrain_clean_seed_42.forget"
+   },
+   "b": {
+    "source": "outputs/p6/phase_audit.json",
+    "key": [
+     "runs",
+     "fisher_step0.001",
+     "after_finetune",
+     "forget_neg_elbo"
+    ]
+   }
+  }
+ },
+ {
+  "text": "34",
+  "anchor": "and 26 to ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p7/calibration_levels.json",
+    "key": "mean_neg_elbo.retrain_clean_seed_46.forget"
+   },
+   "b": {
+    "source": "outputs/p6/phase_audit.json",
+    "key": [
+     "runs",
+     "fisher_step0.001",
+     "after_finetune",
+     "forget_neg_elbo"
+    ]
+   }
+  }
+ },
+ {
+  "text": "334",
+  "anchor": "below the retrained models' mean fit of ",
+  "source": "outputs/p7/calibration_levels.json",
+  "key": "mean_neg_elbo.retrain_clean_seed_42.forget"
+ },
+ {
+  "text": "342",
+  "anchor": "below the retrained models' mean fit of 334 to ",
+  "source": "outputs/p7/calibration_levels.json",
+  "key": "mean_neg_elbo.retrain_clean_seed_46.forget"
+ },
+ {
+  "text": "723",
+  "anchor": "them, at ",
+  "source": "outputs/p6/phase_audit.json",
+  "key": [
+   "runs",
+   "fisher_step0.01",
+   "after_finetune",
+   "forget_neg_elbo"
+  ]
+ },
+ {
+  "text": "296",
+  "anchor": "leaves them at ",
+  "source": "outputs/p6/phase_audit.json",
+  "key": "runs.gradient_ascent.after_finetune.forget_neg_elbo"
+ },
+ {
+  "text": "27",
+  "anchor": "at 296, ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/phase_audit.json",
+    "key": "runs.gradient_ascent.after_finetune.forget_neg_elbo"
+   },
+   "b": {
+    "source": "outputs/p6/phase_audit.json",
+    "key": "runs.baseline.forget_neg_elbo"
+   }
+  }
+ },
+ {
+  "text": "38",
+  "anchor": "start and ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p7/calibration_levels.json",
+    "key": "mean_neg_elbo.retrain_clean_seed_42.forget"
+   },
+   "b": {
+    "source": "outputs/p6/phase_audit.json",
+    "key": "runs.gradient_ascent.after_finetune.forget_neg_elbo"
+   }
+  }
+ },
+ {
+  "text": "46",
+  "anchor": "38 to ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p7/calibration_levels.json",
+    "key": "mean_neg_elbo.retrain_clean_seed_46.forget"
+   },
+   "b": {
+    "source": "outputs/p6/phase_audit.json",
+    "key": "runs.gradient_ascent.after_finetune.forget_neg_elbo"
+   }
+  }
+ },
+ {
+  "text": "336.6",
+  "anchor": "models' mean fit of the forget cells, ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.ltu_avg.gap_mean.target_mean",
+  "note": "Section 6.2"
+ },
+ {
+  "text": "337.2",
+  "anchor": "models' mean fit of the forget cells, 336.6 against ",
+  "source": "outputs/p8/long_finetune.json",
+  "key": "pbmc.retrained_forget_level"
+ },
+ {
+  "text": "336.6",
+  "anchor": "their mean fit of the forget cells, ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.ltu_avg.gap_mean.target_mean",
+  "note": "introduction"
+ },
+ {
+  "text": "337.2",
+  "anchor": "their mean fit of the forget cells, 336.6 against ",
+  "source": "outputs/p8/long_finetune.json",
+  "key": "pbmc.retrained_forget_level"
+ },
+ {
+  "text": "0.833",
+  "anchor": "does, with the audit at ",
+  "source": "outputs/attack_lr_reference_multi.json",
+  "key": "tcga_brca.models.baseline.lr_auc",
+  "note": "Section 6.2 TCGA"
+ },
+ {
+  "text": "0.77",
+  "anchor": "0.833 (interval ",
+  "source": "outputs/attack_lr_reference_multi.json",
+  "key": "tcga_brca.models.baseline.ci95.0"
+ },
+ {
+  "text": "0.89",
+  "anchor": "0.77 to ",
+  "source": "outputs/attack_lr_reference_multi.json",
+  "key": "tcga_brca.models.baseline.ci95.1"
+ },
+ {
+  "text": "0.40",
+  "anchor": "audit, between ",
+  "source": "outputs/attack_lr_reference_multi.json",
+  "key": "tcga_brca.models.gradient_ascent.lr_auc"
+ },
+ {
+  "text": "0.53",
+  "anchor": "0.40 and ",
+  "source": "outputs/attack_lr_reference_multi.json",
+  "key": "tcga_brca.models.scrub.lr_auc"
+ },
+ {
+  "text": "0.32",
+  "anchor": "ascent's interval, ",
+  "source": "outputs/attack_lr_reference_multi.json",
+  "key": "tcga_brca.models.gradient_ascent.ci95.0"
+ },
+ {
+  "text": "0.47",
+  "anchor": "0.32 to ",
+  "source": "outputs/attack_lr_reference_multi.json",
+  "key": "tcga_brca.models.gradient_ascent.ci95.1"
+ },
+ {
+  "text": "0.19",
+  "anchor": "the level (",
+  "source": "outputs/attack_lr_reference_multi.json",
+  "key": "tcga_brca.models.fisher.lr_auc"
+ },
+ {
+  "text": "0.35",
+  "anchor": "the same (",
+  "source": "outputs/attack_lr_reference_multi.json",
+  "key": "tabula_muris.models.fisher.lr_auc"
+ },
+ {
+  "text": "0.88",
+  "anchor": "(0.35 against the baseline's ",
+  "source": "outputs/attack_lr_reference_multi.json",
+  "key": "tabula_muris.models.baseline.lr_auc"
+ },
+ {
+  "text": "0.506",
+  "anchor": "negatives, extra-gradient at ",
+  "source": "outputs/pbmc68k/results_mk.json",
+  "key": "per_checkpoint.extragradient.per_seed.1.attacker_cross",
+  "note": "Discussion: cluster-9 cross-type attacker, extra-gradient seed 42"
+ },
+ {
+  "text": "0.669",
+  "anchor": "0.506 to ",
+  "source": "outputs/pbmc68k/results_mk.json",
+  "key": "per_checkpoint.extragradient.per_seed.2.attacker_cross",
+  "note": "seed 456"
+ },
+ {
+  "text": "0.007",
+  "anchor": "0.669 against the retrained models' ",
+  "source": "outputs/pbmc68k/results_mk.json",
+  "key": "per_checkpoint.retrain.per_seed.4.attacker_cross"
+ },
+ {
+  "text": "0.017",
+  "anchor": "models' 0.007 to ",
+  "source": "outputs/pbmc68k/results_mk.json",
+  "key": "per_checkpoint.retrain.per_seed.7.attacker_cross"
+ },
+ {
+  "text": "2.19",
+  "anchor": "held-out cost of ",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.elbo_cost",
+  "note": "Discussion"
+ },
+ {
+  "text": "0.0069",
+  "anchor": "2.19 nats and ",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.marker_cost"
+ },
+ {
+  "text": "0.039",
+  "anchor": "PBMC-33k it ends ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.long_finetune_200.diff",
+  "note": "Discussion"
+ },
+ {
+  "text": "0.039",
+  "anchor": "fine-tune ends ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.long_finetune_200.diff",
+  "note": "introduction"
+ },
+ {
+  "text": "0.77",
+  "anchor": "edit survives, ",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "classifier_linear",
+   "groups",
+   "global",
+   "survival",
+   "10.0"
+  ],
+  "note": "introduction"
+ },
+ {
+  "text": "0.85",
+  "anchor": "whole classifier and ",
+  "source": "outputs/p6/retain_null_mass.json",
+  "key": [
+   "settings",
+   "classifier_linear",
+   "groups",
+   "forget_class_row",
+   "survival",
+   "10.0"
+  ]
+ },
+ {
+  "text": "3.49",
+  "anchor": "type, pay ",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_mk.arms.retrain.elbo_cost"
+ },
+ {
+  "text": "2.20",
+  "anchor": "3.49 and ",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_pdc.arms.retrain.elbo_cost"
+ },
+ {
+  "text": "0.44",
+  "anchor": "and more (",
+  "source": "outputs/p4/size_ablations_v2.json",
+  "key": "scattered_fisher.10.fisher.lr_auc_mean"
+ },
+ {
+  "text": "0.59",
+  "anchor": "reduces to between ",
+  "source": "outputs/p4/size_ablations_v2.json",
+  "key": "scattered_fisher.50.fisher.lr_auc_mean"
+ },
+ {
+  "text": "0.65",
+  "anchor": "0.59 and ",
+  "source": "outputs/p4/size_ablations_v2.json",
+  "key": "scattered_fisher.500.fisher.lr_auc_mean"
+ },
+ {
+  "text": "0.40",
+  "anchor": "or retrained model (",
+  "source": "outputs/within_type_standardized_check.json",
+  "key": "results.tcga/basal_within/retrain.logistic_std.mean"
+ },
+ {
+  "text": "0.55",
+  "anchor": "(0.40 to ",
+  "source": "outputs/within_type_standardized_check.json",
+  "key": "results.tm/c28_within_n50/retrain.logistic_std.mean"
+ },
+ {
+  "text": "814",
+  "anchor": "sit at medians of ",
+  "source": "outputs/pbmc68k/stopping_probe_mk.json",
+  "key": [
+   "arms",
+   "fisher_cap0.001",
+   "per_seed",
+   "2",
+   "forget_median"
+  ]
+ },
+ {
+  "text": "831",
+  "anchor": "at medians of 814 to ",
+  "source": "outputs/pbmc68k/stopping_probe_mk.json",
+  "key": [
+   "arms",
+   "fisher_cap0.001",
+   "per_seed",
+   "0",
+   "forget_median"
+  ]
+ },
+ {
+  "text": "697",
+  "anchor": "831 and ",
+  "source": "outputs/pbmc68k/stopping_probe_pdc.json",
+  "key": [
+   "arms",
+   "fisher_cap0.001",
+   "per_seed",
+   "2",
+   "forget_median"
+  ]
+ },
+ {
+  "text": "812",
+  "anchor": "697 to ",
+  "source": "outputs/pbmc68k/stopping_probe_pdc.json",
+  "key": [
+   "arms",
+   "fisher_cap0.001",
+   "per_seed",
+   "1",
+   "forget_median"
+  ]
+ },
+ {
+  "text": "0.004",
+  "anchor": "cap by a lower bound of ",
+  "source": "outputs/pbmc68k/stopping_probe_pdc.json",
+  "key": [
+   "arms",
+   "fisher_cap0.01",
+   "refit_std_within",
+   "diff_ci",
+   "0"
+  ]
+ },
+ {
+  "text": "0.047",
+  "anchor": "10^{-3}$ cap (",
+  "source": "outputs/pbmc68k/stopping_probe_mk.json",
+  "key": [
+   "arms",
+   "fisher_cap0.005",
+   "refit_std_within",
+   "diff_vs_retrain"
+  ]
+ },
+ {
+  "text": "-0.023",
+  "anchor": "(0.047, interval $",
+  "source": "outputs/pbmc68k/stopping_probe_mk.json",
+  "key": [
+   "arms",
+   "fisher_cap0.005",
+   "refit_std_within",
+   "diff_ci",
+   "0"
+  ]
+ },
+ {
+  "text": "0.118",
+  "anchor": "$-0.023$ to ",
+  "source": "outputs/pbmc68k/stopping_probe_mk.json",
+  "key": [
+   "arms",
+   "fisher_cap0.005",
+   "refit_std_within",
+   "diff_ci",
+   "1"
+  ]
+ },
+ {
+  "text": "-0.010",
+  "anchor": "$10^{-2}$ cap ($",
+  "source": "outputs/pbmc68k/stopping_probe_mk.json",
+  "key": [
+   "arms",
+   "fisher_cap0.01",
+   "refit_std_within",
+   "diff_vs_retrain"
+  ]
+ },
+ {
+  "text": "-0.081",
+  "anchor": "($-0.010$, interval $",
+  "source": "outputs/pbmc68k/stopping_probe_mk.json",
+  "key": [
+   "arms",
+   "fisher_cap0.01",
+   "refit_std_within",
+   "diff_ci",
+   "0"
+  ]
+ },
+ {
+  "text": "0.061",
+  "anchor": "$-0.081$ to ",
+  "source": "outputs/pbmc68k/stopping_probe_mk.json",
+  "key": [
+   "arms",
+   "fisher_cap0.01",
+   "refit_std_within",
+   "diff_ci",
+   "1"
+  ]
+ },
+ {
+  "text": "-0.006",
+  "anchor": "differences are $",
+  "source": "outputs/pbmc68k/stopping_probe_mk.json",
+  "key": [
+   "arms",
+   "finetune_epoch200",
+   "refit_std_within",
+   "diff_vs_retrain"
+  ]
+ },
+ {
+  "text": "-0.087",
+  "anchor": "$-0.006$, interval $",
+  "source": "outputs/pbmc68k/stopping_probe_mk.json",
+  "key": [
+   "arms",
+   "finetune_epoch200",
+   "refit_std_within",
+   "diff_ci",
+   "0"
+  ]
+ },
+ {
+  "text": "0.075",
+  "anchor": "$-0.006$, interval $-0.087$ to ",
+  "source": "outputs/pbmc68k/stopping_probe_mk.json",
+  "key": [
+   "arms",
+   "finetune_epoch200",
+   "refit_std_within",
+   "diff_ci",
+   "1"
+  ]
+ },
+ {
+  "text": "0.039",
+  "anchor": "0.075 on cluster 9 and ",
+  "source": "outputs/pbmc68k/stopping_probe_pdc.json",
+  "key": [
+   "arms",
+   "finetune_epoch200",
+   "refit_std_within",
+   "diff_vs_retrain"
+  ]
+ },
+ {
+  "text": "-0.002",
+  "anchor": "0.039, interval $",
+  "source": "outputs/pbmc68k/stopping_probe_pdc.json",
+  "key": [
+   "arms",
+   "finetune_epoch200",
+   "refit_std_within",
+   "diff_ci",
+   "0"
+  ]
+ },
+ {
+  "text": "0.081",
+  "anchor": "$-0.002$ to ",
+  "source": "outputs/pbmc68k/stopping_probe_pdc.json",
+  "key": [
+   "arms",
+   "finetune_epoch200",
+   "refit_std_within",
+   "diff_ci",
+   "1"
+  ]
+ },
+ {
+  "text": "0.509",
+  "anchor": "point estimate (",
+  "source": "outputs/pbmc68k/stopping_probe_mk.json",
+  "key": [
+   "arms",
+   "finetune_epoch200",
+   "refit_std_within",
+   "mean"
+  ]
+ },
+ {
+  "text": "0.472",
+  "anchor": "models' spread of ",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.retrain_range.0"
+ },
+ {
+  "text": "0.538",
+  "anchor": "of 0.472 to ",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.retrain_range.1"
+ },
+ {
+  "text": "0.525",
+  "anchor": "cluster-8 one (",
+  "source": "outputs/pbmc68k/stopping_probe_pdc.json",
+  "key": [
+   "arms",
+   "finetune_epoch200",
+   "refit_std_within",
+   "mean"
+  ]
+ },
+ {
+  "text": "0.450",
+  "anchor": "its spread of ",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.retrain_range.0"
+ },
+ {
+  "text": "0.503",
+  "anchor": "of 0.450 to ",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.retrain_range.1"
+ },
+ {
+  "text": "-0.006",
+  "anchor": "and its $",
+  "source": "outputs/pbmc68k/stopping_probe_mk.json",
+  "key": [
+   "arms",
+   "finetune_epoch200",
+   "refit_std_within",
+   "diff_vs_retrain"
+  ]
+ },
+ {
+  "text": "0.008",
+  "anchor": "that run's $+",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.long_finetune.diff"
+ },
+ {
+  "text": "0.062",
+  "anchor": "$+0.008$ (interval $-",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.long_finetune.diff_ci.0",
+  "reduce": "abs"
+ },
+ {
+  "text": "0.080",
+  "anchor": "$+0.008$ (interval $-0.062$ to ",
+  "source": "outputs/pbmc68k/percell_paired_mk.json",
+  "key": "kinds.within.arms.long_finetune.diff_ci.1"
+ },
+ {
+  "text": "550",
+  "anchor": "seeds, rises from ",
+  "source": "outputs/pbmc68k/stopping_probe_mk.json",
+  "key": [
+   "arms",
+   "finetune_epoch10",
+   "forget_median"
+  ]
+ },
+ {
+  "text": "828",
+  "anchor": "from 550 to ",
+  "source": "outputs/pbmc68k/stopping_probe_mk.json",
+  "key": [
+   "arms",
+   "finetune_epoch200",
+   "forget_median"
+  ]
+ },
+ {
+  "text": "29",
+  "anchor": "(medians within ",
+  "formula": "ceil(abs(a - b))",
+  "vars": {
+   "a": {
+    "source": "outputs/pbmc68k/stopping_probe_pdc.json",
+    "key": [
+     "arms",
+     "finetune_epoch10",
+     "within_median"
+    ]
+   },
+   "b": {
+    "source": "outputs/pbmc68k/stopping_probe_pdc.json",
+    "key": [
+     "arms",
+     "finetune_epoch10",
+     "forget_median"
+    ]
+   }
+  },
+  "note": "largest forget-versus-within median gap along the probe (cluster 8 at 10 epochs)"
+ },
+ {
+  "text": "0.048",
+  "anchor": "this split (",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "margin"
+ },
+ {
+  "text": "0.023",
+  "anchor": "(0.048 and ",
+  "source": "outputs/pbmc68k/stopping_probe80_pdc.json",
+  "key": "margin"
+ },
+ {
+  "text": "0.597",
+  "anchor": "on the baseline (",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "arms.baseline.refit_heldback.mean"
+ },
+ {
+  "text": "0.482",
+  "anchor": "(0.597 and ",
+  "source": "outputs/pbmc68k/stopping_probe80_pdc.json",
+  "key": "arms.baseline.refit_heldback.mean"
+ },
+ {
+  "text": "0.016",
+  "anchor": "(differences of +",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "arms.finetune_epoch100.refit_within.diff_vs_retrain"
+ },
+ {
+  "text": "0.054",
+  "anchor": "+0.016 to +",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "arms.finetune_epoch50.refit_within.diff_vs_retrain"
+ },
+ {
+  "text": "0.004",
+  "anchor": "25 by a lower bound of ",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "arms.finetune_epoch25.refit_within.diff_ci.0"
+ },
+ {
+  "text": "0.986",
+  "anchor": "rising to ",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "arms.finetune_epoch200.refit_heldback.mean"
+ },
+ {
+  "text": "0.801",
+  "anchor": "0.587) and reaches ",
+  "source": "outputs/pbmc68k/stopping_probe80_pdc.json",
+  "key": "arms.finetune_epoch200.refit_heldback.mean"
+ },
+ {
+  "text": "976",
+  "anchor": "those five ",
+  "formula": "r + 1",
+  "vars": {
+   "r": {
+    "source": "outputs/p6/proposition_test.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "nu_shared_support",
+     "retain_rank_of_top_forget_units",
+     "2"
+    ]
+   }
+  },
+  "note": "zero-based rank in the JSON, ordinal in the text"
+ },
+ {
+  "text": "997",
+  "anchor": "five 976th, ",
+  "formula": "r + 1",
+  "vars": {
+   "r": {
+    "source": "outputs/p6/proposition_test.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "nu_shared_support",
+     "retain_rank_of_top_forget_units",
+     "4"
+    ]
+   }
+  },
+  "note": "zero-based rank in the JSON, ordinal in the text"
+ },
+ {
+  "text": "1004",
+  "anchor": "976th, 997th, ",
+  "formula": "r + 1",
+  "vars": {
+   "r": {
+    "source": "outputs/p6/proposition_test.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "nu_shared_support",
+     "retain_rank_of_top_forget_units",
+     "3"
+    ]
+   }
+  },
+  "note": "zero-based rank in the JSON, ordinal in the text"
+ },
+ {
+  "text": "1012",
+  "anchor": "997th, 1004th, ",
+  "formula": "r + 1",
+  "vars": {
+   "r": {
+    "source": "outputs/p6/proposition_test.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "nu_shared_support",
+     "retain_rank_of_top_forget_units",
+     "1"
+    ]
+   }
+  },
+  "note": "zero-based rank in the JSON, ordinal in the text"
+ },
+ {
+  "text": "1014",
+  "anchor": "1012th and ",
+  "formula": "r + 1",
+  "vars": {
+   "r": {
+    "source": "outputs/p6/proposition_test.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "nu_shared_support",
+     "retain_rank_of_top_forget_units",
+     "0"
+    ]
+   }
+  },
+  "note": "zero-based rank in the JSON, ordinal in the text"
+ },
+ {
+  "text": "976",
+  "anchor": "set ranks ",
+  "formula": "r + 1",
+  "vars": {
+   "r": {
+    "source": "outputs/p6/proposition_test.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "nu_shared_support",
+     "retain_rank_of_top_forget_units",
+     "2"
+    ]
+   }
+  }
+ },
+ {
+  "text": "1014",
+  "anchor": "976th to ",
+  "formula": "r + 1",
+  "vars": {
+   "r": {
+    "source": "outputs/p6/proposition_test.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "nu_shared_support",
+     "retain_rank_of_top_forget_units",
+     "0"
+    ]
+   }
+  }
+ },
+ {
+  "text": "0.568",
+  "anchor": "checkpoints score ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.long_finetune_200.auc",
+  "note": "tab:longft caption"
+ },
+ {
+  "text": "0.688",
+  "anchor": "\\texttt{paired\\_diff\\_33k.json}) and ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.long_finetune_200.audit_cross.mean"
+ },
+ {
+  "text": "0.48",
+  "anchor": "and 0.688 [",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.long_finetune_200.audit_cross.ci.0"
+ },
+ {
+  "text": "0.88",
+  "anchor": "0.688 [0.48, ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.long_finetune_200.audit_cross.ci.1"
+ },
+ {
+  "text": "0.19",
+  "anchor": "above 1, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "lanczos",
+   "edits_x2_opt/unrestricted",
+   "weight_above",
+   "1.0"
+  ]
+ },
+ {
+  "text": "0.80",
+  "anchor": "kernel, $\\hat\\rho = ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "lanczos",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "200",
+   "rho_pred"
+  ]
+ },
+ {
+  "text": "0.42",
+  "anchor": "and carries ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "lanczos",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "200",
+   "damage_share_pred"
+  ]
+ },
+ {
+  "text": "0.60",
+  "anchor": "falls to ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "10",
+   "rho"
+  ]
+ },
+ {
+  "text": "0.46",
+  "anchor": "falls to 0.60, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "50",
+   "rho"
+  ]
+ },
+ {
+  "text": "0.36",
+  "anchor": "to 0.60, 0.46 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "rho"
+  ]
+ },
+ {
+  "text": "0.07",
+  "anchor": "left to ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "10",
+   "share_meas"
+  ]
+ },
+ {
+  "text": "0.03",
+  "anchor": "to 0.07, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "50",
+   "share_meas"
+  ]
+ },
+ {
+  "text": "0.01",
+  "anchor": "to 0.07, 0.03 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "share_meas"
+  ]
+ },
+ {
+  "text": "0.998",
+  "anchor": "all, $\\hat\\rho = ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "lanczos",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "200",
+   "rho_pred"
+  ]
+ },
+ {
+  "text": "0.97",
+  "anchor": "0.998$ with ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "lanczos",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "200",
+   "damage_share_pred"
+  ]
+ },
+ {
+  "text": "0.75",
+  "anchor": "measured $\\rho$ is ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "10",
+   "rho"
+  ]
+ },
+ {
+  "text": "0.56",
+  "anchor": "is 0.75, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "50",
+   "rho"
+  ]
+ },
+ {
+  "text": "0.46",
+  "anchor": "is 0.75, 0.56 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "rho"
+  ]
+ },
+ {
+  "text": "0.20",
+  "anchor": "0.46 with ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "10",
+   "share_meas"
+  ]
+ },
+ {
+  "text": "0.05",
+  "anchor": "with 0.20, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "50",
+   "share_meas"
+  ]
+ },
+ {
+  "text": "0.01",
+  "anchor": "with 0.20, 0.05 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "share_meas"
+  ]
+ },
+ {
+  "text": "0.54",
+  "anchor": "on zero, and ",
+  "formula": "1 - w",
+  "vars": {
+   "w": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "lanczos_gn",
+     "edits_x2_opt/unrestricted",
+     "weight_above",
+     "0.01"
+    ]
+   }
+  },
+  "note": "spectral weight of the scrub below lambda 0.01 under the Gauss-Newton matrix"
+ },
+ {
+  "text": "0.73",
+  "anchor": "0.01 on PBMC-33k and ",
+  "formula": "1 - w",
+  "vars": {
+   "w": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "lanczos_gn",
+     "edits_x2_opt/unrestricted",
+     "weight_above",
+     "0.01"
+    ]
+   }
+  }
+ },
+ {
+  "text": "0.66",
+  "anchor": "predicts $\\hat\\rho$ of ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "lanczos_gn",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "10",
+   "rho_pred"
+  ]
+ },
+ {
+  "text": "0.57",
+  "anchor": "of 0.66, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "lanczos_gn",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "50",
+   "rho_pred"
+  ]
+ },
+ {
+  "text": "0.51",
+  "anchor": "0.57 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "lanczos_gn",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "200",
+   "rho_pred"
+  ]
+ },
+ {
+  "text": "0.60",
+  "anchor": "0.51 against the measured ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "10",
+   "rho"
+  ]
+ },
+ {
+  "text": "0.46",
+  "anchor": "measured 0.60, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "50",
+   "rho"
+  ]
+ },
+ {
+  "text": "0.36",
+  "anchor": "measured 0.60, 0.46 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "rho"
+  ]
+ },
+ {
+  "text": "0.17",
+  "anchor": "baseline carries ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "lanczos_gn",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "10",
+   "damage_share_pred"
+  ]
+ },
+ {
+  "text": "0.10",
+  "anchor": "carries 0.17, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "lanczos_gn",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "50",
+   "damage_share_pred"
+  ]
+ },
+ {
+  "text": "0.07",
+  "anchor": "0.10 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "lanczos_gn",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "200",
+   "damage_share_pred"
+  ]
+ },
+ {
+  "text": "0.10",
+  "anchor": "residual carries ",
+  "formula": "(a - b) / c",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "states",
+     "edits_x2_opt/unrestricted",
+     "epochs",
+     "10",
+     "fit_residual",
+     "forget"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "baseline",
+     "forget"
+    ]
+   },
+   "c": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits",
+     "edits_x2_opt/unrestricted",
+     "damage"
+    ]
+   }
+  },
+  "note": "measured residual applied to the baseline, share of the damage"
+ },
+ {
+  "text": "0.05",
+  "anchor": "carries 0.10, ",
+  "formula": "(a - b) / c",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "states",
+     "edits_x2_opt/unrestricted",
+     "epochs",
+     "50",
+     "fit_residual",
+     "forget"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "baseline",
+     "forget"
+    ]
+   },
+   "c": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits",
+     "edits_x2_opt/unrestricted",
+     "damage"
+    ]
+   }
+  }
+ },
+ {
+  "text": "0.03",
+  "anchor": "0.10, 0.05 and ",
+  "formula": "(a - b) / c",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "states",
+     "edits_x2_opt/unrestricted",
+     "epochs",
+     "200",
+     "fit_residual",
+     "forget"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "baseline",
+     "forget"
+    ]
+   },
+   "c": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits",
+     "edits_x2_opt/unrestricted",
+     "damage"
+    ]
+   }
+  }
+ },
+ {
+  "text": "0.14",
+  "anchor": "it carries ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "lanczos_gn",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "10",
+   "share_sup_pred"
+  ]
+ },
+ {
+  "text": "0.08",
+  "anchor": "carries 0.14, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "lanczos_gn",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "50",
+   "share_sup_pred"
+  ]
+ },
+ {
+  "text": "0.05",
+  "anchor": "0.14, 0.08 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "lanczos_gn",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "200",
+   "share_sup_pred"
+  ]
+ },
+ {
+  "text": "0.07",
+  "anchor": "0.05 against the measured ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "10",
+   "share_meas"
+  ]
+ },
+ {
+  "text": "0.03",
+  "anchor": "measured 0.07, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "50",
+   "share_meas"
+  ]
+ },
+ {
+  "text": "0.01",
+  "anchor": "measured 0.07, 0.03 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "share_meas"
+  ]
+ },
+ {
+  "text": "0.89",
+  "anchor": "9 it predicts ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "lanczos_gn",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "10",
+   "rho_pred"
+  ]
+ },
+ {
+  "text": "0.75",
+  "anchor": "predicts 0.89, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "lanczos_gn",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "50",
+   "rho_pred"
+  ]
+ },
+ {
+  "text": "0.71",
+  "anchor": "0.75 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "lanczos_gn",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "200",
+   "rho_pred"
+  ]
+ },
+ {
+  "text": "0.75",
+  "anchor": "0.71 against ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "10",
+   "rho"
+  ]
+ },
+ {
+  "text": "0.56",
+  "anchor": "against 0.75, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "50",
+   "rho"
+  ]
+ },
+ {
+  "text": "0.46",
+  "anchor": "against 0.75, 0.56 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "rho"
+  ]
+ },
+ {
+  "text": "0.53",
+  "anchor": "and 0.46; ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "lanczos_gn",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "10",
+   "damage_share_pred"
+  ]
+ },
+ {
+  "text": "0.25",
+  "anchor": "0.46; 0.53, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "lanczos_gn",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "50",
+   "damage_share_pred"
+  ]
+ },
+ {
+  "text": "0.20",
+  "anchor": "0.25 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "lanczos_gn",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "200",
+   "damage_share_pred"
+  ]
+ },
+ {
+  "text": "0.24",
+  "anchor": "the residual's ",
+  "formula": "(a - b) / c",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "states",
+     "edits_x2_opt/unrestricted",
+     "epochs",
+     "10",
+     "fit_residual",
+     "forget"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "baseline",
+     "forget"
+    ]
+   },
+   "c": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits",
+     "edits_x2_opt/unrestricted",
+     "damage"
+    ]
+   }
+  }
+ },
+ {
+  "text": "0.08",
+  "anchor": "residual's 0.24, ",
+  "formula": "(a - b) / c",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "states",
+     "edits_x2_opt/unrestricted",
+     "epochs",
+     "50",
+     "fit_residual",
+     "forget"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "baseline",
+     "forget"
+    ]
+   },
+   "c": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits",
+     "edits_x2_opt/unrestricted",
+     "damage"
+    ]
+   }
+  }
+ },
+ {
+  "text": "0.04",
+  "anchor": "0.24, 0.08 and ",
+  "formula": "(a - b) / c",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "states",
+     "edits_x2_opt/unrestricted",
+     "epochs",
+     "200",
+     "fit_residual",
+     "forget"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "baseline",
+     "forget"
+    ]
+   },
+   "c": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits",
+     "edits_x2_opt/unrestricted",
+     "damage"
+    ]
+   }
+  }
+ },
+ {
+  "text": "0.43",
+  "anchor": "0.04; and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "lanczos_gn",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "10",
+   "share_sup_pred"
+  ]
+ },
+ {
+  "text": "0.16",
+  "anchor": "and 0.43, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "lanczos_gn",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "50",
+   "share_sup_pred"
+  ]
+ },
+ {
+  "text": "0.08",
+  "anchor": "0.16 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "lanczos_gn",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "200",
+   "share_sup_pred"
+  ]
+ },
+ {
+  "text": "0.20",
+  "anchor": "state against the measured ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "10",
+   "share_meas"
+  ]
+ },
+ {
+  "text": "0.05",
+  "anchor": "measured 0.20, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "50",
+   "share_meas"
+  ]
+ },
+ {
+  "text": "0.01",
+  "anchor": "measured 0.20, 0.05 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "share_meas"
+  ]
+ },
+ {
+  "text": "0.99",
+  "anchor": "predicting $\\hat\\rho$ of ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "lanczos_gn",
+   "edits_x2_opt/null_only",
+   "epochs",
+   "200",
+   "rho_pred"
+  ]
+ },
+ {
+  "text": "0.95",
+  "anchor": "PBMC-33k with ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "lanczos_gn",
+   "edits_x2_opt/null_only",
+   "epochs",
+   "200",
+   "damage_share_pred"
+  ]
+ },
+ {
+  "text": "0.94",
+  "anchor": "the damage and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "lanczos_gn",
+   "edits_x2_opt/null_only",
+   "epochs",
+   "200",
+   "rho_pred"
+  ]
+ },
+ {
+  "text": "0.54",
+  "anchor": "cluster 9 with ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "lanczos_gn",
+   "edits_x2_opt/null_only",
+   "epochs",
+   "200",
+   "damage_share_pred"
+  ]
+ },
+ {
+  "text": "0.92",
+  "anchor": "has cosine ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "10",
+   "cos_rperp_Dperp"
+  ]
+ },
+ {
+  "text": "0.997",
+  "anchor": "0.92 to ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "200",
+   "cos_rperp_Dperp"
+  ]
+ },
+ {
+  "text": "0.60",
+  "anchor": "\\Delta_T$, with ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "10",
+   "rho"
+  ]
+ },
+ {
+  "text": "0.34",
+  "anchor": "and a squared norm of ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "10",
+   "residual_sq"
+  ]
+ },
+ {
+  "text": "0.58",
+  "anchor": "against the edit's ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/unrestricted",
+   "delta_sq"
+  ]
+ },
+ {
+  "text": "301",
+  "anchor": "that residual fits the forget cells at ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "10",
+   "fit_residual",
+   "forget"
+  ]
+ },
+ {
+  "text": "277",
+  "anchor": "301 after ten epochs and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "200",
+   "fit_residual",
+   "forget"
+  ]
+ },
+ {
+  "text": "454",
+  "anchor": "$\\rho\\,\\delta$ alone fits them at ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "10",
+   "rev_only",
+   "forget"
+  ]
+ },
+ {
+  "text": "358",
+  "anchor": "454 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "rev_only",
+   "forget"
+  ]
+ },
+ {
+  "text": "325",
+  "anchor": "fit worse, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "10",
+   "fit_minus_delta",
+   "forget"
+  ]
+ },
+ {
+  "text": "297",
+  "anchor": "325 against ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "10",
+   "fit",
+   "forget"
+  ]
+ },
+ {
+  "text": "382",
+  "anchor": "297 on the forget cells and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "10",
+   "fit_minus_delta",
+   "heldout"
+  ]
+ },
+ {
+  "text": "362",
+  "anchor": "382 against ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "10",
+   "fit",
+   "heldout"
+  ]
+ },
+ {
+  "text": "298",
+  "anchor": "forget fit at ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "10",
+   "fit_minus_rho_delta",
+   "forget"
+  ]
+ },
+ {
+  "text": "370",
+  "anchor": "held-out fit, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "10",
+   "fit_minus_rho_delta",
+   "heldout"
+  ]
+ },
+ {
+  "text": "0.99",
+  "anchor": "itself, cosine ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/null_only",
+   "epochs",
+   "200",
+   "cos_residual_delta"
+  ]
+ },
+ {
+  "text": "38",
+  "anchor": "and squared norm ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/null_only",
+   "epochs",
+   "200",
+   "residual_sq"
+  ]
+ },
+ {
+  "text": "39",
+  "anchor": "38 of the edit's ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/null_only",
+   "delta_sq"
+  ]
+ },
+ {
+  "text": "414",
+  "anchor": "the residual fits the forget cells at ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/null_only",
+   "epochs",
+   "200",
+   "fit_residual",
+   "forget"
+  ]
+ },
+ {
+  "text": "544",
+  "anchor": "edit alone fits them at ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/null_only",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "rev_only",
+   "forget"
+  ]
+ },
+ {
+  "text": "0.90",
+  "anchor": "counterweight of squared norm ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/null_only",
+   "epochs",
+   "200",
+   "path_diff_sq"
+  ]
+ },
+ {
+  "text": "0.84",
+  "anchor": "edit, of which ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/null_only",
+   "epochs",
+   "200",
+   "path_diff_sq_by_group",
+   "Encoder"
+  ]
+ },
+ {
+  "text": "0.07",
+  "anchor": "the fine-tune from ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/null_only",
+   "epochs",
+   "10",
+   "path_diff_sq"
+  ]
+ },
+ {
+  "text": "135",
+  "anchor": "that changes the retain gradient by ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/null_only",
+   "grad_change_sq"
+  ]
+ },
+ {
+  "text": "72",
+  "anchor": "in squared norm, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "states",
+   "edits_x2_opt/null_only",
+   "grad_nonlinear_sq"
+  ]
+ },
+ {
+  "text": "1.84",
+  "anchor": "scrub changes the retain gradient by ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "states",
+   "edits_x2_opt/unrestricted",
+   "grad_change_sq"
+  ]
+ },
+ {
+  "text": "488.5",
+  "anchor": "a nat, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "states",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "10",
+   "fit_minus_rho_delta",
+   "forget"
+  ]
+ },
+ {
+  "text": "488.3",
+  "anchor": "488.5 against ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "states",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "10",
+   "fit_none",
+   "forget"
+  ]
+ },
+ {
+  "text": "535.2",
+  "anchor": "488.3 after ten epochs and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "states",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "200",
+   "fit_minus_rho_delta",
+   "forget"
+  ]
+ },
+ {
+  "text": "534.2",
+  "anchor": "535.2 against ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "states",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "200",
+   "fit_none",
+   "forget"
+  ]
+ },
+ {
+  "text": "0.028",
+  "anchor": "than at the baseline, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "share_sup_rho"
+  ]
+ },
+ {
+  "text": "0.076",
+  "anchor": "0.028 of the damage against ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "share_rev_only"
+  ]
+ },
+ {
+  "text": "488",
+  "anchor": "it takes the forget cells from ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": "cohorts.pbmc68k_mk.baseline.forget"
+ },
+ {
+  "text": "534",
+  "anchor": "it takes the forget cells from 488 to ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "states",
+   "edits_x2_opt/unrestricted",
+   "epochs",
+   "200",
+   "fit_none",
+   "forget"
+  ]
+ },
+ {
+  "text": "0.82",
+  "anchor": "there keeps ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/null_only",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "rho"
+  ]
+ },
+ {
+  "text": "0.06",
+  "anchor": "there keeps 0.82 of its coordinates and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/null_only",
+   "arms",
+   "sgd:1e-3",
+   "200",
+   "share_meas"
+  ]
+ },
+ {
+  "text": "543",
+  "anchor": "fine-tuned model leaves ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "states",
+   "edits_x2_opt/null_only",
+   "epochs",
+   "200",
+   "fit_minus_rho_delta",
+   "forget"
+  ]
+ },
+ {
+  "text": "534",
+  "anchor": "543 against ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "states",
+   "edits_x2_opt/null_only",
+   "epochs",
+   "200",
+   "fit_none",
+   "forget"
+  ]
+ },
+ {
+  "text": "0.10",
+  "anchor": "are small, ",
+  "formula": "a * b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits",
+     "edits_x2_opt/null_only",
+     "retain",
+     "diag_form"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits",
+     "edits_x2_opt/null_only",
+     "retain",
+     "fisher_over_diag"
+    ]
+   }
+  }
+ },
+ {
+  "text": "0.11",
+  "anchor": "small, 0.10, ",
+  "formula": "a * b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits",
+     "edits_x2_opt/null_only",
+     "retain",
+     "diag_form"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits",
+     "edits_x2_opt/null_only",
+     "retain",
+     "hess_over_diag"
+    ]
+   }
+  }
+ },
+ {
+  "text": "0.0044",
+  "anchor": "0.11 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/null_only",
+   "retain",
+   "diag_form"
+  ]
+ },
+ {
+  "text": "1,086",
+  "anchor": "same orders, ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "forget",
+   "eps0.01",
+   "fisher_form"
+  ]
+ },
+ {
+  "text": "545",
+  "anchor": "1,086 and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "forget",
+   "eps0.01",
+   "hess_form"
+  ]
+ },
+ {
+  "text": "0.067",
+  "anchor": "545 against ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "forget",
+   "diag_form"
+  ]
+ },
+ {
+  "text": "28",
+  "anchor": "either, since ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "forget",
+   "eps0.01",
+   "grad_along"
+  ]
+ },
+ {
+  "text": "302",
+  "anchor": "moderate scrub's ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "damage"
+  ]
+ },
+ {
+  "text": "16",
+  "anchor": "damage on PBMC-33k and ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "forget",
+   "eps0.01",
+   "grad_along"
+  ]
+ },
+ {
+  "text": "613",
+  "anchor": "16 of ",
+  "source": "outputs/p6/edit_compensation.json",
+  "key": [
+   "cohorts",
+   "pbmc68k_mk",
+   "edits",
+   "edits_x2_opt/unrestricted",
+   "damage"
+  ]
+ },
+ {
+  "text": "0.35",
+  "anchor": "cosines from ",
+  "source": "outputs/p6/fisher_overlap_results.json",
+  "key": "vae.per_category.Encoder.cosine",
+  "note": "Section 6.1 overlap paragraph"
+ },
+ {
+  "text": "0.49",
+  "anchor": "encoder to ",
+  "source": "outputs/p6/fisher_overlap_results.json",
+  "key": [
+   "vae",
+   "per_category",
+   "Decoder output",
+   "cosine"
+  ]
+ },
+ {
+  "text": "0.018",
+  "anchor": "output, against ",
+  "source": "outputs/p6/fisher_overlap_results.json",
+  "key": "classifier.global_cosine"
+ },
+ {
+  "text": "1,540",
+  "anchor": "reached after ",
+  "formula": "round(100 / t, -1)",
+  "vars": {
+   "t": {
+    "source": "outputs/p6/sgd_survival_prediction.json",
+    "key": [
+     "settings",
+     "pbmc33k",
+     "epochs",
+     "10",
+     "t"
+    ]
+   }
+  },
+  "note": "epochs of gradient descent at 1e-3 to reach t = 10, to three significant figures"
+ },
+ {
+  "text": "821",
+  "anchor": "1,540 and ",
+  "formula": "100 / t",
+  "vars": {
+   "t": {
+    "source": "outputs/p6/sgd_survival_prediction.json",
+    "key": [
+     "settings",
+     "pbmc68k_mk",
+     "epochs",
+     "10",
+     "t"
+    ]
+   }
+  }
+ },
+ {
+  "text": "0.803",
+  "anchor": "the baseline scores ",
+  "source": "outputs/tcga_brca/unlearning/unlearning_results.json",
+  "key": "baseline.auc"
+ },
+ {
+  "text": "0.830",
+  "anchor": "0.803 and the retrained model ",
+  "source": "outputs/tcga_brca/unlearning/unlearning_results.json",
+  "key": "retrain.auc"
+ },
+ {
+  "text": "0.580",
+  "anchor": "scores them at ",
+  "source": "outputs/tcga_brca/within_subtype_eval/within_subtype_results.json",
+  "key": "structured.baseline.auc"
+ },
+ {
+  "text": "0.572",
+  "anchor": "0.580 and ",
+  "source": "outputs/tcga_brca/within_subtype_eval/within_subtype_results.json",
+  "key": "structured.retrain.auc"
+ },
+ {
+  "text": "0.903",
+  "anchor": "33 scores ",
+  "source": "outputs/tabula_muris/unlearning_results.json",
+  "key": "unlearning.baseline (structured).auc"
+ },
+ {
+  "text": "0.943",
+  "anchor": "0.903 and ",
+  "source": "outputs/tabula_muris/unlearning_results.json",
+  "key": "unlearning.retrain (structured).auc"
+ },
+ {
+  "text": "0.869",
+  "anchor": "12 scores ",
+  "source": "outputs/p1_c12/scores_c12_v2.json",
+  "key": "methods.baseline.auc_mean"
+ },
+ {
+  "text": "0.814",
+  "anchor": "0.869 and ",
+  "source": "outputs/p1_c12/scores_c12_v2.json",
+  "key": "methods.retrain.auc_mean"
+ },
+ {
+  "text": "0.665",
+  "anchor": "available, gives ",
+  "source": "outputs/larger_cluster_eval/results.json",
+  "key": "pbmc_c7.n=50.Baseline_cross.auc"
+ },
+ {
+  "text": "0.655",
+  "anchor": "0.665 and ",
+  "source": "outputs/larger_cluster_eval/results.json",
+  "key": "pbmc_c7.n=50.Retrain_cross.auc"
+ },
+ {
+  "text": "0.466",
+  "anchor": "under cross-type negatives and ",
+  "source": "outputs/within_type_standardized_check.json",
+  "key": "results.pbmc33k/c7_within_n50/baseline.logistic_std.mean"
+ },
+ {
+  "text": "0.414",
+  "anchor": "0.466 and ",
+  "source": "outputs/within_type_standardized_check.json",
+  "key": "results.pbmc33k/c7_within_n50/retrain.logistic_std.mean"
+ },
+ {
+  "text": "0.159",
+  "anchor": "0.075 to ",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.baseline_excess_ci.1"
+ },
+ {
+  "text": "0.038",
+  "anchor": "and a margin of ",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.margin"
+ },
+ {
+  "text": "0.548",
+  "anchor": "fine-tune sit at ",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.arms.retain_finetune.mean"
+ },
+ {
+  "text": "0.573",
+  "anchor": "0.548 to ",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.arms.ssd.mean"
+ },
+ {
+  "text": "0.062",
+  "anchor": "0.573, differences of ",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.arms.retain_finetune.diff"
+ },
+ {
+  "text": "0.087",
+  "anchor": "0.573, differences of 0.062 to ",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.arms.ssd.diff"
+ },
+ {
+  "text": "0.022",
+  "anchor": "begin at ",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.arms.retain_finetune.diff_ci.0"
+ },
+ {
+  "text": "0.044",
+  "anchor": "0.022 to ",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.arms.ssd.diff_ci.0"
+ },
+ {
+  "text": "0.589",
+  "anchor": "had them (",
+  "source": "outputs/pbmc68k/percell_paired_pdc.json",
+  "key": "kinds.within.arms.fisher.mean"
+ },
+ {
+  "text": "0.011",
+  "anchor": "level (audit ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.contrastive.audit_cross.mean"
+ },
+ {
+  "text": "0.003",
+  "anchor": "attacker between ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.frozen_single_lambda5.auc",
+  "note": "the smallest attacker AUC among the frozen-critic arms (0.0034)"
+ },
+ {
+  "text": "0.003",
+  "anchor": "0.336 and the audit between ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.contrastive.audit_cross.mean"
+ },
+ {
+  "text": "0.831",
+  "anchor": "correlation at ",
+  "source": "outputs/utility_intervals.json",
+  "key": [
+   "cohorts",
+   "pbmc33k",
+   "arms",
+   "sweep_fisher_step0.002",
+   "marker_r"
+  ]
+ },
+ {
+  "text": "0.53",
+  "anchor": "an overlap of ",
+  "source": "outputs/p6/fisher_overlap_deep_clf.json",
+  "key": "per_category.Shared hidden.cosine"
+ },
+ {
+  "text": "0.006",
+  "anchor": "layer, and ",
+  "source": "outputs/p6/fisher_overlap_deep_clf.json",
+  "key": "per_category.Class-specific output.cosine"
+ },
+ {
+  "text": "0.62",
+  "anchor": "stays at ",
+  "source": "outputs/p6/fisher_overlap_conditional.json",
+  "key": "per_category.Encoder.cosine"
+ },
+ {
+  "text": "0.065",
+  "anchor": "are $t = ",
+  "source": "outputs/p6/sgd_survival_prediction.json",
+  "key": [
+   "settings",
+   "pbmc33k",
+   "epochs",
+   "10",
+   "t"
+  ]
+ },
+ {
+  "text": "0.12",
+  "anchor": "PBMC-33k and $t = ",
+  "source": "outputs/p6/sgd_survival_prediction.json",
+  "key": [
+   "settings",
+   "pbmc68k_mk",
+   "epochs",
+   "10",
+   "t"
+  ]
+ },
+ {
+  "text": "0.91",
+  "anchor": "edit stays, ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits_x2_opt",
+     "unrestricted",
+     "finetune",
+     "sgd:1e-3",
+     "after_ft200",
+     "edit",
+     "null",
+     "rho"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits_x2_opt",
+     "none",
+     "finetune",
+     "sgd:1e-3",
+     "after_ft200",
+     "drift_projection",
+     "edits_x2_opt/unrestricted",
+     "null"
+    ]
+   }
+  },
+  "note": "drift-corrected rho, edits_x2_opt unrestricted sgd:1e-3 200 epochs (null coordinates)"
+ },
+ {
+  "text": "0.98",
+  "anchor": "0.91 to ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits_opt",
+     "null_only",
+     "finetune",
+     "sgd:1e-3",
+     "after_ft200",
+     "edit",
+     "null",
+     "rho"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits_x2_opt",
+     "none",
+     "finetune",
+     "sgd:1e-3",
+     "after_ft200",
+     "drift_projection",
+     "edits_opt/null_only",
+     "null"
+    ]
+   }
+  },
+  "note": "drift-corrected rho, edits_opt null_only sgd:1e-3 200 epochs (null coordinates)"
+ },
+ {
+  "text": "0.65",
+  "anchor": "levels and ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits_opt",
+     "unrestricted",
+     "finetune",
+     "sgd:1e-3",
+     "after_ft200",
+     "edit",
+     "null",
+     "rho"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits_x2_opt",
+     "none",
+     "finetune",
+     "sgd:1e-3",
+     "after_ft200",
+     "drift_projection",
+     "edits_opt/unrestricted",
+     "null"
+    ]
+   }
+  },
+  "note": "drift-corrected rho, edits_opt unrestricted sgd:1e-3 200 epochs (null coordinates)"
+ },
+ {
+  "text": "-0.25",
+  "anchor": "baseline, to $",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits_opt",
+     "unrestricted",
+     "finetune",
+     "sgd:1e-3",
+     "after_ft200",
+     "edit",
+     "active",
+     "rho"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits_x2_opt",
+     "none",
+     "finetune",
+     "sgd:1e-3",
+     "after_ft200",
+     "drift_projection",
+     "edits_opt/unrestricted",
+     "active"
+    ]
+   }
+  },
+  "note": "drift-corrected rho, edits_opt unrestricted sgd:1e-3 200 epochs (active coordinates)"
+ },
+ {
+  "text": "-0.30",
+  "anchor": "$-0.25$ to $",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits_opt",
+     "active_only",
+     "finetune",
+     "sgd:1e-3",
+     "after_ft200",
+     "edit",
+     "active",
+     "rho"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits_x2_opt",
+     "none",
+     "finetune",
+     "sgd:1e-3",
+     "after_ft200",
+     "drift_projection",
+     "edits_opt/active_only",
+     "active"
+    ]
+   }
+  },
+  "note": "drift-corrected rho, edits_opt active_only sgd:1e-3 200 epochs (active coordinates)"
+ },
+ {
+  "text": "0.74",
+  "anchor": "parts, leaving ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits_x2_opt",
+     "null_only",
+     "finetune",
+     "adam:1e-4",
+     "after_ft200",
+     "edit",
+     "null",
+     "rho"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits_x2_opt",
+     "none",
+     "finetune",
+     "adam:1e-4",
+     "after_ft200",
+     "drift_projection",
+     "edits_x2_opt/null_only",
+     "null"
+    ]
+   }
+  },
+  "note": "drift-corrected rho, edits_x2_opt null_only adam:1e-4 200 epochs (null coordinates)"
+ },
+ {
+  "text": "0.77",
+  "anchor": "0.74 to ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits_opt",
+     "null_only",
+     "finetune",
+     "adam:1e-4",
+     "after_ft200",
+     "edit",
+     "null",
+     "rho"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits_x2_opt",
+     "none",
+     "finetune",
+     "adam:1e-4",
+     "after_ft200",
+     "drift_projection",
+     "edits_opt/null_only",
+     "null"
+    ]
+   }
+  },
+  "note": "drift-corrected rho, edits_opt null_only adam:1e-4 200 epochs (null coordinates)"
+ },
+ {
+  "text": "0.41",
+  "anchor": "edit on PBMC-33k and ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits_x2_opt",
+     "null_only",
+     "finetune",
+     "adam:1e-4",
+     "after_ft200",
+     "edit",
+     "null",
+     "rho"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits_x2_opt",
+     "none",
+     "finetune",
+     "adam:1e-4",
+     "after_ft200",
+     "drift_projection",
+     "edits_x2_opt/null_only",
+     "null"
+    ]
+   }
+  },
+  "note": "drift-corrected rho, edits_x2_opt null_only adam:1e-4 200 epochs (null coordinates)"
+ },
+ {
+  "text": "0.53",
+  "anchor": "and 0.41 to ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits_opt",
+     "null_only",
+     "finetune",
+     "adam:1e-4",
+     "after_ft200",
+     "edit",
+     "null",
+     "rho"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits_x2_opt",
+     "none",
+     "finetune",
+     "adam:1e-4",
+     "after_ft200",
+     "drift_projection",
+     "edits_opt/null_only",
+     "null"
+    ]
+   }
+  },
+  "note": "drift-corrected rho, edits_opt null_only adam:1e-4 200 epochs (null coordinates)"
+ },
+ {
+  "text": "0.12",
+  "anchor": "size (audit ",
+  "source": "outputs/p4/size_ablations_v2.json",
+  "key": "structured_extragradient.50.extragradient.lr_auc_mean"
+ },
+ {
+  "text": "0.19",
+  "anchor": "(audit 0.12 to ",
+  "source": "outputs/p4/size_ablations_v2.json",
+  "key": "structured_extragradient.10.extragradient.lr_auc_mean"
+ },
+ {
+  "text": "0.69",
+  "anchor": "in the baseline (",
+  "source": "outputs/p4/size_ablations_v2.json",
+  "key": "scattered_fisher.100.baseline.lr_auc_mean"
+ },
+ {
+  "text": "0.79",
+  "anchor": "(0.69 to ",
+  "source": "outputs/p4/size_ablations_v2.json",
+  "key": "scattered_fisher.30.baseline.lr_auc_mean"
+ },
+ {
+  "text": "0.007",
+  "anchor": "anyway (audit ",
+  "source": "outputs/attack_lr_reference.json",
+  "key": [
+   "models",
+   "rau_lambda0.1",
+   "auc_mean"
+  ]
+ },
+ {
+  "text": "0.018",
+  "anchor": "(audit 0.007 to ",
+  "source": "outputs/attack_lr_reference.json",
+  "key": [
+   "models",
+   "rau_lambda100.0",
+   "auc_mean"
+  ]
+ },
+ {
+  "text": "0.042",
+  "anchor": "40.4; marker $r$ ",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc33k.arms.dp_sgd.marker_cost"
+ },
+ {
+  "text": "0.0069",
+  "anchor": "2.67; marker $r$ cost ",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.marker_cost"
+ },
+ {
+  "text": "0.0037",
+  "anchor": "0.0069, interval ",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.marker_cost_ci.0"
+ },
+ {
+  "text": "0.0099",
+  "anchor": "0.0069, interval 0.0037 to ",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.marker_cost_ci.1"
+ },
+ {
+  "text": "0.0066",
+  "anchor": "$r$ cost (",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_pdc.arms.retrain.marker_cost"
+ },
+ {
+  "text": "0.0029",
+  "anchor": "(0.0066, interval ",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_pdc.arms.retrain.marker_cost_ci.0"
+ },
+ {
+  "text": "0.0105",
+  "anchor": "0.0029 to ",
+  "source": "outputs/utility_intervals.json",
+  "key": "cohorts.pbmc68k_pdc.arms.retrain.marker_cost_ci.1"
+ },
+ {
+  "text": "0.454",
+  "anchor": "references score ",
+  "source": "outputs/p4/size_ablations_v2.json",
+  "key": "structured_extragradient.10.retrain.auc_mean"
+ },
+ {
+  "text": "0.565",
+  "anchor": "score 0.454, ",
+  "source": "outputs/p4/size_ablations_v2.json",
+  "key": "structured_extragradient.50.retrain.auc_mean"
+ },
+ {
+  "text": "0.668",
+  "anchor": "0.565, and ",
+  "source": "outputs/p4/size_ablations_v2.json",
+  "key": "structured_extragradient.100.retrain.auc_mean"
+ },
+ {
+  "text": "0.827",
+  "anchor": "two models score ",
+  "source": "outputs/augmentation/augmentation_results.json",
+  "key": "pbmc.within_cluster.Augmented-30.auc"
+ },
+ {
+  "text": "1.000",
+  "anchor": "0.827 and ",
+  "source": "outputs/augmentation/augmentation_results.json",
+  "key": "pbmc.within_cluster.Augmented-100.auc"
+ },
+ {
+  "text": "0.607",
+  "anchor": "there, worse than the baseline's ",
+  "source": "outputs/augmentation/augmentation_results.json",
+  "key": "pbmc.within_cluster.Baseline.auc"
+ },
+ {
+  "text": "0.28",
+  "anchor": "with the attacker at ",
+  "source": "outputs/rau/rau_results.json",
+  "key": [
+   "pbmc",
+   "cross_cluster",
+   "RAU lambda=0.1",
+   "auc"
+  ]
+ },
+ {
+  "text": "0.35",
+  "anchor": "0.28 to ",
+  "source": "outputs/rau/rau_results.json",
+  "key": [
+   "pbmc",
+   "cross_cluster",
+   "RAU lambda=100.0",
+   "auc"
+  ]
+ },
+ {
+  "text": "0.548",
+  "anchor": "against the retrained model's ",
+  "source": "outputs/rau/rau_results.json",
+  "key": "pbmc.cross_cluster.Retrain.auc"
+ },
+ {
+  "text": "0.869",
+  "anchor": "reference (baseline ",
+  "source": "outputs/p1_c12/scores_c12_v2.json",
+  "key": "methods.baseline.auc_mean"
+ },
+ {
+  "text": "0.814",
+  "anchor": "0.869, retrained ",
+  "source": "outputs/p1_c12/scores_c12_v2.json",
+  "key": "methods.retrain.auc_mean"
+ },
+ {
+  "text": "0.867",
+  "anchor": "leaving the attacker at ",
+  "source": "outputs/p1_c12/scores_c12_v2.json",
+  "key": "methods.retain_finetune.auc_mean"
+ },
+ {
+  "text": "0.858",
+  "anchor": "0.867 and ",
+  "source": "outputs/p1_c12/scores_c12_v2.json",
+  "key": "methods.fisher.auc_mean"
+ },
+ {
+  "text": "0.41",
+  "anchor": "dropping it to ",
+  "source": "outputs/p1_c12/scores_c12_v2.json",
+  "key": "methods.extragradient.auc_mean"
+ },
+ {
+  "text": "0.990",
+  "anchor": "which alone gives ",
+  "source": "outputs/feature_group_check.json",
+  "key": [
+   "pbmc33k/c13_cross/baseline",
+   "latent mean (32)",
+   "0"
+  ]
+ },
+ {
+  "text": "0.984",
+  "anchor": "gives 0.990 on the baseline and ",
+  "source": "outputs/feature_group_check.json",
+  "key": [
+   "pbmc33k/c13_cross/retrain_42",
+   "latent mean (32)",
+   "0"
+  ]
+ },
+ {
+  "text": "0.769",
+  "anchor": "term alone gives ",
+  "source": "outputs/feature_group_check.json",
+  "key": [
+   "pbmc33k/c13_cross/baseline",
+   "recon_nll only",
+   "0"
+  ]
+ },
+ {
+  "text": "0.423",
+  "anchor": "0.769 on the baseline and ",
+  "source": "outputs/feature_group_check.json",
+  "key": [
+   "pbmc33k/c13_cross/retrain_42",
+   "recon_nll only",
+   "0"
+  ]
+ },
+ {
+  "text": "0.780",
+  "anchor": "loss scores the baseline at ",
+  "source": "outputs/attack_suite_results.json",
+  "key": "baseline.low_assumption.loss_recon.auc"
+ },
+ {
+  "text": "0.130",
+  "anchor": "from chance (",
+  "source": "outputs/attack_suite_results.json",
+  "key": "retrain.low_assumption.loss_kl.auc",
+  "note": "PLACEHOLDER-CHECK"
+ },
+ {
+  "text": "0.129",
+  "anchor": "chance (0.130, ",
+  "source": "outputs/attack_suite_results.json",
+  "key": "retrain.low_assumption.loss_elbo.auc",
+  "note": "PLACEHOLDER-CHECK"
+ },
+ {
+  "text": "0.019",
+  "anchor": "0.129, and ",
+  "source": "outputs/attack_suite_results.json",
+  "key": "retrain.high_assumption.knn_latent.auc",
+  "note": "PLACEHOLDER-CHECK"
+ },
+ {
+  "text": "0.507",
+  "anchor": "arm sits at ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.retrain.audit_cross.arm_mean"
+ },
+ {
+  "text": "0.40",
+  "anchor": "0.507 with an interval of ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.retrain.audit_cross.arm_ci.0"
+ },
+ {
+  "text": "0.60",
+  "anchor": "of 0.40 to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.retrain.audit_cross.arm_ci.1"
+ },
+ {
+  "text": "0.24",
+  "anchor": "ranging from ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.retrain.audit_cross.loo_per_seed",
+  "reduce": "min"
+ },
+ {
+  "text": "0.74",
+  "anchor": "0.24 to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.retrain.audit_cross.loo_per_seed",
+  "reduce": "max"
+ },
+ {
+  "text": "0.014",
+  "anchor": "with Holm-adjusted $p$ of ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.retain_finetune.audit_cross.p_holm"
+ },
+ {
+  "text": "0.533",
+  "anchor": "worse. DP-SGD (",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.dp_sgd.audit_cross.mean"
+ },
+ {
+  "text": "0.12",
+  "anchor": "(0.533, interval $-$",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.dp_sgd.audit_cross.diff_ci.0",
+  "reduce": "abs"
+ },
+ {
+  "text": "0.19",
+  "anchor": "(0.533, interval $-$0.12 to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.dp_sgd.audit_cross.diff_ci.1"
+ },
+ {
+  "text": "0.56",
+  "anchor": "$\\lambda=10$ (difference interval $-$",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.extragradient.audit_cross.diff_ci.0",
+  "reduce": "abs"
+ },
+ {
+  "text": "0.42",
+  "anchor": "$-$0.56 to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.extragradient.audit_cross.diff_ci.1"
+ },
+ {
+  "text": "37",
+  "anchor": "gap is +",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.dp_sgd.gap_median.gap"
+ },
+ {
+  "text": "21",
+  "anchor": "+37 (interval ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.dp_sgd.gap_median.gap_ci.0"
+ },
+ {
+  "text": "49",
+  "anchor": "21 to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.dp_sgd.gap_median.gap_ci.1"
+ },
+ {
+  "text": "-1",
+  "anchor": "negatives it is $",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.dp_sgd.gap_rel_median.gap"
+ },
+ {
+  "text": "19",
+  "anchor": "$-1$ (interval $-$",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.dp_sgd.gap_rel_median.gap_ci.0",
+  "reduce": "abs"
+ },
+ {
+  "text": "16",
+  "anchor": "$-$19 to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.dp_sgd.gap_rel_median.gap_ci.1"
+ },
+ {
+  "text": "-0.22",
+  "anchor": "here (difference $",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.fisher_step1e-2.audit_cross.diff_vs_retrain"
+ },
+ {
+  "text": "0.39",
+  "anchor": "$-0.22$, interval $-$",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.fisher_step1e-2.audit_cross.diff_ci.0",
+  "reduce": "abs"
+ },
+ {
+  "text": "0.03",
+  "anchor": "$-$0.39 to $-$",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.fisher_step1e-2.audit_cross.diff_ci.1",
+  "reduce": "abs"
+ },
+ {
+  "text": "0.10",
+  "anchor": "$-$0.03, Holm-adjusted $p=",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.fisher_step1e-2.audit_cross.p_holm"
+ },
+ {
+  "text": "0.34",
+  "anchor": "better (difference ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.retrain_leaky.audit_cross.diff_vs_retrain"
+ },
+ {
+  "text": "0.16",
+  "anchor": "0.34, interval ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.retrain_leaky.audit_cross.diff_ci.0"
+ },
+ {
+  "text": "0.49",
+  "anchor": "0.16 to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc33k.arms.retrain_leaky.audit_cross.diff_ci.1"
+ },
+ {
+  "text": "0.592",
+  "anchor": "arm on cluster 9 is ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.retrain.audit_cross.arm_mean"
+ },
+ {
+  "text": "0.41",
+  "anchor": "0.592 with an interval of ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.retrain.audit_cross.arm_ci.0"
+ },
+ {
+  "text": "0.66",
+  "anchor": "of 0.41 to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.retrain.audit_cross.arm_ci.1"
+ },
+ {
+  "text": "0.04",
+  "anchor": "leave-one-out values from ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.retrain.audit_cross.loo_per_seed",
+  "reduce": "min"
+ },
+ {
+  "text": "0.95",
+  "anchor": "0.04 to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.retrain.audit_cross.loo_per_seed",
+  "reduce": "max"
+ },
+ {
+  "text": "-251",
+  "anchor": "scrubbing by $",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.fisher.gap_median.gap"
+ },
+ {
+  "text": "356",
+  "anchor": "$-251$ (interval $-$",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.fisher.gap_median.gap_ci.0",
+  "reduce": "abs"
+ },
+ {
+  "text": "56",
+  "anchor": "$-$356 to $-$",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.fisher.gap_median.gap_ci.1",
+  "reduce": "abs"
+ },
+ {
+  "text": "-247",
+  "anchor": "fine-tune by $",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.gap_median.gap"
+ },
+ {
+  "text": "290",
+  "anchor": "$-247$ (interval $-$",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.gap_median.gap_ci.0",
+  "reduce": "abs"
+ },
+ {
+  "text": "205",
+  "anchor": "$-$290 to $-$",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.long_finetune.gap_median.gap_ci.1",
+  "reduce": "abs"
+ },
+ {
+  "text": "0.510",
+  "anchor": "8 the arm is ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.retrain.audit_cross.arm_mean"
+ },
+ {
+  "text": "0.48",
+  "anchor": "0.510 (interval ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.retrain.audit_cross.arm_ci.0"
+ },
+ {
+  "text": "0.53",
+  "anchor": "0.510 (interval 0.48 to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.retrain.audit_cross.arm_ci.1"
+ },
+ {
+  "text": "0.489",
+  "anchor": "reads fitted as retrained (",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.fisher.audit_cross.mean"
+ },
+ {
+  "text": "60",
+  "anchor": "not resolved (+",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.fisher.gap_median.gap"
+ },
+ {
+  "text": "6",
+  "anchor": "(+60, interval $-$",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.fisher.gap_median.gap_ci.0",
+  "reduce": "abs"
+ },
+ {
+  "text": "226",
+  "anchor": "$-$6 to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.fisher.gap_median.gap_ci.1"
+ },
+ {
+  "text": "0.574",
+  "anchor": "9 (raw ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.baseline.audit_within.mean"
+ },
+ {
+  "text": "0.003",
+  "anchor": "0.574, interval $-$",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.baseline.audit_within.diff_ci.0",
+  "reduce": "abs"
+ },
+ {
+  "text": "0.16",
+  "anchor": "$-$0.003 to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.baseline.audit_within.diff_ci.1"
+ },
+ {
+  "text": "0.652",
+  "anchor": "0.16; z-scored ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.baseline.audit_within_z.mean"
+ },
+ {
+  "text": "0.02",
+  "anchor": "0.652, interval ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.baseline.audit_within_z.diff_ci.0"
+ },
+ {
+  "text": "0.23",
+  "anchor": "0.02 to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.baseline.audit_within_z.diff_ci.1"
+ },
+ {
+  "text": "0.607",
+  "anchor": "clearly on cluster 8 (",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.baseline.audit_within.mean"
+ },
+ {
+  "text": "0.05",
+  "anchor": "(0.607, interval ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.baseline.audit_within.diff_ci.0"
+ },
+ {
+  "text": "0.16",
+  "anchor": "interval 0.05 to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.baseline.audit_within.diff_ci.1"
+ },
+ {
+  "text": "0.674",
+  "anchor": "on both (",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_mk.arms.extragradient.audit_within.mean"
+ },
+ {
+  "text": "0.738",
+  "anchor": "(0.674 and ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.extragradient.audit_within.mean"
+ },
+ {
+  "text": "0.406",
+  "anchor": "other direction (",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.contrastive.audit_within.mean"
+ },
+ {
+  "text": "0.15",
+  "anchor": "(0.406, interval $-$",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.contrastive.audit_within.diff_ci.0",
+  "reduce": "abs"
+ },
+ {
+  "text": "0.04",
+  "anchor": "$-$0.15 to $-$",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.contrastive.audit_within.diff_ci.1",
+  "reduce": "abs"
+ },
+ {
+  "text": "0.556",
+  "anchor": "the arm (",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.fisher.audit_within.mean"
+ },
+ {
+  "text": "0.572",
+  "anchor": "(0.556 to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.scrub.audit_within.mean"
+ },
+ {
+  "text": "0.088",
+  "anchor": "clusters (differences of ",
+  "source": "outputs/pbmc68k/stopping_probe_mk.json",
+  "key": [
+   "arms",
+   "fisher_cap0.001",
+   "refit_std_within",
+   "diff_vs_retrain"
+  ]
+ },
+ {
+  "text": "0.102",
+  "anchor": "0.088 and ",
+  "source": "outputs/pbmc68k/stopping_probe_pdc.json",
+  "key": [
+   "arms",
+   "fisher_cap0.001",
+   "refit_std_within",
+   "diff_vs_retrain"
+  ]
+ },
+ {
+  "text": "-0.087",
+  "anchor": "$-0.006$ (interval $",
+  "source": "outputs/pbmc68k/stopping_probe_mk.json",
+  "key": [
+   "arms",
+   "finetune_epoch200",
+   "refit_std_within",
+   "diff_ci",
+   "0"
+  ]
+ },
+ {
+  "text": "0.075",
+  "anchor": "(interval $-0.087$ to ",
+  "source": "outputs/pbmc68k/stopping_probe_mk.json",
+  "key": [
+   "arms",
+   "finetune_epoch200",
+   "refit_std_within",
+   "diff_ci",
+   "1"
+  ]
+ },
+ {
+  "text": "-0.05",
+  "anchor": "grows from ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/pbmc68k/stopping_probe_mk.json",
+    "key": [
+     "arms",
+     "finetune_epoch10",
+     "heldout_elbo"
+    ]
+   },
+   "b": {
+    "source": "outputs/pbmc68k/stopping_probe_mk.json",
+    "key": [
+     "arms",
+     "baseline",
+     "heldout_elbo"
+    ]
+   }
+  },
+  "note": "held-out ELBO cost at 10 epochs, probe run"
+ },
+ {
+  "text": "2.10",
+  "anchor": "-0.05 to ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/pbmc68k/stopping_probe_mk.json",
+    "key": [
+     "arms",
+     "finetune_epoch200",
+     "heldout_elbo"
+    ]
+   },
+   "b": {
+    "source": "outputs/pbmc68k/stopping_probe_mk.json",
+    "key": [
+     "arms",
+     "baseline",
+     "heldout_elbo"
+    ]
+   }
+  }
+ },
+ {
+  "text": "0.0000",
+  "anchor": "cost from ",
+  "formula": "b - a",
+  "vars": {
+   "a": {
+    "source": "outputs/pbmc68k/stopping_probe_mk.json",
+    "key": [
+     "arms",
+     "finetune_epoch10",
+     "marker_r"
+    ]
+   },
+   "b": {
+    "source": "outputs/pbmc68k/stopping_probe_mk.json",
+    "key": [
+     "arms",
+     "baseline",
+     "marker_r"
+    ]
+   }
+  }
+ },
+ {
+  "text": "0.0070",
+  "anchor": "0.0000 to ",
+  "formula": "b - a",
+  "vars": {
+   "a": {
+    "source": "outputs/pbmc68k/stopping_probe_mk.json",
+    "key": [
+     "arms",
+     "finetune_epoch200",
+     "marker_r"
+    ]
+   },
+   "b": {
+    "source": "outputs/pbmc68k/stopping_probe_mk.json",
+    "key": [
+     "arms",
+     "baseline",
+     "marker_r"
+    ]
+   }
+  }
+ },
+ {
+  "text": "0.889",
+  "anchor": "members at ",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "arms.retrain.refit_heldback.mean"
+ },
+ {
+  "text": "0.587",
+  "anchor": "585 and ",
+  "source": "outputs/pbmc68k/stopping_probe80_pdc.json",
+  "key": "arms.retrain.refit_heldback.mean"
+ },
+ {
+  "text": "595",
+  "anchor": "ones at a median of ",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "arms.retrain.deleted_median"
+ },
+ {
+  "text": "585",
+  "anchor": "(cluster 8: ",
+  "source": "outputs/pbmc68k/stopping_probe80_pdc.json",
+  "key": "arms.retrain.deleted_median"
+ },
+ {
+  "text": "0.804",
+  "anchor": "50 epochs (",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "arms.finetune_epoch25.refit_heldback.mean"
+ },
+ {
+  "text": "0.931",
+  "anchor": "(0.804 to ",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "arms.finetune_epoch50.refit_heldback.mean"
+ },
+ {
+  "text": "0.612",
+  "anchor": "at 50 (",
+  "source": "outputs/pbmc68k/stopping_probe80_pdc.json",
+  "key": "arms.finetune_epoch50.refit_heldback.mean"
+ },
+ {
+  "text": "0.587",
+  "anchor": "the retrains' ",
+  "source": "outputs/pbmc68k/stopping_probe80_pdc.json",
+  "key": "arms.retrain.refit_heldback.mean"
+ },
+ {
+  "text": "460",
+  "anchor": "median falls from ",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "arms.baseline.heldback_median"
+ },
+ {
+  "text": "329",
+  "anchor": "460 to ",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "arms.finetune_epoch200.heldback_median"
+ },
+ {
+  "text": "0.048",
+  "anchor": "on, at a margin of ",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "margin"
+ },
+ {
+  "text": "-0.000",
+  "anchor": "200 epochs ($",
+  "source": "outputs/pbmc68k/stopping_probe80_pdc.json",
+  "key": "arms.finetune_epoch200.refit_within.diff_vs_retrain"
+ },
+ {
+  "text": "-0.043",
+  "anchor": "($-0.000$, interval $",
+  "source": "outputs/pbmc68k/stopping_probe80_pdc.json",
+  "key": "arms.finetune_epoch200.refit_within.diff_ci.0"
+ },
+ {
+  "text": "0.043",
+  "anchor": "($-0.000$, interval $-",
+  "source": "outputs/pbmc68k/stopping_probe80_pdc.json",
+  "key": "arms.finetune_epoch200.refit_within.diff_ci.1"
+ },
+ {
+  "text": "0.023",
+  "anchor": "200, margin ",
+  "source": "outputs/pbmc68k/stopping_probe80_pdc.json",
+  "key": "margin"
+ },
+ {
+  "text": "528",
+  "anchor": "fit rises from ",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "arms.finetune_epoch10.deleted_median"
+ },
+ {
+  "text": "585",
+  "anchor": "10 epochs to ",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "arms.finetune_epoch100.deleted_median"
+ },
+ {
+  "text": "585",
+  "anchor": "then stops (",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "arms.finetune_epoch150.deleted_median"
+ },
+ {
+  "text": "587",
+  "anchor": "stops (585, ",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "arms.finetune_epoch200.deleted_median"
+ },
+ {
+  "text": "595",
+  "anchor": "give them (",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "arms.retrain.deleted_median"
+ },
+ {
+  "text": "570",
+  "anchor": "the type (",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "arms.finetune_epoch200.within_median"
+ },
+ {
+  "text": "0.539",
+  "anchor": "covers zero (",
+  "source": "outputs/pbmc68k/stopping_probe80_mk.json",
+  "key": "arms.finetune_epoch100.audit_cross.mean"
+ },
+ {
+  "text": "573",
+  "anchor": "at 200 (",
+  "source": "outputs/pbmc68k/stopping_probe80_pdc.json",
+  "key": "arms.finetune_epoch150.deleted_median"
+ },
+ {
+  "text": "577",
+  "anchor": "(573 then ",
+  "source": "outputs/pbmc68k/stopping_probe80_pdc.json",
+  "key": "arms.finetune_epoch200.deleted_median"
+ },
+ {
+  "text": "585",
+  "anchor": "577, retrained ",
+  "source": "outputs/pbmc68k/stopping_probe80_pdc.json",
+  "key": "arms.retrain.deleted_median"
+ },
+ {
+  "text": "0.687",
+  "anchor": "585, audit ",
+  "source": "outputs/pbmc68k/stopping_probe80_pdc.json",
+  "key": "arms.finetune_epoch200.audit_cross.mean"
+ },
+ {
+  "text": "0.617",
+  "anchor": "encoder cosine of $",
+  "source": "outputs/p6/fisher_overlap_conditional.json",
+  "key": "per_category.Encoder.cosine"
+ },
+ {
+  "text": "0.653",
+  "anchor": "bottleneck cosine of $",
+  "source": "outputs/p6/fisher_overlap_conditional.json",
+  "key": "per_category.Bottleneck.cosine"
+ },
+ {
+  "text": "0.508",
+  "anchor": "decoder-hidden cosine of $",
+  "source": "outputs/p6/fisher_overlap_conditional.json",
+  "key": "per_category.Decoder hidden.cosine"
+ },
+ {
+  "text": "0.759",
+  "anchor": "has advantage $",
+  "source": "outputs/p6/nb30_results.json",
+  "key": "cvae_baseline_mia.advantage"
+ },
+ {
+  "text": "0.709",
+  "anchor": "it to $",
+  "source": "outputs/p6/nb30_results.json",
+  "key": "cvae_fisher_scrub_mia.advantage"
+ },
+ {
+  "text": "0.289",
+  "anchor": "the overlap is ",
+  "source": "outputs/pbmc68k/fisher_overlap_mk.json",
+  "key": "per_category.Encoder.cosine"
+ },
+ {
+  "text": "0.502",
+  "anchor": "in the encoder, ",
+  "source": "outputs/pbmc68k/fisher_overlap_mk.json",
+  "key": "per_category.Bottleneck.cosine"
+ },
+ {
+  "text": "0.439",
+  "anchor": "the bottleneck, ",
+  "source": "outputs/pbmc68k/fisher_overlap_mk.json",
+  "key": "per_category.Decoder hidden.cosine"
+ },
+ {
+  "text": "0.020",
+  "anchor": "layers, and ",
+  "source": "outputs/pbmc68k/fisher_overlap_mk.json",
+  "key": "per_category.Decoder output.cosine"
+ },
+ {
+  "text": "0.128",
+  "anchor": "the output overlap is ",
+  "source": "outputs/pbmc68k/fisher_overlap_pdc.json",
+  "key": "per_category.Decoder output.cosine"
+ },
+ {
+  "text": "0.547",
+  "anchor": "and the encoder's ",
+  "source": "outputs/pbmc68k/fisher_overlap_pdc.json",
+  "key": "per_category.Encoder.cosine"
+ },
+ {
+  "text": "0.71",
+  "anchor": "(log-Fisher correlation ",
+  "source": "outputs/p6/fisher_overlap_results.json",
+  "key": "vae.log_fisher_correlation"
+ },
+ {
+  "text": "0.018",
+  "anchor": "not (cosine ",
+  "source": "outputs/p6/fisher_overlap_results.json",
+  "key": "classifier.global_cosine"
+ },
+ {
+  "text": "0.71",
+  "anchor": "away (audit ",
+  "source": "outputs/p9/synthetic_support.json",
+  "key": [
+   "configurations",
+   "4",
+   "table",
+   "0",
+   "audit_cross"
+  ]
+ },
+ {
+  "text": "1.00",
+  "anchor": "0.71 and ",
+  "source": "outputs/p9/synthetic_support.json",
+  "key": [
+   "configurations",
+   "6",
+   "table",
+   "0",
+   "audit_cross"
+  ]
+ },
+ {
+  "text": "0.82",
+  "anchor": "0.65 to ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits_x2_opt",
+     "null_only",
+     "finetune",
+     "sgd:1e-3",
+     "after_ft200",
+     "edit",
+     "null",
+     "rho"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits_x2_opt",
+     "none",
+     "finetune",
+     "sgd:1e-3",
+     "after_ft200",
+     "drift_projection",
+     "edits_x2_opt/null_only",
+     "null"
+    ]
+   }
+  },
+  "note": "drift-corrected rho, edits_x2_opt null_only sgd:1e-3 200 epochs (null coordinates)"
+ },
+ {
+  "text": "0.34",
+  "anchor": "reverted, to ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits_x2_opt",
+     "active_only",
+     "finetune",
+     "sgd:1e-3",
+     "after_ft200",
+     "edit",
+     "active",
+     "rho"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "edits_x2_opt",
+     "none",
+     "finetune",
+     "sgd:1e-3",
+     "after_ft200",
+     "drift_projection",
+     "edits_x2_opt/active_only",
+     "active"
+    ]
+   }
+  },
+  "note": "drift-corrected rho, edits_x2_opt active_only sgd:1e-3 200 epochs (active coordinates)"
+ },
+ {
+  "text": "0.43",
+  "anchor": "0.34 to ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits_x2_opt",
+     "active_only",
+     "finetune",
+     "sgd:1e-3",
+     "after_ft200",
+     "edit",
+     "active",
+     "rho"
+    ]
+   },
+   "b": {
+    "source": "outputs/p6/restricted_scrub_test.json",
+    "key": [
+     "cohorts",
+     "pbmc68k_mk",
+     "edits_x2_opt",
+     "none",
+     "finetune",
+     "sgd:1e-3",
+     "after_ft200",
+     "drift_projection",
+     "edits_x2_opt/active_only",
+     "active"
+    ]
+   }
+  },
+  "note": "drift-corrected rho, edits_x2_opt active_only sgd:1e-3 200 epochs (active coordinates)"
+ },
+ {
+  "text": "0.529",
+  "anchor": "0.740 against the retrained models' ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.retrain.auc"
+ },
+ {
+  "text": "0.801",
+  "anchor": "retrained, against the baseline's ",
+  "source": "outputs/p4/multiseed/paired_diff_33k.json",
+  "key": "arms.baseline.auc"
+ },
+ {
+  "text": "0.98",
+  "anchor": "194 cross-type neighbors at ",
+  "source": "outputs/within_type_standardized_check.json",
+  "key": "results.pbmc33k/c13_cross/retrain_seed42.logistic_std.mean"
+ },
+ {
+  "text": "0.99",
+  "anchor": "0.98 to ",
+  "source": "outputs/within_type_standardized_check.json",
+  "key": "results.pbmc33k/c13_cross/baseline.logistic_std.mean"
+ },
+ {
+  "text": "0.537",
+  "anchor": "retrained model at ",
+  "source": "outputs/attack_suite_results.json",
+  "key": "retrain.low_assumption.loss_recon.auc"
+ },
+ {
+  "text": "0.590",
+  "anchor": "lie between ",
+  "source": "outputs/pbmc68k/results_mk.json",
+  "key": "per_checkpoint.retrain.per_seed.6.refit_std_within.perm_null.p975"
+ },
+ {
+  "text": "0.606",
+  "anchor": "0.590 and ",
+  "source": "outputs/pbmc68k/results_mk.json",
+  "key": "per_checkpoint.long_finetune.per_seed.2.refit_std_within.perm_null.p975"
+ },
+ {
+  "text": "0.555",
+  "anchor": "cells and between ",
+  "source": "outputs/pbmc68k/results_pdc.json",
+  "key": "per_checkpoint.gradient_ascent.per_seed.2.refit_std_within.perm_null.p975"
+ },
+ {
+  "text": "0.563",
+  "anchor": "0.555 and ",
+  "source": "outputs/pbmc68k/results_pdc.json",
+  "key": "per_checkpoint.retrain.per_seed.7.refit_std_within.perm_null.p975"
+ },
+ {
+  "text": "0.000",
+  "anchor": "Fisher cosine of $",
+  "source": "outputs/p6/fisher_overlap_conditional.json",
+  "key": "fc_mean_decomposition.cluster_cols_cosine"
+ },
+ {
+  "text": "0.379",
+  "anchor": "shared columns $",
+  "source": "outputs/p6/fisher_overlap_conditional.json",
+  "key": "fc_mean_decomposition.shared_cols_cosine"
+ },
+ {
+  "text": "0.002",
+  "anchor": "agree to ",
+  "formula": "u - l",
+  "vars": {
+   "u": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "lanczos_gn",
+     "edits_x2_opt/unrestricted",
+     "epochs",
+     "200",
+     "rho_pred_upper"
+    ]
+   },
+   "l": {
+    "source": "outputs/p6/edit_compensation.json",
+    "key": [
+     "cohorts",
+     "pbmc33k",
+     "lanczos_gn",
+     "edits_x2_opt/unrestricted",
+     "epochs",
+     "200",
+     "rho_pred"
+    ]
+   }
+  },
+  "note": "Gauss / Radau bracket width at 200 epochs, PBMC-33k published scrub"
+ },
+ {
+  "text": "0.06",
+  "anchor": "sit just above the arm (0.556 to 0.572, Holm-adjusted $p$ of ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.scrub.audit_within.p_holm",
+  "note": "Appendix C: smallest Holm-adjusted p among the four edit-then-fine-tune arms within type"
+ },
+ {
+  "text": "0.09",
+  "anchor": "Holm-adjusted $p$ of 0.06 to ",
+  "source": "outputs/audit_reference_free.json",
+  "key": "cohorts.pbmc68k_pdc.arms.gradient_ascent.audit_within.p_holm"
+ },
+ {
+  "text": "0.42",
+  "anchor": "where it is isolated, against ",
+  "source": "outputs/p9/synthetic_support.json",
+  "key": [
+   "configurations",
+   "3",
+   "table",
+   "10",
+   "attacker_within"
+  ],
+  "note": "over the three retrained seeds of every configuration"
+ },
+ {
+  "text": "0.57",
+  "anchor": "0.42 to ",
+  "source": "outputs/p9/synthetic_support.json",
+  "key": [
+   "configurations",
+   "7",
+   "table",
+   "10",
+   "attacker_within"
+  ]
+ },
+ {
+  "text": "0.00",
+  "anchor": "audit to between ",
+  "source": "outputs/p9/synthetic_support.json",
+  "key": [
+   "configurations",
+   "6",
+   "table",
+   "5",
+   "audit_cross"
+  ]
+ },
+ {
+  "text": "0.19",
+  "anchor": "0.00 and ",
+  "source": "outputs/p9/synthetic_support.json",
+  "key": [
+   "configurations",
+   "1",
+   "table",
+   "5",
+   "audit_cross"
+  ]
+ },
+ {
+  "text": "0.46",
+  "anchor": "Its audit of ",
+  "source": "outputs/p9/synthetic_support.json",
+  "key": [
+   "configurations",
+   "6",
+   "table",
+   "6",
+   "audit_cross"
+  ]
+ },
+ {
+  "text": "0.65",
+  "anchor": "of 0.46 to ",
+  "source": "outputs/p9/synthetic_support.json",
+  "key": [
+   "configurations",
+   "5",
+   "table",
+   "6",
+   "audit_cross"
+  ]
+ },
+ {
+  "text": "0.01",
+  "anchor": "eight configurations and ",
+  "formula": "a - b",
+  "vars": {
+   "a": {
+    "source": "outputs/p9/synthetic_support.json",
+    "key": [
+     "configurations",
+     "4",
+     "table",
+     "6",
+     "audit_cross"
+    ]
+   },
+   "b": {
+    "source": "outputs/p9/synthetic_support.json",
+    "key": [
+     "configurations",
+     "4",
+     "audit_band_all_pairs"
+    ],
+    "reduce": "max"
+   }
+  },
+  "note": "simulation appendix: how far the oracle-level audit sits above the all-pairs retrained range in the one configuration where it does"
+ },
+ {
+  "text": "0.90",
+  "anchor": "every configuration, ",
+  "source": "outputs/p9/synthetic_support.json",
+  "key": [
+   "configurations",
+   "2",
+   "table",
+   "0",
+   "attacker_within"
+  ],
+  "note": "simulation appendix: the baseline within-component AUC where the rare component overlaps the common data (0.90) and where it is isolated (0.70)"
+ },
+ {
+  "text": "0.70",
+  "anchor": "overlaps the common data and ",
+  "source": "outputs/p9/synthetic_support.json",
+  "key": [
+   "configurations",
+   "6",
+   "table",
+   "0",
+   "attacker_within"
+  ],
+  "note": "simulation appendix: the baseline within-component AUC where the rare component overlaps the common data (0.90) and where it is isolated (0.70)"
+ }
+]

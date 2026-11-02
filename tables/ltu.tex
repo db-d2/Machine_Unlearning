@@ -1,0 +1,12 @@
+\begin{tabular}{lccccccccc}
+\toprule
+Model & Forget fit & AUC & Advantage [95\% CI] & Difference [95\% CI] & Verdict & Audit [95\% CI] & Verdict & ELBO & Marker $r$ \\
+\midrule
+Baseline & 269.5 & 0.801 & 0.601 & +0.272 [0.21, 0.33] & trained on the cells & 0.995 [0.99, 1.00] & trained on the cells & 364.0 & 0.831 \\
+Clean retrains (five seeds) & 337.2 & 0.529 & 0.057 [0.02, 0.27] & -- & reference & 0.507 [0.40, 0.60] & reference & 364.2 & 0.831 \\
+\midrule
+Target: ten nearest negatives & 308.7 & 0.752 & 0.503 [0.38, 0.62] & +0.223 [0.12, 0.33] & more identifiable & 0.672 [0.48, 0.84] & not resolved & 364.8 & 0.830 \\
+Target: mean over the 194 negatives (retrained level) & 336.6 & 0.580 & 0.161 [0.05, 0.29] & +0.052 [-0.07, 0.17] & not resolved & 0.416 [0.24, 0.60] & not resolved & 365.0 & 0.830 \\
+Target: 88 disjoint held-out neighbors & 295.7 & 0.834 & 0.669 [0.57, 0.76] & +0.306 [0.20, 0.42] & more identifiable & 0.744 [0.58, 0.89] & fitted better & 364.8 & 0.830 \\
+\bottomrule
+\end{tabular}

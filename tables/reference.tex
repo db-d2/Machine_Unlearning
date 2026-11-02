@@ -1,0 +1,13 @@
+\begin{tabular}{lccc}
+\toprule
+Model & Fit-excess attacker, AUC & Advantage [nested 95\% CI] & Audit AUC [95\% CI] \\
+\midrule
+Clean retrain, five seeds (reference) & 0.509 to 0.567 & 0.057 [0.02, 0.27] & 0.17 to 0.83 (every ordered pair of the five retrains) \\
+Retrain that drew its own split (superseded) & 0.571 to 0.585 & 0.158 [0.02, 0.37] & 0.799 [0.72, 0.87] \\
+Baseline & 0.801 & 0.601 & 0.996 [0.99, 1.00] \\
+\midrule
+Refit attacker on the clean retrain (20 x 5-fold) & 0.507 & 0.035 [-0.03, 0.10] & -- \\
+Refit attacker on the baseline (positive control) & 0.797 & 0.594 & -- \\
+Permutation null of the advantage estimator & -- & 0.091 [0.004, 0.25] & -- \\
+\bottomrule
+\end{tabular}

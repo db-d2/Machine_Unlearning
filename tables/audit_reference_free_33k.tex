@@ -1,0 +1,37 @@
+\begin{tabular}{lcccccccc}
+\toprule
+Model & Seeds & Audit, mean-of-retrains reference [95\% CI] & Difference from the retrained arm [95\% CI] & Audit verdict & Forget median & Gap, median [95\% CI] & Gap relative to the negatives [95\% CI] & Fit verdict \\
+\midrule
+Clean retrains (leave-one-out) & 5 & 0.507 [0.40, 0.60]; per seed 0.24 to 0.74 & -- & reference & 317 (311 to 326) & -- & -- & -- \\
+Baseline (no unlearning) & 1 & 0.995 [0.99, 1.00] & +0.488 [0.40, 0.59] & fitted better & 247 & -69.7 [-85.4, -58.8] & -69.7 [-85.6, -58.4] & fitted better \\
+Retain-only fine-tune & 5 & 0.988 [0.93, 1.00] & +0.481 [0.38, 0.59] & fitted better & 282 & -35.1 [-45.0, -21.8] & -34.3 [-44.1, -20.9] & fitted better \\
+Gradient ascent + fine-tune & 5 & 0.995 [0.99, 1.00] & +0.488 [0.40, 0.59] & fitted better & 274 & -42.9 [-52.2, -31.2] & -41.8 [-51.8, -30.1] & fitted better \\
+SSD & 3 & 0.995 [0.99, 1.00] & +0.488 [0.40, 0.59] & fitted better & 274 & -43.2 [-54.6, -30.3] & -42.5 [-54.8, -29.6] & fitted better \\
+SCRUB & 3 & 0.980 [0.92, 1.00] & +0.473 [0.37, 0.58] & fitted better & 274 & -43.1 [-56.2, -28.8] & -42.4 [-55.8, -28.0] & fitted better \\
+Moon feature unlearning & 3 & 0.996 [0.99, 1.00] & +0.488 [0.40, 0.59] & fitted better & 272 & -45.3 [-58.9, -35.7] & -45.6 [-59.2, -35.6] & fitted better \\
+Fisher scrubbing & 3 & 0.992 [0.98, 1.00] & +0.484 [0.39, 0.59] & fitted better & 289 & -27.9 [-43.0, -17.3] & -27.1 [-42.7, -16.4] & fitted better \\
+Fisher, step cap $3\times 10^{-3}$ & 1 & 0.141 [0.03, 0.27] & -0.367 [-0.52, -0.20] & fitted worse & 398 & +80.6 [+30.5, +102.5] & +80.8 [+30.8, +102.8] & fitted worse \\
+Fisher, step cap $10^{-2}$ & 1 & 0.288 [0.15, 0.45] & -0.219 [-0.39, -0.03] & fitted worse & 360 & +42.9 [+5.47, +83.2] & +36.6 [-2.44, +76.4] & not resolved \\
+Extra-gradient ($\lambda=10$) & 10 & 0.250 [0.001, 0.91] & -0.257 [-0.56, 0.42] & not resolved & 346 & +28.9 [-24.8, +77.2] & +28.6 [-25.4, +76.1] & not resolved \\
+Extra-gradient ($\lambda=1$) & 10 & 0.044 [0.0003, 0.20] & -0.463 [-0.57, -0.28] & fitted worse & 364 & +47.5 [+6.16, +137.5] & +47.4 [+5.90, +135.0] & fitted worse \\
+Contrastive latent & 3 & 0.003 [0.00, 0.01] & -0.504 [-0.59, -0.40] & fitted worse & 409 & +92.5 [+67.1, +106.9] & +91.3 [+66.1, +105.9] & fitted worse \\
+Frozen critics, one critic, $\lambda=5$ & 3 & 0.004 [0.00, 0.01] & -0.503 [-0.59, -0.40] & fitted worse & 1170 & +852.6 [+716.4, +896.0] & +851.3 [+715.3, +894.5] & fitted worse \\
+Frozen critics, one critic, $\lambda=10$ & 3 & 0.003 [0.00, 0.01] & -0.505 [-0.59, -0.40] & fitted worse & 1035 & +717.9 [+628.9, +779.0] & +716.6 [+628.2, +777.8] & fitted worse \\
+Frozen critics, three critics, $\lambda=5$ & 3 & 0.006 [0.00, 0.01] & -0.501 [-0.59, -0.40] & fitted worse & 54015 & +53697.7 [+38245.0, +68509.4] & +53696.0 [+38244.2, +68507.7] & fitted worse \\
+Frozen critics, three critics, $\lambda=10$ & 3 & 0.005 [0.00, 0.01] & -0.502 [-0.59, -0.40] & fitted worse & 54080 & +53763.5 [+39142.7, +66659.7] & +53761.9 [+39140.6, +66655.9] & fitted worse \\
+DP-SGD ($\varepsilon=10$, from scratch) & 3 & 0.533 [0.43, 0.64] & +0.025 [-0.12, 0.19] & as retrained & 354 & +36.9 [+20.7, +48.9] & -0.94 [-18.7, +15.6] & as retrained \\
+\midrule
+Fisher, step cap $1.5\times 10^{-3}$ & 3 & 0.887 [0.69, 1.00] & +0.380 [0.16, 0.55] & fitted better & 305 & -11.9 [-37.3, +6.76] & -11.0 [-37.3, +7.41] & not resolved \\
+Fisher, step cap $2\times 10^{-3}$ & 3 & 0.610 [0.35, 0.85] & +0.103 [-0.17, 0.37] & not resolved & 326 & +9.35 [-27.6, +32.7] & +10.2 [-26.9, +33.5] & not resolved \\
+Fisher, step cap $2.5\times 10^{-3}$ & 3 & 0.312 [0.13, 0.57] & -0.196 [-0.40, 0.10] & not resolved & 352 & +35.5 [-10.1, +66.3] & +36.2 [-9.75, +67.2] & not resolved \\
+Fisher, step cap $3\times 10^{-3}$ (sweep) & 3 & 0.168 [0.04, 0.32] & -0.339 [-0.50, -0.15] & fitted worse & 388 & +71.0 [+22.8, +117.0] & +71.4 [+23.8, +116.8] & fitted worse \\
+Gradient ascent, lr $10^{-4}$ & 3 & 0.995 [0.99, 1.00] & +0.488 [0.40, 0.59] & fitted better & 274 & -42.4 [-51.2, -32.0] & -41.5 [-51.0, -31.0] & fitted better \\
+Gradient ascent, lr $10^{-3}$ & 3 & 0.995 [0.99, 1.00] & +0.487 [0.40, 0.59] & fitted better & 274 & -42.5 [-51.5, -31.8] & -41.6 [-51.3, -30.2] & fitted better \\
+Gradient ascent, lr $10^{-2}$ & 3 & 0.995 [0.98, 1.00] & +0.488 [0.40, 0.59] & fitted better & 275 & -41.8 [-50.9, -30.9] & -40.9 [-50.5, -29.9] & fitted better \\
+Likelihood-targeted, look-alike level & 10 & 0.672 [0.48, 0.84] & +0.165 [-0.05, 0.37] & not resolved & 306 & -10.7 [-49.9, +4.84] & -10.9 [-50.4, +4.38] & not resolved \\
+Likelihood-targeted, retrained level & 10 & 0.416 [0.24, 0.60] & -0.091 [-0.28, 0.12] & not resolved & 337 & +20.1 [-20.5, +35.4] & +18.9 [-22.8, +33.7] & not resolved \\
+Likelihood-targeted, disjoint look-alikes & 10 & 0.744 [0.58, 0.89] & +0.237 [0.05, 0.42] & fitted better & 296 & -20.8 [-61.8, -5.59] & -21.1 [-62.1, -5.68] & fitted better \\
+Retain-only fine-tune, 200 epochs & 3 & 0.688 [0.48, 0.88] & +0.181 [-0.05, 0.40] & not resolved & 311 & -5.46 [-19.8, +8.36] & -4.78 [-19.4, +9.60] & as retrained \\
+Leaky retrain (superseded) & 5 & 0.849 [0.69, 0.96] & +0.342 [0.16, 0.49] & fitted better & 304 & -13.1 [-27.6, -2.18] & -12.3 [-26.6, -1.01] & fitted better \\
+\bottomrule
+\end{tabular}

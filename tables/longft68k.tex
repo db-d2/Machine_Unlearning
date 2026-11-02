@@ -1,0 +1,13 @@
+\begin{tabular}{lcccccc}
+\toprule
+Retain epochs & Forget cells, mean & Held-out megakaryocytes, mean & Retain sample, mean & Held-out cells, mean & Fit-excess attacker, cross & Audit vs.\ retrain seed 42, cross [nested 95\% CI at 200] \\
+\midrule
+0 & 488.3 & 521.7 & 481.7 & 484.4 & 0.964 to 0.967 & 1.000 \\
+10 & 543.0 to 558.1 & 559.9 to 573.2 & 481.0 to 481.1 & 484.0 to 484.1 & 0.945 to 0.951 & 1.000 \\
+50 & 659.0 to 678.5 & 658.4 to 675.3 & 479.3 to 479.4 & 483.9 to 483.9 & 0.740 to 0.802 & 1.000 \\
+100 & 728.0 to 757.1 & 722.6 to 751.9 & 477.6 to 477.7 & 483.9 to 484.0 & 0.467 to 0.598 & 1.000 \\
+200 & 790.7 to 813.4 & 788.4 to 808.6 & 474.4 to 474.5 & 484.7 to 484.9 & 0.312 to 0.380 & 1.000 [1.00, 1.00] \\
+\midrule
+Retrained models & 981.2 to 1106.3 & 975.1 to 1108.8 & 481.2 to 482.3 & 483.9 to 485.0 & 0.007 to 0.017 & 0.03 to 0.97 (every ordered pair) \\
+\bottomrule
+\end{tabular}

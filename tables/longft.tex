@@ -1,0 +1,13 @@
+\begin{tabular}{lcccccc}
+\toprule
+Retain epochs & PBMC forget negELBO, mean & PBMC attacker (the run's own instance) & PBMC audit vs.\ retrain seed 42 [nested 95\% CI at 200] & TCGA forget negELBO, mean & TCGA unseen Basal, mean & TCGA audit vs.\ the TCGA retrain [95\% CI at 200] \\
+\midrule
+0 & 269.5 & 0.795 to 0.799 & 0.996 & 1116.5 & 1086.0 & 0.833 \\
+10 & 285.0 to 286.7 & 0.734 to 0.750 & 0.995 to 0.996 & 1253.1 to 1277.8 & 1220.4 to 1247.7 & 0.338 to 0.691 \\
+50 & 303.6 to 306.8 & 0.669 to 0.688 & 0.992 to 0.994 & 1256.9 to 1257.5 & 1225.5 to 1228.3 & 0.482 to 0.503 \\
+100 & 317.6 to 320.3 & 0.580 to 0.615 & 0.944 to 0.971 & 1216.2 to 1257.1 & 1190.7 to 1224.4 & 0.419 to 0.494 \\
+200 & 327.7 to 331.3 & 0.552 to 0.561 & 0.519 to 0.662 [0.46, 0.68] & 938.2 to 1023.8 & 866.6 to 952.9 & 0.638 to 0.671 [0.61, 0.71] \\
+\midrule
+Retrained models & 337.2 & 0.529 (canonical instance) & 0.24 to 0.52 & 1277.4 & 1246.4 & -- \\
+\bottomrule
+\end{tabular}

@@ -107,6 +107,18 @@ results['advantage_null_floor'] = {
     'estimator': '2|AUC-0.5| under shuffled labels (H0: no membership signal)',
     'n_pos': int(l0.sum()), 'n_neg': int((l0 == 0).sum()),
     'mean': float(null.mean()), 'ci95': [float(np.percentile(null, 2.5)), float(np.percentile(null, 97.5))]}
+
+# The step ablation holds two step caps at one seed each, so its pooled "nested" interval bootstraps two
+# hyperparameters as if they were seeds and its mean describes no model (round-7 review). Each cap is also
+# summarized on its own; this runs after everything above so that no earlier draw moves.
+for rec in load('fisher_step_ablation') or []:
+    key = 'fisher_' + rec['seed'].split('_seed')[0]          # fisher_step1e-2, fisher_step3e-3
+    st, _ = nested([rec]); results['methods'][key] = st
+    tests[key] = {'note': 'one step cap, single seed, no cross-seed test', 'method_mean_adv': st['mean'],
+                  'nested_ci': [st['nested_ci_low'], st['nested_ci_high']], **nested_diff([rec], retrain)}
+    print(f"  {key}: adv={st['mean']:.3f} ci95=[{st['nested_ci_low']:.3f},{st['nested_ci_high']:.3f}] "
+          f"diff95={[round(x, 3) for x in tests[key]['diff_ci']]}")
+
 results['hypothesis_tests'] = tests
 json.dump(results, open(OUT, 'w'), indent=2)
 print(f"\nretrain adv={rt_stat['mean']:.3f} nested95=[{rt_stat['nested_ci_low']:.3f},{rt_stat['nested_ci_high']:.3f}]")

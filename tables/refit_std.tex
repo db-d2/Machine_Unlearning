@@ -1,0 +1,22 @@
+\begin{tabular}{lccc}
+\toprule
+Forget cells vs negatives, model & Logistic, standardized & MLP, standardized & MLP, raw (the paper's attacker) \\
+\midrule
+PBMC-33k cluster 13, 30 vs 194 cross-type, baseline & 0.988 $\pm$ 0.002 & 0.990 $\pm$ 0.001 & 0.799 $\pm$ 0.013 \\
+PBMC-33k cluster 13, 30 vs 194 cross-type, clean retrain & 0.984 $\pm$ 0.002 & 0.984 $\pm$ 0.001 & 0.541 $\pm$ 0.006 \\
+PBMC-33k cluster 7, 50 vs 80 within, baseline & 0.466 $\pm$ 0.033 & 0.415 $\pm$ 0.051 & 0.516 $\pm$ 0.006 \\
+PBMC-33k cluster 7, 50 vs 80 within, retrained & 0.414 $\pm$ 0.032 & 0.425 $\pm$ 0.050 & 0.514 $\pm$ 0.007 \\
+PBMC-33k cluster 7, 100 vs 80 within, baseline & 0.468 $\pm$ 0.025 & 0.445 $\pm$ 0.030 & 0.480 $\pm$ 0.010 \\
+PBMC-33k cluster 7, 100 vs 80 within, retrained & 0.434 $\pm$ 0.037 & 0.475 $\pm$ 0.032 & 0.489 $\pm$ 0.009 \\
+Tabula Muris cluster 28, 50 vs 67 within, baseline & 0.487 $\pm$ 0.035 & 0.505 $\pm$ 0.042 & 0.527 $\pm$ 0.019 \\
+Tabula Muris cluster 28, 50 vs 67 within, retrained & 0.550 $\pm$ 0.033 & 0.504 $\pm$ 0.030 & 0.521 $\pm$ 0.017 \\
+Tabula Muris cluster 28, 100 vs 67 within, baseline & 0.536 $\pm$ 0.028 & 0.550 $\pm$ 0.023 & 0.480 $\pm$ 0.029 \\
+Tabula Muris cluster 28, 100 vs 67 within, retrained & 0.449 $\pm$ 0.035 & 0.461 $\pm$ 0.035 & 0.488 $\pm$ 0.020 \\
+TCGA-BRCA Basal, 158 vs 30 within, baseline & 0.442 $\pm$ 0.034 & 0.436 $\pm$ 0.034 & 0.566 $\pm$ 0.013 \\
+TCGA-BRCA Basal, 158 vs 30 within, retrained & 0.404 $\pm$ 0.040 & 0.424 $\pm$ 0.038 & 0.556 $\pm$ 0.015 \\
+PBMC-68k cluster 9, 107 vs 71 within, baseline & 0.683 $\pm$ 0.022 & -- & 0.452 $\pm$ 0.020 \\
+PBMC-68k cluster 9, 107 vs 71 within, clean retrains (8) & 0.472 to 0.538 & -- & 0.491 to 0.504 \\
+PBMC-68k cluster 8, 302 vs 201 within, baseline & 0.603 $\pm$ 0.013 & -- & 0.473 $\pm$ 0.011 \\
+PBMC-68k cluster 8, 302 vs 201 within, clean retrains (8) & 0.450 to 0.503 & -- & 0.502 to 0.508 \\
+\bottomrule
+\end{tabular}

@@ -1,0 +1,19 @@
+\begin{tabular}{lp{0.78\textwidth}}
+\toprule
+Method & Settings \\
+\midrule
+Baseline and clean retrains & Adam $10^{-4}$, 100 epochs, batch 256, KL warm-up 20 epochs, free bits 0.03, early stopping patience 10 (PBMC-68k: selection on the full-weight objective, patience counted after the warm-up) \\
+Retain-only fine-tuning & Adam $10^{-4}$, 50 epochs on $\mathcal{R}$ with patience 10 (the methods' own fine-tune phase: 10 epochs at $10^{-4}$) \\
+Gradient ascent & 10 ascent steps on $\mathcal{F}$ at $10^{-5}$ with the gradient norm clipped to 1.0, then 30 retain epochs at $10^{-4}$ with patience 10 (sweep of the ascent step in Section~\ref{sec:beyond}) \\
+Fisher scrubbing & per-sample diagonal retain Fisher, relative damping 0.1, 100 scrub steps at $10^{-4}$ with the step capped at $10^{-3}$ per parameter (ablation $3 \times 10^{-3}$ and $10^{-2}$; sweep in Section~\ref{sec:beyond}), then 10 retain epochs at $10^{-4}$ \\
+SSD & multiplicative dampening by forget-set Fisher importance, $\alpha = 1$, threshold 0, damping $10^{-5}$, then 10 retain epochs at $10^{-4}$ (the published method has no fine-tune) \\
+SCRUB & 20 epochs of 5 forget steps (maximize the KL to the teacher, weight 1) and retain steps (match the teacher, weight 1, plus the ELBO) at $10^{-4}$, then 10 retain epochs at $10^{-4}$ \\
+Moon feature unlearning & 20 decoder epochs with the forget-versus-retain latent direction removed, encoder frozen \\
+Contrastive latent & 20 epochs, $\gamma = 1$, $\lambda = 1$, $10^{-4}$, then 10 retain epochs at $10^{-4}$ \\
+Frozen critics & one or three pre-trained critics, $\lambda \in \{5, 10\}$, VAE at $10^{-4}$, 50 epochs \\
+Extra-gradient co-training & $\lambda \in \{10, 1\}$, 50 passes over $\mathcal{R}$, VAE at $10^{-4}$, three critics at $10^{-5}$ with two critic steps per VAE step, ExtraAdam; critics pre-trained on the cohort's baseline (forget versus retain, 100 epochs) \\
+DP-SGD & from scratch on $\mathcal{R}$, $\varepsilon = 10$, $\delta = 10^{-5}$, gradient norm clipped to 1.0, noise calibrated by Opacus, 50 epochs at $10^{-3}$, patience 15 \\
+Likelihood-targeted fine-tune & retain loss plus $\lambda = 1$ times the mean absolute gap to the target, Adam $10^{-4}$, stop when the mean gap stays within 5 units for 3 epochs \\
+Attacker & MLP [256, 256], spectral normalization, dropout 0.3, 50 epochs, Adam $10^{-3}$, batch 128, 80/20 split, 70 features \\
+\bottomrule
+\end{tabular}

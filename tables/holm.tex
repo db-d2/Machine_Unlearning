@@ -1,0 +1,57 @@
+\begin{tabular}{lccccccccccc}
+\toprule
+Method & Paired difference [95\% CI] & $p_{>}$ & $p_{<}$ & $p_{\approx}$ & Verdict & Holm $p_{>}$ & Holm $p_{<}$ & Holm $p_{\approx}$ & Holm verdict & Type $p$ (raw / Holm) & Type verdict \\
+\midrule
+\multicolumn{12}{l}{\emph{PBMC-33k cluster 13, transferred attacker, published settings (14 arms), margin 0.107}} \\
+Retain-only fine-tune & +0.141 [0.10, 0.19] & $<$0.001 & 1.000 & 0.953 & more identifiable & 0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 / 0.014 & fitted better \\
+Gradient ascent + fine-tune & +0.177 [0.14, 0.22] & $<$0.001 & 1.000 & 1.000 & more identifiable & 0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 / 0.014 & fitted better \\
+SSD & +0.172 [0.13, 0.22] & $<$0.001 & 1.000 & 0.999 & more identifiable & 0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 / 0.014 & fitted better \\
+SCRUB & +0.187 [0.14, 0.24] & $<$0.001 & 1.000 & 0.999 & more identifiable & 0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 / 0.014 & fitted better \\
+Moon feature unlearning & +0.211 [0.16, 0.26] & $<$0.001 & 1.000 & 1.000 & more identifiable & 0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 / 0.014 & fitted better \\
+Fisher scrubbing & +0.144 [0.10, 0.19] & $<$0.001 & 1.000 & 0.941 & more identifiable & 0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 / 0.014 & fitted better \\
+Extra-gradient ($\lambda=10$) & -0.117 [-0.19, -0.05] & 1.000 & $<$0.001 & 0.618 & less identifiable & 1.000 & 0.004 & 1.000 & less identifiable & 0.583 / 1.000 & not resolved \\
+Extra-gradient ($\lambda=1$) & -0.192 [-0.28, -0.12] & 1.000 & $<$0.001 & 0.995 & less identifiable & 1.000 & 0.001 & 1.000 & less identifiable & $<$0.001 / 0.014 & fitted worse \\
+Contrastive latent & -0.359 [-0.44, -0.28] & 1.000 & $<$0.001 & 1.000 & less identifiable & 1.000 & 0.001 & 1.000 & less identifiable & $<$0.001 / 0.014 & fitted worse \\
+Frozen critics, one critic, $\lambda=5$ & -0.526 [-0.63, -0.42] & 1.000 & $<$0.001 & 1.000 & less identifiable & 1.000 & 0.001 & 1.000 & less identifiable & $<$0.001 / 0.014 & fitted worse \\
+Frozen critics, one critic, $\lambda=10$ & -0.526 [-0.63, -0.41] & 1.000 & $<$0.001 & 1.000 & less identifiable & 1.000 & 0.001 & 1.000 & less identifiable & $<$0.001 / 0.014 & fitted worse \\
+Frozen critics, three critics, $\lambda=5$ & -0.521 [-0.63, -0.41] & 1.000 & $<$0.001 & 1.000 & less identifiable & 1.000 & 0.001 & 1.000 & less identifiable & $<$0.001 / 0.014 & fitted worse \\
+Frozen critics, three critics, $\lambda=10$ & -0.521 [-0.63, -0.41] & 1.000 & $<$0.001 & 1.000 & less identifiable & 1.000 & 0.001 & 1.000 & less identifiable & $<$0.001 / 0.014 & fitted worse \\
+DP-SGD ($\varepsilon=10$, from scratch) & -0.063 [-0.12, -0.01] & 0.990 & 0.010 & 0.062 & less identifiable & 1.000 & 0.069 & 0.867 & not resolved & 0.636 / 1.000 & as retrained \\
+\midrule
+\multicolumn{12}{l}{\emph{PBMC-33k cluster 13, transferred attacker, step and cap ablations (9 arms), margin 0.107}} \\
+Fisher, step cap $3\times 10^{-3}$ & -0.217 [-0.30, -0.14] & 1.000 & $<$0.001 & 0.997 & less identifiable & 1.000 & $<$0.001 & 1.000 & less identifiable & $<$0.001 / 0.009 & fitted worse \\
+Fisher, step cap $10^{-2}$ & -0.084 [-0.14, -0.02] & 0.997 & 0.004 & 0.228 & less identifiable & 1.000 & 0.025 & 1.000 & not resolved & 0.034 / 0.102 & fitted worse \\
+Fisher, step cap $1.5\times 10^{-3}$ & +0.133 [0.09, 0.18] & $<$0.001 & 1.000 & 0.855 & more identifiable & $<$0.001 & 1.000 & 1.000 & more identifiable & 0.002 / 0.010 & fitted better \\
+Fisher, step cap $2\times 10^{-3}$ & +0.049 [-0.01, 0.11] & 0.054 & 0.946 & 0.030 & not resolved & 0.272 & 1.000 & 0.246 & not resolved & 0.542 / 0.542 & not resolved \\
+Fisher, step cap $2.5\times 10^{-3}$ & -0.044 [-0.11, 0.02] & 0.914 & 0.086 & 0.027 & not resolved & 1.000 & 0.518 & 0.246 & not resolved & 0.197 / 0.394 & not resolved \\
+Fisher, step cap $3\times 10^{-3}$ (sweep) & -0.150 [-0.24, -0.07] & 1.000 & $<$0.001 & 0.845 & less identifiable & 1.000 & $<$0.001 & 1.000 & less identifiable & 0.003 / 0.012 & fitted worse \\
+Gradient ascent, lr $10^{-4}$ & +0.178 [0.14, 0.22] & $<$0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 / 0.009 & fitted better \\
+Gradient ascent, lr $10^{-3}$ & +0.177 [0.13, 0.22] & $<$0.001 & 1.000 & 0.999 & more identifiable & $<$0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 / 0.009 & fitted better \\
+Gradient ascent, lr $10^{-2}$ & +0.170 [0.13, 0.22] & $<$0.001 & 1.000 & 0.999 & more identifiable & $<$0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 / 0.009 & fitted better \\
+\midrule
+\multicolumn{12}{l}{\emph{PBMC-33k cluster 13, transferred attacker, targeted and long fine-tunes (4 arms), margin 0.107}} \\
+Likelihood-targeted, look-alike level & +0.223 [0.12, 0.33] & $<$0.001 & 1.000 & 0.985 & more identifiable & $<$0.001 & 1.000 & 1.000 & more identifiable & 0.115 / 0.345 & not resolved \\
+Likelihood-targeted, retrained level & +0.052 [-0.07, 0.17] & 0.195 & 0.805 & 0.183 & not resolved & 0.195 & 1.000 & 0.550 & not resolved & 0.432 / 0.432 & not resolved \\
+Likelihood-targeted, disjoint look-alikes & +0.306 [0.20, 0.42] & $<$0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 & 1.000 & 1.000 & more identifiable & 0.017 / 0.068 & fitted better \\
+Retain-only fine-tune, 200 epochs & +0.039 [0.01, 0.07] & 0.005 & 0.995 & $<$0.001 & more identifiable & 0.011 & 1.000 & $<$0.001 & more identifiable & 0.120 / 0.345 & not resolved \\
+\midrule
+\multicolumn{12}{l}{\emph{PBMC-68k cluster 9, megakaryocytes, within-type refit (8 arms), margin 0.044}} \\
+Retain-only fine-tune & +0.041 [-0.03, 0.11] & 0.111 & 0.889 & 0.470 & not resolved & 0.314 & 1.000 & 1.000 & not resolved & $<$0.001 / 0.008 & fitted better \\
+Gradient ascent + fine-tune & +0.066 [-0.01, 0.14] & 0.037 & 0.963 & 0.729 & not resolved & 0.148 & 1.000 & 1.000 & not resolved & $<$0.001 / 0.008 & fitted better \\
+SSD & +0.132 [0.06, 0.20] & $<$0.001 & 1.000 & 0.990 & more identifiable & 0.003 & 1.000 & 1.000 & more identifiable & $<$0.001 / 0.008 & fitted better \\
+SCRUB & +0.086 [0.02, 0.15] & 0.008 & 0.992 & 0.893 & more identifiable & 0.046 & 1.000 & 1.000 & not resolved & $<$0.001 / 0.008 & fitted better \\
+Fisher scrubbing & +0.088 [0.02, 0.16] & 0.009 & 0.992 & 0.889 & more identifiable & 0.046 & 1.000 & 1.000 & not resolved & 0.027 / 0.027 & fitted better \\
+Extra-gradient ($\lambda=10$) & +0.361 [0.29, 0.44] & $<$0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 / 0.008 & fitted better \\
+Contrastive latent & +0.043 [-0.03, 0.11] & 0.105 & 0.895 & 0.494 & not resolved & 0.314 & 1.000 & 1.000 & not resolved & $<$0.001 / 0.008 & fitted better \\
+Retain-only fine-tune, 200 epochs & +0.008 [-0.06, 0.08] & 0.405 & 0.596 & 0.165 & not resolved & 0.405 & 1.000 & 1.000 & not resolved & $<$0.001 / 0.008 & fitted better \\
+\midrule
+\multicolumn{12}{l}{\emph{PBMC-68k cluster 8, plasmacytoid dendritic cells, within-type refit (7 arms), margin 0.038}} \\
+Retain-only fine-tune & +0.062 [0.02, 0.10] & 0.002 & 0.998 & 0.877 & more identifiable & 0.002 & 1.000 & 1.000 & more identifiable & $<$0.001 / 0.007 & fitted better \\
+Gradient ascent + fine-tune & +0.079 [0.04, 0.12] & $<$0.001 & 1.000 & 0.970 & more identifiable & $<$0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 / 0.007 & fitted better \\
+SSD & +0.087 [0.04, 0.13] & $<$0.001 & 1.000 & 0.989 & more identifiable & $<$0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 / 0.007 & fitted better \\
+SCRUB & +0.084 [0.03, 0.13] & $<$0.001 & 1.000 & 0.967 & more identifiable & $<$0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 / 0.007 & fitted better \\
+Fisher scrubbing & +0.102 [0.06, 0.14] & $<$0.001 & 1.000 & 0.999 & more identifiable & $<$0.001 & 1.000 & 1.000 & more identifiable & 0.080 / 0.080 & not resolved \\
+Extra-gradient ($\lambda=10$) & +0.283 [0.21, 0.35] & $<$0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 / 0.007 & fitted better \\
+Contrastive latent & +0.145 [0.10, 0.19] & $<$0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 & 1.000 & 1.000 & more identifiable & $<$0.001 / 0.007 & fitted worse \\
+\bottomrule
+\end{tabular}

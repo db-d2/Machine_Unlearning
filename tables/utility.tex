@@ -1,0 +1,25 @@
+\begin{tabular}{lcccc}
+\toprule
+Model & ELBO & KL & Marker $r$ & ARI \\
+\midrule
+Baseline (no unlearning) & 363.9 & 10.83 & 0.831 & 0.468 \\
+Clean retrain & 364.2 & 10.97 & 0.831 & 0.481 \\
+Retain-only fine-tune & 363.0 & 11.00 & 0.832 & 0.451 \\
+Gradient ascent + fine-tune & 363.2 & 11.00 & 0.831 & 0.463 \\
+SSD & 363.6 & 10.72 & 0.831 & 0.475 \\
+SCRUB & 363.5 & 10.72 & 0.831 & 0.461 \\
+Moon feature unlearning & 364.5 & 10.83 & 0.831 & 0.468 \\
+Fisher scrubbing & 363.6 & 10.81 & 0.832 & 0.470 \\
+Fisher, step cap $3\times 10^{-3}$ & 363.7 & 10.70 & 0.831 & 0.467 \\
+Fisher, step cap $10^{-2}$ & 370.8 & 11.55 & 0.830 & 0.517 \\
+Extra-gradient ($\lambda=10$) & 363.8 & 10.78 & 0.832 & 0.470 \\
+Extra-gradient ($\lambda=1$) & 363.3 & 10.82 & 0.831 & 0.464 \\
+Contrastive latent & 363.7 & 10.73 & 0.831 & 0.465 \\
+Frozen critics, one critic, $\lambda=5$ & 363.9 & 10.85 & 0.831 & 0.456 \\
+Frozen critics, one critic, $\lambda=10$ & 363.8 & 10.83 & 0.831 & 0.451 \\
+Frozen critics, three critics, $\lambda=5$ & 402.9 & 10.81 & 0.832 & 0.463 \\
+Frozen critics, three critics, $\lambda=10$ & 405.8 & 10.83 & 0.832 & 0.459 \\
+DP-SGD ($\varepsilon=10$, from scratch) & 402.9 & 8.11 & 0.789 & 0.500 \\
+Retrain, own split (superseded) & 361.9 & 10.86 & 0.834 & 0.460 \\
+\bottomrule
+\end{tabular}

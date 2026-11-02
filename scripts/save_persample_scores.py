@@ -3,8 +3,14 @@
 enabling an EXACT per-sample nested bootstrap (reviewer W4). Reuses the canonical eval
 machinery (train one fresh attacker on baseline, apply to each method's features).
 
-Usage: PYTHONPATH=src python scripts/save_persample_scores.py
+Usage: PYTHONPATH=src python scripts/save_persample_scores.py [--extended] [--out DIR]
 Output: outputs/p4/multiseed/persample/<method>.json  (list of {seed, auc, scores, labels})
+
+--extended (2026-09-25) appends, AFTER every canonical checkpoint, the Fisher-cap and gradient-ascent sweeps
+(outputs/p4/sweeps), the three NB41 likelihood-targeted variants (outputs/p7/ltu*) and the NB42 200-epoch
+retain fine-tunes (outputs/p8/pbmc). The pass is deterministic on CPU in a fixed order, so the canonical rows
+come out bit-identical and the appended rows are scored by the same attacker instance in the same pass
+(checked against the stored files before adoption). The paired test is scripts/paired_diff_33k.py.
 """
 import json, sys
 from pathlib import Path
@@ -67,7 +73,28 @@ def checkpoint_map():
     return M
 
 
+def extended_map():
+    """Checkpoints scored after the canonical ones in an --extended pass (never before them)."""
+    M = {}
+    for d in sorted((BASE / 'outputs/p4/sweeps').glob('*_seed*')):
+        cfg, sd = d.name.rsplit('_seed', 1)
+        f = d / ('unlearned_model.pt' if cfg.startswith('fisher') else 'best_model.pt')
+        if f.exists():
+            M.setdefault('sweep_' + cfg, []).append((f'seed{sd}', f))
+    for v in ['ltu', 'ltu_avg', 'ltu_disjoint']:
+        for d in sorted((BASE / f'outputs/p7/{v}').glob('seed*')):
+            if (d / 'best_model.pt').exists():
+                M.setdefault(v, []).append((d.name, d / 'best_model.pt'))
+    for d in sorted((BASE / 'outputs/p8/pbmc').glob('seed*')):
+        if (d / 'final_model.pt').exists():
+            M.setdefault('long_finetune_200', []).append((d.name, d / 'final_model.pt'))
+    return M
+
+
 def main():
+    import argparse
+    ap = argparse.ArgumentParser(); ap.add_argument('--extended', action='store_true'); ap.add_argument('--out', default=str(OUT))
+    args = ap.parse_args(); out_dir = Path(args.out); out_dir.mkdir(parents=True, exist_ok=True)
     adata = sc.read_h5ad(DATA_PATH)
     split = json.load(open(SPLIT_PATH)); forget_idx = split['forget_indices']; retain_idx = split['retain_indices']
     matched_neg_idx = json.load(open(MATCHED_NEG_PATH))['matched_indices']
@@ -76,7 +103,10 @@ def main():
     attacker = train_fresh_attacker(base_model, adata, forget_idx, matched_neg_idx, retain_idx)
     attacker.eval()
     labels = np.concatenate([np.ones(len(forget_idx)), np.zeros(len(matched_neg_idx))])
-    for method, seeds in checkpoint_map().items():
+    cmap = checkpoint_map()
+    if args.extended:
+        cmap.update(extended_map())   # appended after 'baseline', the last canonical key
+    for method, seeds in cmap.items():
         recs = []
         for sd, path in seeds:
             try:
@@ -93,7 +123,7 @@ def main():
             auc = float(roc_auc_score(labels, scores))
             recs.append({'seed': str(sd), 'auc': auc, 'scores': [float(s) for s in scores], 'labels': [int(l) for l in labels]})
             print(f"  {method} {sd}: AUC={auc:.4f}", flush=True)
-        json.dump(recs, open(OUT / f'{method}.json', 'w'))
+        json.dump(recs, open(out_dir / f'{method}.json', 'w'))
         print(f"== saved {method}: {len(recs)} seeds ==", flush=True)
     print("DONE")
 

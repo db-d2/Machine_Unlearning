@@ -26,7 +26,7 @@ import eval_multiseed as EM
 EM.DEVICE = 'cpu'
 from eval_multiseed import load_vae_model, DATA_PATH, SPLIT_PATH, MATCHED_NEG_PATH, BASELINE_CHECKPOINT
 from save_persample_scores import checkpoint_map
-from likelihood_audit import neg_elbo_per_cell, N_SAMPLES, SEED
+from likelihood_audit import neg_elbo_per_cell, lr_auc_ci, nested_auc_ci, N_SAMPLES, SEED
 
 REF = BASE / 'outputs/p1/retrain_clean/seed_42/best_model.pt'
 OUT = BASE / 'outputs/attack_lr_reference.json'
@@ -66,20 +66,26 @@ def main():
         targets.setdefault('augmentation_' + p.stem.split('_')[1], []).append(('seed42', p))
     out = {'reference': str(REF.relative_to(BASE)), 'score': 'negELBO_ref - negELBO_target (member => positive)',
            'estimator': f'likelihood_audit.neg_elbo_per_cell: eval mode, {N_SAMPLES} seeded z samples (seed {SEED}), CPU',
-           'n_forget': len(xf), 'n_matched': len(xm), 'models': {}}
+           'n_forget': len(xf), 'n_matched': len(xm), 'ci': 'per seed: percentile bootstrap over cells (10,000, groups resampled separately); per model: nested over seeds and cells; null95: permutation null of the AUC', 'models': {}}
     for m, seeds in targets.items():
-        aucs = []
+        aucs, per = [], []
         for sd, p in seeds:
             if m == 'retrain_leaky':
                 import nested_bootstrap_retrain as NBR; NBR.DEVICE = 'cpu'
                 model = NBR.load_retrain_model(str(p))
             else:
                 model, _ = load_vae_model(str(p))
-            sf, sm = ref_f - neg_elbo(model, xf), ref_m - neg_elbo(model, xm)
+            tf, tm = neg_elbo(model, xf), neg_elbo(model, xm)
+            sf, sm = ref_f - tf, ref_m - tm
             aucs.append(float(roc_auc_score(labels, np.r_[sf, sm])))
+            per.append(lr_auc_ci(ref_f, ref_m, tf, tm))
+        nest = nested_auc_ci(per)
         out['models'][m] = {'auc_mean': float(np.mean(aucs)), 'advantage_mean': float(np.mean([2 * abs(a - 0.5) for a in aucs])),
-                            'per_seed_auc': dict(zip([str(s) for s, _ in seeds], aucs)), 'n_seeds': len(aucs)}
-        print(f"  {m:22s} LR-vs-clean-retrain AUC={np.mean(aucs):.3f} adv={np.mean([2*abs(a-0.5) for a in aucs]):.3f} (n={len(aucs)})", flush=True)
+                            'per_seed_auc': dict(zip([str(s) for s, _ in seeds], aucs)), 'n_seeds': len(aucs),
+                            'per_seed_ci95': dict(zip([str(s) for s, _ in seeds], [r['ci95'] for r in per])),
+                            'nested_ci95': [nest['nested_ci_low'], nest['nested_ci_high']],
+                            'null95': per[0]['null95']}
+        print(f"  {m:22s} LR-vs-clean-retrain AUC={np.mean(aucs):.3f} [{nest['nested_ci_low']:.3f}, {nest['nested_ci_high']:.3f}] adv={np.mean([2*abs(a-0.5) for a in aucs]):.3f} (n={len(aucs)})", flush=True)
     json.dump(out, open(OUT, 'w'), indent=2)
     print(f"saved {OUT}")
 

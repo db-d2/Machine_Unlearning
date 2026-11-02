@@ -1,0 +1,14 @@
+\begin{tabular}{lccccc}
+\toprule
+ & PBMC-33k & PBMC-68k (cl.\ 9) & PBMC-68k (cl.\ 8) & Tabula Muris & TCGA-BRCA \\
+\midrule
+Type & scRNA-seq & scRNA-seq & scRNA-seq & scRNA-seq & bulk RNA-seq \\
+Samples & 33,088 cells & 68,512 cells & 68,512 cells & 41,647 cells & 1,089 patients \\
+Genes & 2,000 HVG & 2,000 HVG & 2,000 HVG & 2,000 HVG & 978 L1000 \\
+Retain / forget / held out & 28,094 / 30 / 4,964 & 57,958 / 107 / 10,447 & 57,763 / 302 / 10,447 & 35,317 / 82 / 6,248 & 767 / 158 / 164 \\
+Forget set & cluster 13 (30 megakaryocytes) & cluster 9 (107 megakaryocytes) & cluster 8 (302 pDC) & cluster 33 (82 cardiac muscle) & Basal subtype (158 patients) \\
+Forget fraction of training & 0.1\% & 0.2\% & 0.5\% & 0.2\% & 17\% \\
+Cross-type negatives & 194 & 143 & 445 & 135 & 89 \\
+Within-type negatives & 5 & 71 & 201 & -- & 30 \\
+\bottomrule
+\end{tabular}

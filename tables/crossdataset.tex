@@ -1,0 +1,16 @@
+\begin{tabular}{lccccc}
+\toprule
+Model & TM attacker (cross) & TM audit [95\% CI] & TCGA attacker (cross) & TCGA attacker (within) & TCGA audit [95\% CI] \\
+\midrule
+Baseline & 0.903 & 0.877 [0.82, 0.93] & 0.803 & 0.580 & 0.833 [0.77, 0.89] \\
+Retrained model & 0.943 & -- & 0.830 & 0.572 & -- \\
+\midrule
+Retain-only fine-tune & -- & -- & 0.830 & 0.572 & 0.457 [0.38, 0.53] \\
+Gradient ascent + fine-tune & -- & -- & 0.830 & 0.571 & 0.397 [0.32, 0.47] \\
+SSD & -- & -- & 0.830 & 0.571 & 0.454 [0.38, 0.53] \\
+SCRUB & -- & -- & 0.829 & 0.572 & 0.533 [0.46, 0.61] \\
+Contrastive latent & -- & -- & 0.831 & 0.572 & 0.519 [0.44, 0.60] \\
+Fisher scrubbing & 0.944 & 0.346 [0.25, 0.44] & 0.784 & 0.543 & 0.191 [0.13, 0.25] \\
+Extra-gradient & 0.723 & 0.947 [0.92, 0.97] & -- & -- & -- \\
+\bottomrule
+\end{tabular}

@@ -1,8 +1,18 @@
 #!/usr/bin/env python3
-"""Reproducible source for Figure 1 (eval_pipeline). Emits eval_pipeline.svg.
+"""Reproducible source for Figure 1 (eval_pipeline). Emits eval_pipeline.svg; convert with
+    rsvg-convert -f pdf -o figures/eval_pipeline.pdf figures/eval_pipeline.svg
+Every number drawn comes from the canonical result files through src/canonical.py.
 All numbers are the current paper values; edit them here, never in a raster asset."""
 import os
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "eval_pipeline.svg")
+import sys, json
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src"))
+import canonical as C
+_summ = C.pbmc_summary(); _util = json.load(open(os.path.join(C.ROOT, "outputs/p4/multiseed/utility_all.json")))["methods"]
+BASE_AUC = _summ["baseline"]["auc"]; RETR_AUC = _summ["retrain"]["auc"]; THR = C.pbmc_success_threshold()
+RETR_R, RETR_ADV = _util["retrain"]["mean"]["marker_r"], _summ["retrain"]["mean"]
+DP_R, DP_ADV = _util["dp_sgd"]["mean"]["marker_r"], _summ["dp_sgd"]["mean"]
+
 
 # ---- palette ----
 BG="#e9eef2"; CARD="#ffffff"; BORDER="#d9e1e9"; INK="#1f2a33"; MUTED="#5c6b77"
@@ -37,25 +47,27 @@ def card(x,y,w,h): E.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx=
 # ============ PANEL A : DATASETS ============
 ax,ay,aw,ah=22,22,772,338; card(ax,ay,aw,ah)
 badge(ax+22,ay+20,"A"); tx(ax+54,ay+38,"Datasets",19,INK,"700")
-tx(ax+22,ay+68,"Three cohorts, two modalities. Each structured forget set is a rare",12.5,MUTED)
+tx(ax+22,ay+68,"Four cohorts, two modalities. Each structured forget set is a rare",12.5,MUTED)
 tx(ax+22,ay+85,"biologically coherent subpopulation.",12.5,MUTED)
 def grid(gx,gy,cols,rows,cell,gap,fn):
     for r in range(rows):
         for c in range(cols):
             E.append(f'<rect x="{gx+c*(cell+gap)}" y="{gy+r*(cell+gap)}" width="{cell}" height="{cell}" rx="1.4" fill="{fn(c,r)}"/>')
 def dcard(dx,title,sub,line1,line2,fn,light_grid=False):
-    dy=ay+104; dw=232; dh=182
+    dy=ay+104; dw=172; dh=182
     E.append(f'<rect x="{dx}" y="{dy}" width="{dw}" height="{dh}" rx="10" fill="#f6f9fb" stroke="{BORDER}" stroke-width="1"/>')
-    tx(dx+16,dy+26,title,14,INK,"700"); tx(dx+16,dy+43,sub,10.5,MUTED,fam=MONO)
-    grid(dx+16,dy+56,18,7,9,2.2,fn)
-    tx(dx+16,dy+152,line1,10.5,INK,fam=MONO)
-    tx(dx+16,dy+170,"forget: "+line2,10.5,FORGET,fam=MONO)
+    tx(dx+16,dy+26,title,13,INK,"700"); tx(dx+16,dy+43,sub,9.5,MUTED,fam=MONO)
+    grid(dx+16,dy+56,18,7,6.5,1.6,fn)
+    tx(dx+16,dy+152,line1,9.5,INK,fam=MONO)
+    tx(dx+16,dy+170,"forget: "+line2,9.5,FORGET,fam=MONO)
 def pbmc(c,r): return FORGET if (14<=c<=16 and 0<=r<=1) else (UNSEEN if c>=16 else RETAIN)
 def tm(c,r):   return FORGET if (2<=c<=4 and 3<=r<=4) else (UNSEEN if c>=16 else RETAIN)
 def tcga(c,r): return FORGET if (0<=c<=4 and 0<=r<=2) else (UNSEEN if (c+r)%2==0 else "#9fc0dd")
+def p68(c,r):  return FORGET if (13<=c<=16 and 0<=r<=1) else (UNSEEN if c>=16 else RETAIN)
 dcard(ax+22,"PBMC-33k","single-cell RNA-seq","33,088 cells · 2,000 HVGs","30 megakaryocytes",pbmc)
-dcard(ax+22+250,"Tabula Muris","single-cell RNA-seq","41,647 cells · 2,000 HVGs","82 cardiac muscle",tm)
-dcard(ax+22+500,"TCGA-BRCA","bulk RNA-seq","1,089 patients · 978 L1000","158 Basal subtype",tcga)
+dcard(ax+22+185,"PBMC-68k","single-cell RNA-seq","68,512 cells · 2,000 HVGs","107 MK / 302 pDC",p68)
+dcard(ax+22+370,"Tabula Muris","single-cell RNA-seq","41,647 cells · 2,000 HVGs","82 cardiac muscle",tm)
+dcard(ax+22+555,"TCGA-BRCA","bulk RNA-seq","1,089 patients · 978 L1000","158 Basal subtype",tcga)
 ly=ay+ah-22
 swatch(ax+22,ly-9,RETAIN,"retain cells"); swatch(ax+150,ly-9,UNSEEN,"unseen (matched negatives)"); swatch(ax+360,ly-9,FORGET,"forget set (structured)")
 
@@ -99,8 +111,8 @@ E.append(f'<polygon points="{ax+aw*0.34},380 {ax+aw*0.34-4},372 {ax+aw*0.34+4},3
 # ============ PANEL C : MEMBERSHIP INFERENCE ============
 cx,cy,cw,ch=22,382,500,368; card(cx,cy,cw,ch)
 badge(cx+22,cy+20,"C"); tx(cx+54,cy+38,"Membership inference",19,INK,"700")
-tx(cx+22,cy+66,"Trained MLP attacker on 70-dim VAE latent features",12,MUTED)
-tx(cx+22,cy+83,"classifies forget vs. matched-negative samples.",12,MUTED)
+tx(cx+22,cy+66,"One MLP attacker on 70 model-internal features, trained on the",12,MUTED)
+tx(cx+22,cy+83,"baseline and applied to every model; a likelihood audit vs. retrained models.",12,MUTED)
 vy=cy+150
 rr(cx+24,vy-24,58,48,"#e4e9ee",rx=6,stroke=BORDER,sw=1); tx(cx+53,vy+4,"VAE",13,INK,"700",anc="middle")
 arrow(cx+84,vy,cx+120,vy); tx(cx+102,vy-8,"query",9.5,MUTED,anc="middle",fam=MONO)
@@ -116,32 +128,37 @@ tx(cx+386,vy-4,"AUC",13,INK,"700"); tx(cx+386,vy+16,"advantage =",10,MUTED,fam=M
 # reference box
 ry=cy+ch-92
 E.append(f'<rect x="{cx+22}" y="{ry}" width="{cw-44}" height="66" rx="9" fill="#f6f9fb" stroke="{BORDER}" stroke-width="1"/>')
-tx(cx+38,ry+24,"Reference (PBMC, structured):",12,INK,"700")
-tx(cx+38,ry+48,"baseline AUC ",11,MUTED,fam=MONO); tx(cx+150,ry+48,"0.79",11,FORGET,"700",fam=MONO)
-tx(cx+200,ry+48,"retrain AUC ",11,MUTED,fam=MONO); tx(cx+300,ry+48,"0.58",11,RETAIN,"700",fam=MONO)
-tx(cx+350,ry+48,"chance ",11,MUTED,fam=MONO); tx(cx+408,ry+48,"0.50",11,MUTED,"700",fam=MONO)
+tx(cx+38,ry+24,"PBMC cluster 13, attacker AUC",12,INK,"700")
+tx(cx+38,ry+48,"baseline ",11,MUTED,fam=MONO); tx(cx+120,ry+48,f"{BASE_AUC:.2f}",11,FORGET,"700",fam=MONO)
+tx(cx+180,ry+48,"retrained ",11,MUTED,fam=MONO); tx(cx+270,ry+48,f"{RETR_AUC:.2f}",11,RETAIN,"700",fam=MONO)
+tx(cx+340,ry+48,"chance ",11,MUTED,fam=MONO); tx(cx+400,ry+48,"0.50",11,MUTED,"700",fam=MONO)
 arrow(cx+cw-2,vy+40,540,vy+40)  # C -> D
 
+PTS = [("retrained", RETR_R, RETR_ADV, GREEN, 7), ("DP-SGD", DP_R, DP_ADV, ORANGE, 6)] + [
+    (m, _util[m]["mean"]["marker_r"], _summ[m]["mean"], GREY, 5)
+    for m in ["retain_finetune", "gradient_ascent", "ssd", "scrub", "moon", "fisher", "extragradient", "extragradient_lambda1", "contrastive"]]
 # ============ PANEL D : UNLEARNING & EVALUATION ============
 dx,dy,dw,dh=540,382,838,368; card(dx,dy,dw,dh)
 badge(dx+22,dy+20,"D"); tx(dx+54,dy+38,"Unlearning & evaluation",19,INK,"700")
-tx(dx+22,dy+66,"Nine post-hoc methods plus two training-time approaches and a DP-SGD",12,MUTED)
-tx(dx+22,dy+83,"(from scratch) baseline. Only retrain reaches the target region.",12,MUTED)
-tx(dx+22,dy+116,"11 METHODS, GROUPED",10.5,MUTED,"700",fam=MONO,ls="0.8")
-groups=[("Fine-tune","retain FT · grad ascent · Moon"),("Fisher-based","Fisher scrub · SSD"),
-        ("Distillation","SCRUB · contrastive latent"),("Adversarial","frozen critics · extra-gradient"),
-        ("Training-time","synthetic aug. · RAU"),("Scratch (baseline)","DP-SGD · full retrain")]
+tx(dx+22,dy+66,"Nine post-hoc methods, two constructive approaches, a fine-tune with a",12,MUTED)
+tx(dx+22,dy+83,"likelihood target, and DP-SGD, judged against models retrained without the forget set.",12,MUTED)
+tx(dx+22,dy+116,"METHODS, GROUPED BY WHAT THEY DO",10.5,MUTED,"700",fam=MONO,ls="0.8")
+groups=[("Edit, then fine-tune","retain FT · GA · Fisher · SSD · SCRUB · Moon"),
+        ("Continuous objective","extra-grad. · contrastive · frozen critics"),
+        ("Constructive","synthetic aug. · repr. alignment"),
+        ("Targeted","fine-tune to a likelihood target"),
+        ("From scratch","DP-SGD · retrained models")]
 gy=dy+140
 for g,m in groups:
-    tx(dx+22,gy,g,12,INK,"700"); tx(dx+150,gy,m,11.5,MUTED,fam=MONO); gy+=34
+    tx(dx+22,gy,g,11.5,INK,"700"); tx(dx+150,gy,m,10.5,MUTED,fam=MONO); gy+=34
 # scatter plot
-sx,sy,sw,sh=dx+430,dy+150,360,168
+sx,sy,sw,sh=dx+500,dy+150,310,168
 E.append(f'<rect x="{sx}" y="{sy}" width="{sw}" height="{sh}" fill="#fbfcfd" stroke="{BORDER}" stroke-width="1"/>')
-tx(sx,sy-10,"PRIVACY–UTILITY PLANE (PBMC)",10.5,MUTED,"700",fam=MONO,ls="0.6")
+tx(sx,sy-10,"ADVANTAGE VS. UTILITY (PBMC)",10.5,MUTED,"700",fam=MONO,ls="0.6")
 def X(r): return sx+ (r-0.5)/0.5*sw
 def Y(a): return sy+sh - a*1.0*sh
-# target band advantage <= 0.258
-E.append(f'<rect x="{sx}" y="{Y(0.258)}" width="{sw}" height="{sy+sh-Y(0.258)}" fill="{BAND}" opacity="0.55"/>')
+# pass region: advantage at or below the retrained models' upper bound
+E.append(f'<rect x="{sx}" y="{Y(THR)}" width="{sw}" height="{sy+sh-Y(THR)}" fill="{BAND}" opacity="0.55"/>')
 # axes ticks
 for a in [0.0,0.25,0.5,0.75,1.0]:
     tx(sx-6,Y(a)+4,f"{a:.2f}",9,MUTED,anc="end",fam=MONO); ln(sx,Y(a),sx+3,Y(a),BORDER,1)
@@ -150,14 +167,10 @@ for r in [0.5,0.75,1.0]:
 tx(sx-30,sy+sh/2,"privacy advantage",9.5,MUTED,anc="middle")  # rotated below
 E[-1]=E[-1].replace('text-anchor="middle"',f'text-anchor="middle" transform="rotate(-90 {sx-30} {sy+sh/2})"')
 tx(sx+sw/2,sy+sh+28,"utility (marker r)",9.5,MUTED,anc="middle")
-pts=[("retrain",0.829,0.156,GREEN,7),("Fisher",0.628,0.615,"#c0392b",7),("DP-SGD",0.787,0.045,ORANGE,6),
-     ("extra-grad",0.789,0.281,GREY,5),("retain-FT",0.832,0.333,GREY,5),("SSD",0.831,0.435,GREY,5),
-     ("SCRUB",0.832,0.411,GREY,5),("contrastive",0.832,0.673,GREY,5),("grad-asc",0.832,0.396,GREY,5),
-     ("Moon",0.831,0.480,GREY,5)]
-for name,r,a,col,rad in pts:
+for name,r,a,col,rad in PTS:
     E.append(f'<circle cx="{X(r):.1f}" cy="{Y(a):.1f}" r="{rad}" fill="{col}" opacity="0.9"/>')
-tx(X(0.628)-10,Y(0.615)-10,"Fisher (Streisand)",9.5,"#c0392b","700",anc="end")
-tx(X(0.829)+12,Y(0.156)+4,"retrain",10,GREEN,"700")
+tx(X(RETR_R)+12,Y(RETR_ADV)+4,"retrained",10,GREEN,"700")
+tx(X(DP_R)-8,Y(DP_ADV)-8,"DP-SGD",9.5,ORANGE,"700",anc="end")
 E.append('</svg>')
 open(OUT,"w").write("\n".join(E))
 print("wrote", OUT, len(E), "elements")

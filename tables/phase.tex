@@ -1,0 +1,15 @@
+\begin{tabular}{lcccccc}
+\toprule
+Stage & Forget, mean & Retain, mean & Held out, mean & Fit-excess attacker, AUC & Advantage & Audit AUC [95\% CI] \\
+\midrule
+Baseline & 269.5 & 363.0 & 362.9 & 0.793 & 0.59 & 0.996 [0.99, 1.00] \\
+Fisher scrub, max step $10^{-3}$, after scrub & 5569.4 & 1250.1 & 1284.1 & 0.016 & 0.97 & 0.015 [0.003, 0.03] \\
+Fisher scrub, max step $10^{-3}$, after retain fine-tune & 307.6 & 362.4 & 362.4 & 0.666 & 0.33 & 0.987 [0.97, 1.00] \\
+Fisher scrub, max step $3\times 10^{-3}$, after scrub & 59489.8 & 6063.4 & 6561.5 & 0.170 & 0.66 & 0.014 [0.002, 0.03] \\
+Fisher scrub, max step $3\times 10^{-3}$, after retain fine-tune & 377.2 & 362.7 & 362.7 & 0.386 & 0.23 & 0.173 [0.05, 0.31] \\
+Fisher scrub, max step $10^{-2}$, after scrub & 216483.8 & 173734.5 & 171780.9 & 0.487 & 0.03 & 0.418 [0.34, 0.50] \\
+Fisher scrub, max step $10^{-2}$, after retain fine-tune & 723.2 & 370.2 & 369.2 & 0.376 & 0.25 & 0.155 [0.05, 0.28] \\
+Gradient ascent, after ascent & 269.5 & 363.0 & 362.9 & 0.802 & 0.60 & 0.996 [0.99, 1.00] \\
+Gradient ascent, after retain fine-tune & 296.3 & 361.6 & 362.2 & 0.716 & 0.43 & 0.996 [0.99, 1.00] \\
+\bottomrule
+\end{tabular}

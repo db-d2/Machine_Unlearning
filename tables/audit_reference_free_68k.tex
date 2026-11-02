@@ -1,0 +1,28 @@
+\begin{tabular}{lcccccccc}
+\toprule
+Model & Seeds & Audit, mean-of-retrains reference [95\% CI] & Difference from the retrained arm [95\% CI] & Audit verdict & Forget median & Gap, median [95\% CI] & Gap relative to the negatives [95\% CI] & Fit verdict \\
+\midrule
+\multicolumn{9}{l}{\emph{Cluster 9, megakaryocytes}} \\
+Clean retrains (leave-one-out) & 8 & 0.592 [0.41, 0.66]; per seed 0.04 to 0.95 & -- & reference & 1076 (1014 to 1154) & -- & -- & -- \\
+Baseline (no unlearning) & 1 & 1.000 [1.00, 1.00] & +0.408 [0.34, 0.59] & fitted better & 491 & -584.9 [-627.8, -548.2] & -585.0 [-629.6, -550.6] & fitted better \\
+Retain-only fine-tune & 3 & 1.000 [1.00, 1.00] & +0.408 [0.34, 0.59] & fitted better & 681 & -394.8 [-440.9, -354.0] & -395.4 [-440.4, -355.1] & fitted better \\
+Gradient ascent + fine-tune & 3 & 1.000 [1.00, 1.00] & +0.408 [0.34, 0.59] & fitted better & 624 & -451.8 [-495.8, -414.7] & -451.6 [-495.7, -414.6] & fitted better \\
+SSD & 3 & 1.000 [1.00, 1.00] & +0.408 [0.34, 0.59] & fitted better & 611 & -464.5 [-503.2, -430.8] & -463.8 [-505.1, -431.7] & fitted better \\
+SCRUB & 3 & 0.994 [0.97, 1.00] & +0.403 [0.34, 0.59] & fitted better & 596 & -479.8 [-529.7, -424.4] & -479.9 [-530.9, -425.7] & fitted better \\
+Fisher scrubbing & 3 & 0.653 [0.53, 0.76] & +0.062 [-0.07, 0.27] & not resolved & 824 & -251.1 [-356.0, -56.3] & -251.2 [-355.8, -58.8] & fitted better \\
+Extra-gradient ($\lambda=10$) & 3 & 0.999 [1.00, 1.00] & +0.408 [0.34, 0.59] & fitted better & 482 & -593.7 [-635.5, -556.4] & -596.2 [-637.5, -559.3] & fitted better \\
+Contrastive latent & 3 & 0.971 [0.92, 1.00] & +0.379 [0.30, 0.57] & fitted better & 711 & -364.7 [-444.1, -294.7] & -364.8 [-445.6, -295.0] & fitted better \\
+Retain-only fine-tune, 200 epochs & 3 & 1.000 [1.00, 1.00] & +0.408 [0.34, 0.59] & fitted better & 829 & -246.5 [-289.7, -205.4] & -250.5 [-292.6, -207.1] & fitted better \\
+\midrule
+\multicolumn{9}{l}{\emph{Cluster 8, plasmacytoid dendritic cells}} \\
+Clean retrains (leave-one-out) & 8 & 0.510 [0.48, 0.53]; per seed 0.31 to 0.66 & -- & reference & 680 (672 to 684) & -- & -- & -- \\
+Baseline (no unlearning) & 1 & 0.999 [1.00, 1.00] & +0.489 [0.47, 0.52] & fitted better & 532 & -147.8 [-160.2, -131.1] & -146.2 [-159.2, -128.9] & fitted better \\
+Retain-only fine-tune & 3 & 0.994 [0.99, 1.00] & +0.484 [0.46, 0.52] & fitted better & 583 & -96.7 [-112.9, -84.1] & -94.5 [-111.2, -80.6] & fitted better \\
+Gradient ascent + fine-tune & 3 & 0.997 [0.99, 1.00] & +0.487 [0.47, 0.52] & fitted better & 570 & -109.6 [-123.5, -96.5] & -107.3 [-122.7, -93.5] & fitted better \\
+SSD & 3 & 0.999 [1.00, 1.00] & +0.489 [0.47, 0.52] & fitted better & 567 & -112.1 [-130.3, -99.3] & -110.7 [-129.7, -96.8] & fitted better \\
+SCRUB & 3 & 0.999 [1.00, 1.00] & +0.489 [0.47, 0.52] & fitted better & 556 & -123.5 [-137.5, -111.3] & -122.4 [-136.5, -109.2] & fitted better \\
+Fisher scrubbing & 3 & 0.489 [0.39, 0.59] & -0.021 [-0.12, 0.08] & as retrained & 740 & +60.3 [-6.26, +226.3] & +62.2 [-4.49, +227.4] & not resolved \\
+Extra-gradient ($\lambda=10$) & 3 & 0.929 [0.80, 1.00] & +0.419 [0.29, 0.50] & fitted better & 499 & -180.5 [-196.1, -160.5] & -180.9 [-197.2, -160.5] & fitted better \\
+Contrastive latent & 3 & 0.011 [0.00004, 0.04] & -0.498 [-0.52, -0.46] & fitted worse & 767 & +87.5 [+61.4, +105.9] & +88.1 [+61.2, +107.4] & fitted worse \\
+\bottomrule
+\end{tabular}

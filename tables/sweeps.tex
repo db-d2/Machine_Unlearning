@@ -1,0 +1,16 @@
+\begin{tabular}{lccccccccc}
+\toprule
+Configuration & Forget median & Audit & In range & Attacker AUC & Advantage & Difference [95\% CI] & Verdict & ELBO & Marker $r$ \\
+\midrule
+Gradient ascent, ascent step $10^{-4}$ & 274 to 275 & 0.994 to 0.996 & 0 of 3 & 0.701 to 0.711 & 0.40 to 0.42 & +0.178 [0.14, 0.22] & more identifiable & 363.2 & 0.832 \\
+Gradient ascent, ascent step $10^{-3}$ & 274 to 275 & 0.994 to 0.995 & 0 of 3 & 0.703 to 0.711 & 0.41 to 0.42 & +0.177 [0.13, 0.22] & more identifiable & 363.2 & 0.832 \\
+Gradient ascent, ascent step $10^{-2}$ & 274 to 276 & 0.994 to 0.995 & 0 of 3 & 0.692 to 0.705 & 0.38 to 0.41 & +0.170 [0.13, 0.22] & more identifiable & 363.2 & 0.832 \\
+Fisher scrubbing, step cap $1.5\times 10^{-3}$ & 296 to 313 & 0.793 to 0.991 & 1 of 3 & 0.641 to 0.677 & 0.28 to 0.35 & +0.133 [0.09, 0.18] & more identifiable & 363.5 & 0.831 \\
+Fisher scrubbing, step cap $2\times 10^{-3}$ & 317 to 335 & 0.474 to 0.751 & 3 of 3 & 0.556 to 0.615 & 0.11 to 0.23 & +0.049 [-0.01, 0.11] & not resolved & 363.6 & 0.831 \\
+Fisher scrubbing, step cap $2.5\times 10^{-3}$ & 339 to 363 & 0.242 to 0.441 & 3 of 3 & 0.461 to 0.520 & 0.04 to 0.08 & -0.044 [-0.11, 0.02] & not resolved & 363.7 & 0.831 \\
+Fisher scrubbing, step cap $3\times 10^{-3}$ & 369 to 398 & 0.141 to 0.196 & 2 of 3 & 0.324 to 0.435 & 0.13 to 0.35 & -0.150 [-0.24, -0.07] & less identifiable & 363.8 & 0.831 \\
+\midrule
+Baseline & 247 & 0.995 & -- & 0.801 & 0.60 & +0.272 [0.21, 0.33] & trained on the cells & 364.0 & 0.831 \\
+Clean retrains (leave-one-out) & 311 to 326 & 0.243 to 0.741 & -- & 0.509 to 0.567 & 0.02 to 0.13 & -- & reference & 364.2 & 0.831 \\
+\bottomrule
+\end{tabular}

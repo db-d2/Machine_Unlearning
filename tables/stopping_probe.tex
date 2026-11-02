@@ -1,0 +1,35 @@
+\begin{tabular}{lccccccccccc}
+\toprule
+Setting & Per-cell AUC [nested 95\% CI] & Paired difference [95\% CI] & Per-cell verdict & Audit & Forget median & Type & Look-alikes, mean & Retain sample, mean & Cross negatives, mean & Held-out ELBO & Marker $r$ \\
+\midrule
+\multicolumn{12}{l}{\emph{Cluster 9, megakaryocytes: retrained per-cell arm 0.515, margin 0.044, retrained forget medians 1,014 to 1,154}} \\
+Baseline & 0.683 [0.61, 0.76] & -- & trained on the cells & 1.000 & 491 & better & 511 & 481 & 525 & 484.5 & 0.762 \\
+Fisher, cap $10^{-3}$ (published) & 0.603 [0.53, 0.68] & +0.088 [0.02, 0.16] & more identifiable & 0.642 & 814 to 831 & better & 510 & 481 & 524 & 487.0 & 0.762 \\
+Fisher, cap $2\times 10^{-3}$ & 0.630 [0.55, 0.70] & +0.115 [0.04, 0.19] & more identifiable & 0.174 & 23,751 to 50,426 & worse & 510 & 481 & 524 & 766.4 & 0.762 \\
+Fisher, cap $3\times 10^{-3}$ & 0.625 [0.55, 0.70] & +0.110 [0.03, 0.18] & more identifiable & 0.085 & 141,436 to 166,282 & worse & 512 & 481 & 526 & 1605.4 & 0.762 \\
+Fisher, cap $5\times 10^{-3}$ & 0.562 [0.49, 0.63] & +0.047 [-0.02, 0.12] & not resolved & 0.019 & 116,634 to 149,565 & worse & 517 & 482 & 536 & 1444.4 & 0.762 \\
+Fisher, cap $10^{-2}$ & 0.505 [0.43, 0.58] & -0.010 [-0.08, 0.06] & not resolved & 0.009 & 5,059 to 29,373 & worse & 523 & 485 & 534 & 612.4 & 0.759 \\
+Retain fine-tune, 50 epochs (published) & 0.556 [0.48, 0.63] & +0.041 [-0.03, 0.11] & not resolved & 1.000 & 665 to 697 & better & 506 & 479 & 524 & 484.9 & 0.761 \\
+Retain fine-tune, 10 epochs & 0.645 [0.57, 0.72] & +0.130 [0.05, 0.21] & more identifiable & 1.000 & 543 to 555 & better & 509 & 481 & 524 & 484.4 & 0.762 \\
+Retain fine-tune, 25 epochs & 0.611 [0.53, 0.68] & +0.095 [0.03, 0.16] & more identifiable & 1.000 & 607 to 611 & better & 508 & 480 & 524 & 484.6 & 0.762 \\
+Retain fine-tune, 50 epochs & 0.554 [0.48, 0.62] & +0.039 [-0.03, 0.11] & not resolved & 1.000 & 688 to 700 & better & 506 & 479 & 524 & 484.9 & 0.762 \\
+Retain fine-tune, 100 epochs & 0.560 [0.48, 0.64] & +0.045 [-0.04, 0.13] & not resolved & 1.000 & 754 to 774 & better & 503 & 477 & 525 & 485.5 & 0.759 \\
+Retain fine-tune, 150 epochs & 0.579 [0.51, 0.65] & +0.064 [-0.01, 0.14] & not resolved & 1.000 & 785 to 795 & better & 500 & 476 & 526 & 485.9 & 0.756 \\
+Retain fine-tune, 200 epochs & 0.509 [0.43, 0.59] & -0.006 [-0.09, 0.08] & not resolved & 1.000 & 811 to 848 & better & 498 & 474 & 528 & 486.6 & 0.755 \\
+\midrule
+\multicolumn{12}{l}{\emph{Cluster 8, plasmacytoid dendritic cells: retrained per-cell arm 0.487, margin 0.038, retrained forget medians 672 to 684}} \\
+Baseline & 0.603 [0.56, 0.65] & -- & trained on the cells & 0.999 & 532 & better & 465 & 480 & 472 & 484.5 & 0.762 \\
+Fisher, cap $10^{-3}$ (published) & 0.589 [0.54, 0.63] & +0.102 [0.06, 0.14] & more identifiable & 0.484 & 697 to 812 & worse & 464 & 479 & 472 & 493.9 & 0.761 \\
+Fisher, cap $2\times 10^{-3}$ & 0.572 [0.53, 0.62] & +0.085 [0.04, 0.13] & more identifiable & 0.360 & 700 to 27,813 & worse & 467 & 480 & 474 & 1262.4 & 0.757 \\
+Fisher, cap $3\times 10^{-3}$ & 0.553 [0.51, 0.60] & +0.066 [0.03, 0.11] & more identifiable & 0.281 & 721 to 100,925 & worse & 471 & 481 & 479 & 1750.3 & 0.752 \\
+Fisher, cap $5\times 10^{-3}$ & 0.535 [0.49, 0.58] & +0.048 [0.01, 0.08] & more identifiable & 0.110 & 1,784 to 2,768 & worse & 475 & 483 & 479 & 740.5 & 0.755 \\
+Fisher, cap $10^{-2}$ & 0.527 [0.48, 0.57] & +0.041 [0.004, 0.08] & more identifiable & 0.069 & 1,345 to 1,707 & worse & 480 & 485 & 483 & 504.1 & 0.749 \\
+Retain fine-tune, 50 epochs (published) & 0.548 [0.50, 0.59] & +0.062 [0.02, 0.10] & more identifiable & 0.995 & 580 to 585 & better & 461 & 478 & 471 & 484.7 & 0.760 \\
+Retain fine-tune, 10 epochs & 0.570 [0.52, 0.62] & +0.083 [0.04, 0.13] & more identifiable & 0.999 & 548 to 552 & better & 464 & 479 & 471 & 484.4 & 0.761 \\
+Retain fine-tune, 25 epochs & 0.582 [0.54, 0.63] & +0.095 [0.05, 0.14] & more identifiable & 0.998 & 561 to 569 & better & 463 & 479 & 471 & 484.5 & 0.761 \\
+Retain fine-tune, 50 epochs & 0.559 [0.51, 0.60] & +0.073 [0.03, 0.11] & more identifiable & 0.986 & 582 to 586 & better & 461 & 478 & 471 & 484.8 & 0.760 \\
+Retain fine-tune, 100 epochs & 0.531 [0.49, 0.57] & +0.045 [0.01, 0.09] & more identifiable & 0.961 & 608 to 609 & better & 458 & 476 & 472 & 485.3 & 0.756 \\
+Retain fine-tune, 150 epochs & 0.504 [0.46, 0.55] & +0.018 [-0.02, 0.06] & not resolved & 0.954 & 613 to 618 & better & 454 & 474 & 472 & 485.7 & 0.754 \\
+Retain fine-tune, 200 epochs & 0.525 [0.48, 0.57] & +0.039 [-0.002, 0.08] & not resolved & 0.928 & 622 to 629 & better & 452 & 472 & 473 & 486.3 & 0.753 \\
+\bottomrule
+\end{tabular}

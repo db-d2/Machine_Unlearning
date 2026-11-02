@@ -1,0 +1,12 @@
+\begin{tabular}{lcccccc}
+\toprule
+Forget cells vs negatives, model & All 70 & Latent mean & Latent log-var & Likelihood terms & Reconstruction & kNN distance \\
+\midrule
+PBMC-33k cluster 13 vs 194 cross-type, baseline & 0.990 & 0.990 & 0.988 & 0.921 & 0.769 & 0.628 \\
+PBMC-33k cluster 13 vs 194 cross-type, clean retrain & 0.984 & 0.984 & 0.985 & 0.878 & 0.423 & 0.605 \\
+PBMC-68k cluster 9 vs 71 within-type, baseline & 0.668 & 0.545 & 0.573 & 0.594 & 0.609 & 0.450 \\
+PBMC-68k cluster 9 vs 71 within-type, clean retrain & 0.495 & 0.518 & 0.515 & 0.515 & 0.439 & 0.474 \\
+PBMC-68k cluster 8 vs 201 within-type, baseline & 0.589 & 0.537 & 0.533 & 0.521 & 0.542 & 0.480 \\
+PBMC-68k cluster 8 vs 201 within-type, clean retrain & 0.487 & 0.485 & 0.497 & 0.531 & 0.459 & 0.483 \\
+\bottomrule
+\end{tabular}

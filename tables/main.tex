@@ -1,0 +1,22 @@
+\begin{tabular}{lccccccccc}
+\toprule
+Method & Seeds & Attacker AUC [nested 95\% CI] & Advantage & Paired difference [95\% CI] & Attacker & Reference-free audit [95\% CI] & Audit & ELBO & Marker $r$ \\
+\midrule
+Baseline (no unlearning) & 1 & 0.801 [0.70, 0.89] & 0.601 & +0.272 [0.21, 0.33] & trained on the cells & 0.995 [0.99, 1.00] & trained on the cells & 364.0 & 0.831 \\
+Clean retrain & 5 & 0.529 [0.42, 0.63] & 0.057 & -- & reference & 0.507 [0.40, 0.60] & reference & 364.2 & 0.831 \\
+\midrule
+Retain-only fine-tune & 5 & 0.669 [0.56, 0.77] & 0.339 & +0.141 [0.10, 0.19] & more identifiable & 0.988 [0.93, 1.00] & fitted better & 363.0 & 0.832 \\
+Gradient ascent + fine-tune & 5 & 0.706 [0.59, 0.81] & 0.412 & +0.177 [0.14, 0.22] & more identifiable & 0.995 [0.99, 1.00] & fitted better & 363.2 & 0.831 \\
+SSD & 3 & 0.701 [0.59, 0.80] & 0.402 & +0.172 [0.13, 0.22] & more identifiable & 0.995 [0.99, 1.00] & fitted better & 363.6 & 0.831 \\
+SCRUB & 3 & 0.716 [0.60, 0.82] & 0.431 & +0.187 [0.14, 0.24] & more identifiable & 0.980 [0.92, 1.00] & fitted better & 363.6 & 0.831 \\
+Moon feature unlearning & 3 & 0.740 [0.63, 0.84] & 0.480 & +0.211 [0.16, 0.26] & more identifiable & 0.996 [0.99, 1.00] & fitted better & 364.5 & 0.831 \\
+Fisher scrubbing & 3 & 0.673 [0.56, 0.77] & 0.345 & +0.144 [0.10, 0.19] & more identifiable & 0.992 [0.98, 1.00] & fitted better & 363.6 & 0.832 \\
+Fisher, step cap $3\times 10^{-3}$ & 1 & 0.312 [0.21, 0.42] & 0.376 & -0.217 [-0.30, -0.14] & less identifiable & 0.141 [0.03, 0.27] & fitted worse & 363.8 & 0.831 \\
+Fisher, step cap $10^{-2}$ & 1 & 0.445 [0.33, 0.56] & 0.111 & -0.084 [-0.14, -0.02] & less identifiable & 0.288 [0.15, 0.45] & fitted worse & 370.8 & 0.830 \\
+Extra-gradient ($\lambda=10$) & 10 & 0.411 [0.31, 0.52] & 0.225 & -0.117 [-0.19, -0.05] & less identifiable & 0.250 [0.001, 0.91] & not resolved & 363.8 & 0.832 \\
+Extra-gradient ($\lambda=1$) & 10 & 0.336 [0.23, 0.44] & 0.327 & -0.192 [-0.28, -0.12] & less identifiable & 0.044 [0.0003, 0.20] & fitted worse & 363.2 & 0.831 \\
+Contrastive latent & 3 & 0.170 [0.11, 0.24] & 0.661 & -0.359 [-0.44, -0.28] & less identifiable & 0.003 [0.00, 0.01] & fitted worse & 363.7 & 0.831 \\
+Frozen critics (4 configurations) & 3 each & 0.003 to 0.008 & 0.985 to 0.995 & -0.526 to -0.521 & less identifiable & 0.003 to 0.006 & fitted worse & 363.7 to 404.4 & 0.831 to 0.832 \\
+DP-SGD ($\varepsilon=10$, from scratch) & 3 & 0.466 [0.37, 0.56] & 0.068 & -0.063 [-0.12, -0.01] & less identifiable & 0.533 [0.43, 0.64] & as retrained & 402.9 & 0.789 \\
+\bottomrule
+\end{tabular}

@@ -1,0 +1,19 @@
+\begin{tabular}{llll}
+\toprule
+Method & Family & What it does & Budget \\
+\midrule
+Retain-only fine-tuning & edit, then fine-tune & continues training on $\mathcal{R}$ & 50 epochs (patience 10) \\
+Gradient ascent & edit, then fine-tune & ten clipped ascent steps on the forget loss, then retain fine-tune & 10 ascent steps, then up to 30 retain epochs (patience 10) \\
+Fisher scrubbing & edit, then fine-tune & step against the forget gradient scaled by the inverse retain Fisher, capped, then retain fine-tune & 100 scrub steps, then 10 retain epochs \\
+SSD & edit, then fine-tune & multiplicative dampening by forget-set Fisher importance, then retain fine-tune & one dampening pass, then 10 retain epochs \\
+SCRUB & edit, then fine-tune & distills from the baseline, matching it on $\mathcal{R}$ and diverging on $\mathcal{F}$ & 20 distillation epochs, then 10 retain epochs \\
+Moon feature unlearning & edit, then fine-tune & decoder fine-tune with a forget-versus-retain latent direction removed & 20 decoder epochs \\
+Contrastive latent & continuous objective & forget posteriors pushed to the prior, retain representations held & 20 epochs, then 10 retain epochs \\
+Frozen critics & continuous objective & VAE updated to defeat fixed pre-trained attackers (one or three, two weights) & 50 epochs \\
+Extra-gradient co-training & continuous objective & min-max game against three co-trained critics, extragradient updates & 50 passes, $\lambda = 10$ (1) \\
+Synthetic augmentation & constructive & trains on $\mathcal{R}$ plus synthetic forget-type cells from held-out seeds & from scratch \\
+Representation alignment & constructive & fine-tunes the baseline until its forget-cell posteriors match a retrained model's & -- \\
+DP-SGD & from scratch & trains on $\mathcal{R}$ with $\varepsilon = 10$ & from scratch \\
+Likelihood-targeted fine-tune (Section~\ref{sec:target}) & demonstration & retain loss plus a penalty on the gap between each forget cell's negative ELBO and a target & until the gap stays small \\
+\bottomrule
+\end{tabular}

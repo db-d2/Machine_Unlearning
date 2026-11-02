@@ -129,10 +129,18 @@ def fisher_scrub(model, forget_loader, fisher, device, scrub_lr=0.0001, scrub_st
 
 
 def retain_finetune(model, retain_loader, device, epochs=10, lr=0.0001,
-                    tracker=None, eval_fn=None, eval_interval=2, scrub_steps=0):
-    """Fine-tune on the retain set with the training objective (vae_loss)."""
+                    tracker=None, eval_fn=None, eval_interval=2, scrub_steps=0, optimizer='adam'):
+    """Fine-tune on the retain set with the training objective (vae_loss).
+
+    ``optimizer``: 'adam' (the methods' setting, the default) or 'sgd' (plain gradient descent without momentum,
+    the setting of the restoration proposition; used by scripts/restricted_scrub_test.py)."""
     model.train()
-    optimizer = optim.Adam(model.parameters(), lr=lr)
+    if optimizer == 'adam':
+        optimizer = optim.Adam(model.parameters(), lr=lr)
+    elif optimizer == 'sgd':
+        optimizer = optim.SGD(model.parameters(), lr=lr)
+    else:
+        raise ValueError(f"optimizer must be 'adam' or 'sgd', got {optimizer!r}")
     retain_losses = []
     print(f"Fine-tuning on retain set for {epochs} epochs...")
     for epoch in range(epochs):

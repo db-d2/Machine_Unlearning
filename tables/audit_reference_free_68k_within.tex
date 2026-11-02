@@ -1,0 +1,28 @@
+\begin{tabular}{lccccccc}
+\toprule
+Model & Seeds & Within-type audit [95\% CI] & Difference [95\% CI] & Verdict & Per-cell z-scored audit [95\% CI] & Difference [95\% CI] & Verdict \\
+\midrule
+\multicolumn{8}{l}{\emph{Cluster 9, megakaryocytes}} \\
+Clean retrains (leave-one-out) & 8 & 0.495 [0.48, 0.51] & -- & reference & 0.500 [0.48, 0.53] & -- & reference \\
+Baseline (no unlearning) & 1 & 0.574 [0.49, 0.66] & +0.078 [-0.003, 0.16] & not resolved & 0.652 [0.52, 0.73] & +0.152 [0.02, 0.23] & fitted better \\
+Retain-only fine-tune & 3 & 0.483 [0.40, 0.57] & -0.012 [-0.10, 0.07] & not resolved & 0.546 [0.43, 0.64] & +0.045 [-0.07, 0.14] & not resolved \\
+Gradient ascent + fine-tune & 3 & 0.509 [0.42, 0.59] & +0.014 [-0.07, 0.10] & not resolved & 0.577 [0.46, 0.67] & +0.076 [-0.05, 0.17] & not resolved \\
+SSD & 3 & 0.516 [0.43, 0.60] & +0.021 [-0.06, 0.10] & not resolved & 0.591 [0.46, 0.68] & +0.090 [-0.04, 0.18] & not resolved \\
+SCRUB & 3 & 0.501 [0.40, 0.60] & +0.006 [-0.09, 0.11] & not resolved & 0.569 [0.44, 0.67] & +0.068 [-0.06, 0.17] & not resolved \\
+Fisher scrubbing & 3 & 0.478 [0.39, 0.56] & -0.017 [-0.10, 0.07] & not resolved & 0.501 [0.42, 0.58] & +0.000 [-0.09, 0.09] & not resolved \\
+Extra-gradient ($\lambda=10$) & 3 & 0.674 [0.59, 0.76] & +0.178 [0.09, 0.26] & fitted better & 0.773 [0.63, 0.83] & +0.272 [0.13, 0.33] & fitted better \\
+Contrastive latent & 3 & 0.526 [0.44, 0.61] & +0.030 [-0.05, 0.11] & not resolved & 0.521 [0.42, 0.61] & +0.021 [-0.09, 0.12] & not resolved \\
+Retain-only fine-tune, 200 epochs & 3 & 0.477 [0.39, 0.56] & -0.019 [-0.10, 0.07] & not resolved & 0.525 [0.43, 0.63] & +0.025 [-0.08, 0.13] & not resolved \\
+\midrule
+\multicolumn{8}{l}{\emph{Cluster 8, plasmacytoid dendritic cells}} \\
+Clean retrains (leave-one-out) & 8 & 0.498 [0.49, 0.51] & -- & reference & 0.498 [0.49, 0.51] & -- & reference \\
+Baseline (no unlearning) & 1 & 0.607 [0.55, 0.66] & +0.110 [0.05, 0.16] & fitted better & 0.592 [0.53, 0.64] & +0.094 [0.03, 0.14] & fitted better \\
+Retain-only fine-tune & 3 & 0.552 [0.50, 0.60] & +0.054 [-0.002, 0.10] & not resolved & 0.559 [0.50, 0.61] & +0.061 [-0.002, 0.11] & not resolved \\
+Gradient ascent + fine-tune & 3 & 0.564 [0.51, 0.62] & +0.067 [0.01, 0.12] & fitted better & 0.568 [0.51, 0.62] & +0.070 [0.01, 0.12] & fitted better \\
+SSD & 3 & 0.564 [0.51, 0.62] & +0.066 [0.01, 0.12] & fitted better & 0.565 [0.50, 0.61] & +0.067 [0.002, 0.12] & fitted better \\
+SCRUB & 3 & 0.572 [0.52, 0.63] & +0.075 [0.02, 0.13] & fitted better & 0.574 [0.51, 0.62] & +0.076 [0.01, 0.13] & fitted better \\
+Fisher scrubbing & 3 & 0.556 [0.50, 0.61] & +0.058 [0.003, 0.11] & fitted better & 0.552 [0.50, 0.61] & +0.054 [-0.004, 0.11] & not resolved \\
+Extra-gradient ($\lambda=10$) & 3 & 0.738 [0.68, 0.80] & +0.240 [0.18, 0.30] & fitted better & 0.723 [0.63, 0.77] & +0.226 [0.13, 0.27] & fitted better \\
+Contrastive latent & 3 & 0.406 [0.35, 0.46] & -0.092 [-0.15, -0.04] & fitted worse & 0.414 [0.36, 0.47] & -0.084 [-0.14, -0.03] & fitted worse \\
+\bottomrule
+\end{tabular}

@@ -1,0 +1,22 @@
+\begin{tabular}{lcccc>{\raggedright\arraybackslash}p{2.8cm}cl}
+\toprule
+Model & Forget median & Per-cell AUC [95\% CI] & Advantage & Paired difference [95\% CI] & Cells & Reference-free audit [95\% CI] & Type \\
+\midrule
+\multicolumn{8}{l}{\emph{Cluster 9, megakaryocytes (107 forget, 71 held out)}} \\
+Baseline (trained on the cells) & 491 & 0.68 [0.61, 0.76] & 0.37 & -- & trained on the cells & 1.000 [1.00, 1.00] & trained on the cells \\
+Clean retrains (8) & 1,014 to 1,154 & 0.47 to 0.54 [0.45, 0.57] & 0.00 to 0.08 & -- & reference & 0.592 [0.41, 0.66] & reference \\
+Edit, then fine-tune (4 methods) & 572 to 697 & 0.54 to 0.66 & 0.08 to 0.33 & +0.041 to +0.132 & not resolved (retain-FT, GA); more identifiable (SSD, SCRUB) & 0.994 to 1.000 & fitted better \\
+Fisher scrubbing & 814 to 831 & 0.59 to 0.62 [0.53, 0.68] & 0.18 to 0.24 & +0.088 [0.02, 0.16] & more identifiable & 0.653 [0.53, 0.76] & fitted better \\
+Contrastive latent & 663 to 755 & 0.55 to 0.56 [0.48, 0.63] & 0.10 to 0.13 & +0.043 [-0.03, 0.11] & not resolved & 0.971 [0.92, 1.00] & fitted better \\
+Extra-gradient ($\lambda=10$) & 475 to 489 & 0.84 to 0.91 [0.81, 0.93] & 0.68 to 0.83 & +0.361 [0.29, 0.44] & more identifiable & 0.999 [1.00, 1.00] & fitted better \\
+Retain-only fine-tune, 200 epochs & 820 to 846 & 0.51 to 0.54 [0.45, 0.59] & 0.01 to 0.08 & +0.008 [-0.06, 0.08] & not resolved & 1.000 [1.00, 1.00] & fitted better \\
+\midrule
+\multicolumn{8}{l}{\emph{Cluster 8, plasmacytoid dendritic cells (302 forget, 201 held out)}} \\
+Baseline (trained on the cells) & 532 & 0.60 [0.56, 0.65] & 0.21 & -- & trained on the cells & 0.999 [1.00, 1.00] & trained on the cells \\
+Clean retrains (8) & 672 to 684 & 0.45 to 0.50 [0.45, 0.52] & 0.01 to 0.10 & -- & reference & 0.510 [0.48, 0.53] & reference \\
+Edit, then fine-tune (4 methods) & 555 to 585 & 0.54 to 0.60 & 0.08 to 0.20 & +0.062 to +0.087 & more identifiable (retain-FT, GA, SSD, SCRUB) & 0.994 to 0.999 & fitted better \\
+Fisher scrubbing & 697 to 812 & 0.58 to 0.59 [0.54, 0.63] & 0.17 to 0.19 & +0.102 [0.06, 0.14] & more identifiable & 0.489 [0.39, 0.59] & not resolved \\
+Contrastive latent & 747 to 777 & 0.63 [0.58, 0.68] & 0.26 to 0.27 & +0.145 [0.10, 0.19] & more identifiable & 0.011 [0.00004, 0.04] & fitted worse \\
+Extra-gradient ($\lambda=10$) & 492 to 508 & 0.70 to 0.83 [0.70, 0.83] & 0.41 to 0.66 & +0.283 [0.21, 0.35] & more identifiable & 0.929 [0.80, 1.00] & fitted better \\
+\bottomrule
+\end{tabular}

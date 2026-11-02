@@ -1,0 +1,23 @@
+\begin{tabular}{lccccccccc}
+\toprule
+Edit & Steps & Forget, edit & Held-out, edit & Forget 10 & Forget 50 & Forget 200 & Held-out 200 & Audit 50 & Audit 200 \\
+\midrule
+\multicolumn{10}{l}{\emph{PBMC-33k cluster 13: baseline forget 269, retain 363, held-out 363 (mean negative ELBO per cell); 4,984,190 retain-null of 7,349,984 parameters}} \\
+No edit & 0 & 269 & 363 & 284 & 306 & 329 & 362 & 0.974 & 0.760 \\
+Published scrub, published damage & 100 & 5,601 & 1,271 & 298 & 309 & 331 & 362 & 0.985 & 0.648 \\
+Retain-active directions & 86 & 5,684 & 1,343 & 294 & 308 & 331 & 362 & 0.985 & 0.664 \\
+Retain-null directions & 268 & 6,239 & 371 & 540 & 426 & 404 & 362 & 0.074 & 0.066 \\
+Published scrub, moderate damage & 26 & 572 & 402 & 292 & 312 & 332 & 362 & 0.973 & 0.615 \\
+Retain-active directions & 26 & 582 & 406 & 290 & 310 & 332 & 362 & 0.984 & 0.640 \\
+Retain-null directions & 124 & 549 & 363 & 431 & 405 & 387 & 362 & 0.075 & 0.067 \\
+\midrule
+\multicolumn{10}{l}{\emph{PBMC-68k cluster 9: baseline forget 488, retain 481, held-out 479 (mean negative ELBO per cell); 4,975,282 retain-null of 7,349,984 parameters}} \\
+No edit & 0 & 488 & 479 & 540 & 689 & 800 & 481 & 1.000 & 1.000 \\
+Published scrub, published damage & 100 & 49,193 & 671 & 971 & 679 & 804 & 481 & 1.000 & 1.000 \\
+Retain-active directions & 128 & 48,945 & 702 & 832 & 681 & 804 & 481 & 1.000 & 1.000 \\
+Retain-null directions & 25 & 60,925 & 668 & 4,652 & 911 & 797 & 481 & 0.813 & 1.000 \\
+Published scrub, moderate damage & 40 & 1,106 & 481 & 542 & 682 & 801 & 481 & 1.000 & 1.000 \\
+Retain-active directions & 50 & 1,038 & 481 & 541 & 684 & 799 & 481 & 1.000 & 1.000 \\
+Retain-null directions & 9 & 1,483 & 482 & 551 & 678 & 801 & 481 & 1.000 & 1.000 \\
+\bottomrule
+\end{tabular}

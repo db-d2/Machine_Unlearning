@@ -22,7 +22,7 @@ from sklearn.metrics import roc_auc_score
 BASE = Path(__file__).parent.parent
 sys.path.insert(0, str(BASE / 'src'))
 from vae import VAE
-from likelihood_audit import neg_elbo_per_cell, N_SAMPLES, SEED
+from likelihood_audit import neg_elbo_per_cell, lr_auc_ci, N_SAMPLES, SEED
 
 OUT = BASE / 'outputs' / 'attack_lr_reference_multi.json'
 COHORTS = {
@@ -73,9 +73,10 @@ def main():
         for name, path in c['targets'].items():
             if not path.exists():
                 print(f"  [{cohort}] missing {name}"); continue
-            m = load(path); s = np.r_[rf - neg_elbo(m, xf), rm - neg_elbo(m, xm)]
-            auc = float(roc_auc_score(labels, s)); res['models'][name] = {'lr_auc': auc, 'advantage': 2 * abs(auc - 0.5)}
-            print(f"  [{cohort}] {name:18s} LR AUC={auc:.3f}", flush=True)
+            m = load(path); tf, tm = neg_elbo(m, xf), neg_elbo(m, xm); s = np.r_[rf - tf, rm - tm]
+            auc = float(roc_auc_score(labels, s)); c = lr_auc_ci(rf, rm, tf, tm)
+            res['models'][name] = {'lr_auc': auc, 'advantage': 2 * abs(auc - 0.5), 'ci95': c['ci95'], 'null95': c['null95']}
+            print(f"  [{cohort}] {name:18s} LR AUC={auc:.3f} [{c['ci95'][0]:.3f}, {c['ci95'][1]:.3f}]", flush=True)
         out[cohort] = res
     out['estimator'] = f'likelihood_audit.neg_elbo_per_cell: eval mode, {N_SAMPLES} seeded z samples (seed {SEED}), CPU'
     json.dump(out, open(OUT, 'w'), indent=2)
